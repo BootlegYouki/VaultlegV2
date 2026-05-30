@@ -30,8 +30,8 @@
     "semantic_hash": ""
   },
   "E:\\Github\\template-tui\\src\\App.tsx": {
-    "mtime": 1780116875.9249039,
-    "ast_hash": "b42db5deb75a5b638d86bdb1ed4aaf3a",
+    "mtime": 1780118786.1239848,
+    "ast_hash": "42e609b2549086eb4aeddfd0ad5ad9aa",
     "semantic_hash": ""
   },
   "E:\\Github\\template-tui\\src\\main.tsx": {
@@ -170,7 +170,7 @@
     "semantic_hash": ""
   },
   "E:\\Github\\template-tui\\README.md": {
-    "mtime": 1780073095.878,
+    "mtime": 1780118384.3597672,
     "ast_hash": "e82eb266e7be0e4dce9f19ab6f3f77f0",
     "semantic_hash": ""
   },
@@ -182,6 +182,11 @@
   "E:\\Github\\template-tui\\.agents\\workflows\\graphify.md": {
     "mtime": 1780118223.3438652,
     "ast_hash": "637776aa6f7496d069afe7520c845c8a",
+    "semantic_hash": ""
+  },
+  "E:\\Github\\template-tui\\src\\components\\tui-template\\showcase.tsx": {
+    "mtime": 1780118872.734006,
+    "ast_hash": "b2d3d0f6aad55000b3ac2f73f089e5e6",
     "semantic_hash": ""
   }
 }
