@@ -14,23 +14,23 @@
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- [[_COMMUNITY_Tactical UI Components Forge|Tactical UI Components Forge]]
-- [[_COMMUNITY_Vivid TUI Components Hub|Vivid TUI Components Hub]]
-- [[_COMMUNITY_Community 2|Community 2]]
+- [[_COMMUNITY_Tactical UI Components Hub|Tactical UI Components Hub]]
+- [[_COMMUNITY_Terminal UI Forge|Terminal UI Forge]]
+- [[_COMMUNITY_Radix Primitives Hub|Radix Primitives Hub]]
 - [[_COMMUNITY_Community 3|Community 3]]
 - [[_COMMUNITY_Community 4|Community 4]]
-- [[_COMMUNITY_Data Pulse Hub|Data Pulse Hub]]
+- [[_COMMUNITY_Community 5|Community 5]]
 - [[_COMMUNITY_Community 6|Community 6]]
 - [[_COMMUNITY_Community 7|Community 7]]
 - [[_COMMUNITY_Community 8|Community 8]]
-- [[_COMMUNITY_Terminal UI Collective|Terminal UI Collective]]
+- [[_COMMUNITY_Community 9|Community 9]]
 - [[_COMMUNITY_Community 10|Community 10]]
 - [[_COMMUNITY_Community 11|Community 11]]
 - [[_COMMUNITY_Community 12|Community 12]]
-- [[_COMMUNITY_Modern Package Masters|Modern Package Masters]]
+- [[_COMMUNITY_Community 13|Community 13]]
 - [[_COMMUNITY_Community 14|Community 14]]
 - [[_COMMUNITY_Community 15|Community 15]]
-- [[_COMMUNITY_Nimble Pnpm Pioneers|Nimble Pnpm Pioneers]]
+- [[_COMMUNITY_Community 17|Community 17]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `cn()` - 85 edges
@@ -58,15 +58,15 @@
 
 ## Communities (18 total, 4 thin omitted)
 
-### Community 0 - "Tactical UI Components Forge"
+### Community 0 - "Tactical UI Components Hub"
 Cohesion: 0.11
 Nodes (42): TuiContainer, ComponentsSection(), ComponentsSectionProps, ICON_LIST, IconItem, BrutalistSlider(), BrutalistSliderProps, LogMessage (+34 more)
 
-### Community 1 - "Vivid TUI Components Hub"
+### Community 1 - "Terminal UI Forge"
 Cohesion: 0.10
 Nodes (25): ResolvedTheme, Theme, THEME_VALUES, ThemeProvider(), ThemeProviderContext, ThemeProviderProps, ThemeProviderState, useTheme() (+17 more)
 
-### Community 2 - "Community 2"
+### Community 2 - "Radix Primitives Hub"
 Cohesion: 0.11
 Nodes (29): cn(), DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuGroup(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuPortal() (+21 more)
 
@@ -78,7 +78,7 @@ Nodes (21): aliases, components, hooks, lib, ui, utils, iconLibrary, menuAccent 
 Cohesion: 0.09
 Nodes (21): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection, moduleResolution (+13 more)
 
-### Community 5 - "Data Pulse Hub"
+### Community 5 - "Community 5"
 Cohesion: 0.16
 Nodes (18): latencyData, processData, radarData, TelemetrySection(), TelemetrySectionProps, weeklyData, Button(), buttonVariants (+10 more)
 
@@ -94,7 +94,7 @@ Nodes (33): dependencies, class-variance-authority, clsx, @fontsource-variable/j
 Cohesion: 0.11
 Nodes (17): compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib, module, moduleDetection, moduleResolution, noEmit (+9 more)
 
-### Community 9 - "Terminal UI Collective"
+### Community 9 - "Community 9"
 Cohesion: 0.40
 Nodes (4): TuiContainer, TuiContainerProps, TuiRadar(), TuiRadarProps
 
@@ -118,17 +118,17 @@ Nodes (5): compilerOptions, paths, files, @/*, references
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `Community 2` to `Tactical UI Components Forge`, `Vivid TUI Components Hub`, `Data Pulse Hub`, `Terminal UI Collective`?**
+- **Why does `cn()` connect `Radix Primitives Hub` to `Tactical UI Components Hub`, `Terminal UI Forge`, `Community 5`, `Community 9`?**
   _High betweenness centrality (0.113) - this node is a cross-community bridge._
-- **Why does `TuiContainer` connect `Tactical UI Components Forge` to `Vivid TUI Components Hub`, `Community 2`, `Data Pulse Hub`, `Terminal UI Collective`, `Community 11`?**
+- **Why does `TuiContainer` connect `Tactical UI Components Hub` to `Terminal UI Forge`, `Radix Primitives Hub`, `Community 5`, `Community 9`, `Community 11`?**
   _High betweenness centrality (0.044) - this node is a cross-community bridge._
-- **Why does `ComponentsSection()` connect `Tactical UI Components Forge` to `Vivid TUI Components Hub`, `Community 2`, `Data Pulse Hub`?**
+- **Why does `ComponentsSection()` connect `Tactical UI Components Hub` to `Terminal UI Forge`, `Radix Primitives Hub`, `Community 5`?**
   _High betweenness centrality (0.043) - this node is a cross-community bridge._
 - **What connects `$schema`, `style`, `rsc` to the rest of the system?**
   _141 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Tactical UI Components Forge` be split into smaller, more focused modules?**
+- **Should `Tactical UI Components Hub` be split into smaller, more focused modules?**
   _Cohesion score 0.11447811447811448 - nodes in this community are weakly interconnected._
-- **Should `Vivid TUI Components Hub` be split into smaller, more focused modules?**
+- **Should `Terminal UI Forge` be split into smaller, more focused modules?**
   _Cohesion score 0.0990990990990991 - nodes in this community are weakly interconnected._
-- **Should `Community 2` be split into smaller, more focused modules?**
+- **Should `Radix Primitives Hub` be split into smaller, more focused modules?**
   _Cohesion score 0.11363636363636363 - nodes in this community are weakly interconnected._

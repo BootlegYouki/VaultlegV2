@@ -17,10 +17,10 @@ try {
   execSync('git rev-parse --is-inside-work-tree', { stdio: 'ignore', cwd: ROOT_DIR });
   
   console.log('Restoring showcase files from Git...');
-  // Restore tui-template folder and App.tsx
-  execSync('git checkout HEAD -- src/components/tui-template src/App.tsx', { stdio: 'inherit', cwd: ROOT_DIR });
+  // Restore tui-template folder, App.tsx, and index.html
+  execSync('git checkout HEAD -- src/components/tui-template src/App.tsx index.html', { stdio: 'inherit', cwd: ROOT_DIR });
   
-  console.log('\x1b[32m%s\x1b[0m', '✔ Successfully restored tui-template folder and App.tsx.');
+  console.log('\x1b[32m%s\x1b[0m', '✔ Successfully restored tui-template folder, App.tsx, and index.html.');
   
   // Re-run graphify to ensure the restored code is indexed
   try {

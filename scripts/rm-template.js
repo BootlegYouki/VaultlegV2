@@ -8,6 +8,7 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 const APP_TSX_PATH = path.join(ROOT_DIR, 'src', 'App.tsx');
 const TEMPLATE_DIR_PATH = path.join(ROOT_DIR, 'src', 'components', 'tui-template');
+const INDEX_HTML_PATH = path.join(ROOT_DIR, 'index.html');
 
 console.log('\x1b[35m%s\x1b[0m', '=== TEMPLATE-TUI CLEANUP SYSTEM ===');
 
@@ -47,6 +48,18 @@ try {
   console.log('\x1b[32m%s\x1b[0m', '✔ Successfully cleaned src/App.tsx and set up minimal starter page.');
 } catch (error) {
   console.error('\x1b[31m%s\x1b[0m', `✘ Failed to clean src/App.tsx: ${error.message}`);
+}
+
+// 3. Update title in index.html
+if (fs.existsSync(INDEX_HTML_PATH)) {
+  try {
+    let indexContent = fs.readFileSync(INDEX_HTML_PATH, 'utf8');
+    indexContent = indexContent.replace(/<title>TEMPLATE-TUI<\/title>/i, '<title>TUI App</title>');
+    fs.writeFileSync(INDEX_HTML_PATH, indexContent, 'utf8');
+    console.log('\x1b[32m%s\x1b[0m', '✔ Successfully updated title in index.html to "TUI App".');
+  } catch (error) {
+    console.error('\x1b[31m%s\x1b[0m', `✘ Failed to update index.html title: ${error.message}`);
+  }
 }
 
 console.log('\x1b[36m%s\x1b[0m', '\nCleanup complete! Your custom retro-brutalist App is ready to be built.');
