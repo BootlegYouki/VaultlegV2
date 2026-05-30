@@ -207,7 +207,7 @@
       "source_file": "package.json",
       "source_location": "L1",
       "id": "package_json",
-      "community": 8,
+      "community": 4,
       "norm_label": "package.json"
     },
     {
@@ -216,7 +216,7 @@
       "source_file": "package.json",
       "source_location": "L2",
       "id": "template_tui_package_name",
-      "community": 8,
+      "community": 4,
       "norm_label": "name"
     },
     {
@@ -225,7 +225,7 @@
       "source_file": "package.json",
       "source_location": "L3",
       "id": "template_tui_package_private",
-      "community": 8,
+      "community": 4,
       "norm_label": "private"
     },
     {
@@ -234,7 +234,7 @@
       "source_file": "package.json",
       "source_location": "L4",
       "id": "template_tui_package_version",
-      "community": 8,
+      "community": 4,
       "norm_label": "version"
     },
     {
@@ -243,7 +243,7 @@
       "source_file": "package.json",
       "source_location": "L5",
       "id": "template_tui_package_type",
-      "community": 8,
+      "community": 4,
       "norm_label": "type"
     },
     {
@@ -252,7 +252,7 @@
       "source_file": "package.json",
       "source_location": "L6",
       "id": "template_tui_package_scripts",
-      "community": 8,
+      "community": 4,
       "norm_label": "scripts"
     },
     {
@@ -261,7 +261,7 @@
       "source_file": "package.json",
       "source_location": "L7",
       "id": "template_tui_package_scripts_dev",
-      "community": 8,
+      "community": 4,
       "norm_label": "dev"
     },
     {
@@ -270,7 +270,7 @@
       "source_file": "package.json",
       "source_location": "L8",
       "id": "template_tui_package_scripts_build",
-      "community": 8,
+      "community": 4,
       "norm_label": "build"
     },
     {
@@ -279,7 +279,7 @@
       "source_file": "package.json",
       "source_location": "L9",
       "id": "template_tui_package_scripts_lint",
-      "community": 8,
+      "community": 4,
       "norm_label": "lint"
     },
     {
@@ -288,7 +288,7 @@
       "source_file": "package.json",
       "source_location": "L10",
       "id": "template_tui_package_scripts_format",
-      "community": 8,
+      "community": 4,
       "norm_label": "format"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "package.json",
       "source_location": "L11",
       "id": "template_tui_package_scripts_typecheck",
-      "community": 8,
+      "community": 4,
       "norm_label": "typecheck"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "package.json",
       "source_location": "L12",
       "id": "template_tui_package_scripts_preview",
-      "community": 8,
+      "community": 4,
       "norm_label": "preview"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "package.json",
       "source_location": "L13",
       "id": "template_tui_package_scripts_rm_template",
-      "community": 8,
+      "community": 4,
       "norm_label": "rm-template"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "package.json",
       "source_location": "L14",
       "id": "template_tui_package_scripts_int_template",
-      "community": 8,
+      "community": 4,
       "norm_label": "int-template"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "package.json",
       "source_location": "L15",
       "id": "template_tui_package_scripts_init_template",
-      "community": 8,
+      "community": 4,
       "norm_label": "init-template"
     },
     {
@@ -1152,7 +1152,7 @@
       "source_file": "src/main.tsx",
       "source_location": "L1",
       "id": "src_main_tsx",
-      "community": 2,
+      "community": 16,
       "norm_label": "main.tsx"
     },
     {
@@ -1161,7 +1161,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L1",
       "id": "src_components_theme_provider_tsx",
-      "community": 2,
+      "community": 16,
       "norm_label": "theme-provider.tsx"
     },
     {
@@ -1170,7 +1170,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L4",
       "id": "components_theme_provider_theme",
-      "community": 2,
+      "community": 16,
       "norm_label": "theme"
     },
     {
@@ -1179,7 +1179,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L5",
       "id": "components_theme_provider_resolvedtheme",
-      "community": 2,
+      "community": 16,
       "norm_label": "resolvedtheme"
     },
     {
@@ -1188,7 +1188,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L7",
       "id": "components_theme_provider_themeproviderprops",
-      "community": 2,
+      "community": 16,
       "norm_label": "themeproviderprops"
     },
     {
@@ -1197,7 +1197,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L14",
       "id": "components_theme_provider_themeproviderstate",
-      "community": 2,
+      "community": 16,
       "norm_label": "themeproviderstate"
     },
     {
@@ -1206,7 +1206,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L20",
       "id": "components_theme_provider_theme_values",
-      "community": 2,
+      "community": 16,
       "norm_label": "theme_values"
     },
     {
@@ -1215,7 +1215,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L22",
       "id": "components_theme_provider_themeprovidercontext",
-      "community": 2,
+      "community": 16,
       "norm_label": "themeprovidercontext"
     },
     {
@@ -1224,7 +1224,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L26",
       "id": "components_theme_provider_istheme",
-      "community": 2,
+      "community": 16,
       "norm_label": "istheme()"
     },
     {
@@ -1233,7 +1233,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L34",
       "id": "components_theme_provider_getsystemtheme",
-      "community": 2,
+      "community": 16,
       "norm_label": "getsystemtheme()"
     },
     {
@@ -1242,7 +1242,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L42",
       "id": "components_theme_provider_disabletransitionstemporarily",
-      "community": 2,
+      "community": 16,
       "norm_label": "disabletransitionstemporarily()"
     },
     {
@@ -1251,7 +1251,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L61",
       "id": "components_theme_provider_iseditabletarget",
-      "community": 2,
+      "community": 16,
       "norm_label": "iseditabletarget()"
     },
     {
@@ -1260,7 +1260,7 @@
       "source_file": "src/components/theme-provider.tsx",
       "source_location": "L80",
       "id": "components_theme_provider_themeprovider",
-      "community": 2,
+      "community": 16,
       "norm_label": "themeprovider()"
     },
     {
@@ -1359,7 +1359,7 @@
       "source_file": "src/components/tui-template/style-section.tsx",
       "source_location": "L1",
       "id": "src_components_tui_template_style_section_tsx",
-      "community": 1,
+      "community": 2,
       "norm_label": "style-section.tsx"
     },
     {
@@ -1368,7 +1368,7 @@
       "source_file": "src/components/tui-template/style-section.tsx",
       "source_location": "L4",
       "id": "tui_template_style_section_stylesection",
-      "community": 1,
+      "community": 2,
       "norm_label": "stylesection()"
     },
     {
@@ -1557,7 +1557,7 @@
       "source_file": "src/components/ui/badge.tsx",
       "source_location": "L1",
       "id": "src_components_ui_badge_tsx",
-      "community": 1,
+      "community": 2,
       "norm_label": "badge.tsx"
     },
     {
@@ -1566,7 +1566,7 @@
       "source_file": "src/components/ui/badge.tsx",
       "source_location": "L7",
       "id": "ui_badge_badgevariants",
-      "community": 1,
+      "community": 2,
       "norm_label": "badgevariants"
     },
     {
@@ -1575,7 +1575,7 @@
       "source_file": "src/components/ui/badge.tsx",
       "source_location": "L30",
       "id": "ui_badge_badge",
-      "community": 1,
+      "community": 2,
       "norm_label": "badge()"
     },
     {
@@ -1899,7 +1899,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L1",
       "id": "src_components_ui_dropdown_menu_tsx",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdown-menu.tsx"
     },
     {
@@ -1917,7 +1917,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L13",
       "id": "ui_dropdown_menu_dropdownmenuportal",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenuportal()"
     },
     {
@@ -1935,7 +1935,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L32",
       "id": "ui_dropdown_menu_dropdownmenucontent",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenucontent()"
     },
     {
@@ -1944,7 +1944,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L54",
       "id": "ui_dropdown_menu_dropdownmenugroup",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenugroup()"
     },
     {
@@ -1953,7 +1953,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L62",
       "id": "ui_dropdown_menu_dropdownmenuitem",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenuitem()"
     },
     {
@@ -1962,7 +1962,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L85",
       "id": "ui_dropdown_menu_dropdownmenucheckboxitem",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenucheckboxitem()"
     },
     {
@@ -1971,7 +1971,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L119",
       "id": "ui_dropdown_menu_dropdownmenuradiogroup",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenuradiogroup()"
     },
     {
@@ -1980,7 +1980,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L130",
       "id": "ui_dropdown_menu_dropdownmenuradioitem",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenuradioitem()"
     },
     {
@@ -1989,7 +1989,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L162",
       "id": "ui_dropdown_menu_dropdownmenulabel",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenulabel()"
     },
     {
@@ -1998,7 +1998,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L182",
       "id": "ui_dropdown_menu_dropdownmenuseparator",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenuseparator()"
     },
     {
@@ -2007,7 +2007,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L195",
       "id": "ui_dropdown_menu_dropdownmenushortcut",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenushortcut()"
     },
     {
@@ -2016,7 +2016,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L211",
       "id": "ui_dropdown_menu_dropdownmenusub",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenusub()"
     },
     {
@@ -2025,7 +2025,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L217",
       "id": "ui_dropdown_menu_dropdownmenusubtrigger",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenusubtrigger()"
     },
     {
@@ -2034,7 +2034,7 @@
       "source_file": "src/components/ui/dropdown-menu.tsx",
       "source_location": "L241",
       "id": "ui_dropdown_menu_dropdownmenusubcontent",
-      "community": 0,
+      "community": 3,
       "norm_label": "dropdownmenusubcontent()"
     },
     {
@@ -2043,7 +2043,7 @@
       "source_file": "src/components/ui/input.tsx",
       "source_location": "L1",
       "id": "src_components_ui_input_tsx",
-      "community": 0,
+      "community": 3,
       "norm_label": "input.tsx"
     },
     {
@@ -2052,7 +2052,7 @@
       "source_file": "src/components/ui/input.tsx",
       "source_location": "L5",
       "id": "ui_input_input",
-      "community": 0,
+      "community": 3,
       "norm_label": "input()"
     },
     {
@@ -2295,7 +2295,7 @@
       "source_file": "src/components/ui/skeleton.tsx",
       "source_location": "L1",
       "id": "src_components_ui_skeleton_tsx",
-      "community": 0,
+      "community": 3,
       "norm_label": "skeleton.tsx"
     },
     {
@@ -2304,7 +2304,7 @@
       "source_file": "src/components/ui/skeleton.tsx",
       "source_location": "L3",
       "id": "ui_skeleton_skeleton",
-      "community": 0,
+      "community": 3,
       "norm_label": "skeleton()"
     },
     {
@@ -2430,7 +2430,7 @@
       "source_file": "src/components/ui/tui-container.tsx",
       "source_location": "L1",
       "id": "src_components_ui_tui_container_tsx",
-      "community": 1,
+      "community": 2,
       "norm_label": "tui-container.tsx"
     },
     {
@@ -2439,7 +2439,7 @@
       "source_file": "src/components/ui/tui-container.tsx",
       "source_location": "L4",
       "id": "ui_tui_container_tuicontainerprops",
-      "community": 1,
+      "community": 2,
       "norm_label": "tuicontainerprops"
     },
     {
@@ -2448,7 +2448,7 @@
       "source_file": "src/components/ui/tui-container.tsx",
       "source_location": "L11",
       "id": "ui_tui_container_tuicontainer",
-      "community": 1,
+      "community": 2,
       "norm_label": "tuicontainer"
     },
     {
@@ -2457,7 +2457,7 @@
       "source_file": "src/lib/utils.ts",
       "source_location": "L1",
       "id": "src_lib_utils_ts",
-      "community": 0,
+      "community": 2,
       "norm_label": "utils.ts"
     },
     {
@@ -2466,7 +2466,7 @@
       "source_file": "src/lib/utils.ts",
       "source_location": "L4",
       "id": "lib_utils_cn",
-      "community": 0,
+      "community": 3,
       "norm_label": "cn()"
     },
     {
@@ -2560,19 +2560,37 @@
       "norm_label": "\ud83d\udee0\ufe0f quick start"
     },
     {
-      "label": "\ud83e\uddf9 How to Clean the Template (Start Fresh)",
+      "label": "\ud83e\uddf9 Template Management (Cleanup & Restore)",
       "file_type": "document",
       "source_file": "README.md",
       "source_location": "L38",
-      "id": "template_tui_readme_how_to_clean_the_template_start_fresh",
+      "id": "template_tui_readme_template_management_cleanup_restore",
       "community": 11,
-      "norm_label": "\ud83e\uddf9 how to clean the template (start fresh)"
+      "norm_label": "\ud83e\uddf9 template management (cleanup & restore)"
+    },
+    {
+      "label": "\ud83e\uddfc Clean the Template (Start Fresh)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L42",
+      "id": "template_tui_readme_clean_the_template_start_fresh",
+      "community": 11,
+      "norm_label": "\ud83e\uddfc clean the template (start fresh)"
+    },
+    {
+      "label": "\ud83d\udcdf Restore/Initialize the Template",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L48",
+      "id": "template_tui_readme_restore_initialize_the_template",
+      "community": 11,
+      "norm_label": "\ud83d\udcdf restore/initialize the template"
     },
     {
       "label": "\ud83e\udde0 maintaining the Graphify Knowledge Graph",
       "file_type": "document",
       "source_file": "README.md",
-      "source_location": "L49",
+      "source_location": "L57",
       "id": "template_tui_readme_maintaining_the_graphify_knowledge_graph",
       "community": 11,
       "norm_label": "\ud83e\udde0 maintaining the graphify knowledge graph"
@@ -2612,6 +2630,15 @@
       "id": "workflows_graphify_workflow_graphify",
       "community": 13,
       "norm_label": "workflow: graphify"
+    },
+    {
+      "label": "\ud83e\uddf9 How to Clean the Template (Start Fresh)",
+      "file_type": "document",
+      "source_file": "README.md",
+      "source_location": "L38",
+      "community": 11,
+      "norm_label": "\ud83e\uddf9 how to clean the template (start fresh)",
+      "id": "template_tui_readme_how_to_clean_the_template_start_fresh"
     },
     {
       "label": "React + TypeScript + Vite + shadcn/ui",
@@ -2967,9 +2994,9 @@
       "source_file": "package.json",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "template_tui_package_scripts",
-      "target": "template_tui_package_scripts_init_template",
-      "confidence_score": 1.0
+      "target": "template_tui_package_scripts_init_template"
     },
     {
       "relation": "contains",
@@ -2977,9 +3004,9 @@
       "source_file": "package.json",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "template_tui_package_scripts",
-      "target": "template_tui_package_scripts_int_template",
-      "confidence_score": 1.0
+      "target": "template_tui_package_scripts_int_template"
     },
     {
       "relation": "contains",
@@ -3727,9 +3754,9 @@
       "source_file": "scripts/int-template.js",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_int_template_js",
-      "target": "scripts_int_template_app_tsx_path",
-      "confidence_score": 1.0
+      "target": "scripts_int_template_app_tsx_path"
     },
     {
       "relation": "contains",
@@ -3737,9 +3764,9 @@
       "source_file": "scripts/int-template.js",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_int_template_js",
-      "target": "scripts_int_template_dirname",
-      "confidence_score": 1.0
+      "target": "scripts_int_template_dirname"
     },
     {
       "relation": "contains",
@@ -3747,9 +3774,9 @@
       "source_file": "scripts/int-template.js",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_int_template_js",
-      "target": "scripts_int_template_filename",
-      "confidence_score": 1.0
+      "target": "scripts_int_template_filename"
     },
     {
       "relation": "contains",
@@ -3757,9 +3784,9 @@
       "source_file": "scripts/int-template.js",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_int_template_js",
-      "target": "scripts_int_template_root_dir",
-      "confidence_score": 1.0
+      "target": "scripts_int_template_root_dir"
     },
     {
       "relation": "contains",
@@ -3767,9 +3794,9 @@
       "source_file": "scripts/int-template.js",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "scripts_int_template_js",
-      "target": "scripts_int_template_template_dir_path",
-      "confidence_score": 1.0
+      "target": "scripts_int_template_template_dir_path"
     },
     {
       "relation": "contains",
@@ -3870,9 +3897,9 @@
       "source_file": "src/App.tsx",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app_tsx",
-      "target": "src_components_tui_template_showcase_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_tui_template_showcase_tsx"
     },
     {
       "relation": "imports_from",
@@ -3936,9 +3963,9 @@
       "source_file": "src/App.tsx",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_app_tsx",
-      "target": "tui_template_showcase_tuishowcase",
-      "confidence_score": 1.0
+      "target": "tui_template_showcase_tuishowcase"
     },
     {
       "relation": "imports",
@@ -4199,9 +4226,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_theme_provider_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_theme_provider_tsx"
     },
     {
       "relation": "imports",
@@ -4210,9 +4237,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "components_theme_provider_usetheme",
-      "confidence_score": 1.0
+      "target": "components_theme_provider_usetheme"
     },
     {
       "relation": "calls",
@@ -4232,9 +4259,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "lib_utils_cn",
-      "confidence_score": 1.0
+      "target": "lib_utils_cn"
     },
     {
       "relation": "imports_from",
@@ -4243,9 +4270,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_avatar_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_avatar_tsx"
     },
     {
       "relation": "imports_from",
@@ -4254,9 +4281,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_badge_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_badge_tsx"
     },
     {
       "relation": "imports_from",
@@ -4265,9 +4292,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_button_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_button_tsx"
     },
     {
       "relation": "imports_from",
@@ -4276,9 +4303,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_card_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_card_tsx"
     },
     {
       "relation": "imports_from",
@@ -4287,9 +4314,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_dialog_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_dialog_tsx"
     },
     {
       "relation": "imports_from",
@@ -4298,9 +4325,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_dropdown_menu_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_dropdown_menu_tsx"
     },
     {
       "relation": "imports_from",
@@ -4309,9 +4336,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_input_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_input_tsx"
     },
     {
       "relation": "imports_from",
@@ -4320,9 +4347,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_label_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_label_tsx"
     },
     {
       "relation": "imports_from",
@@ -4331,9 +4358,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_select_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_select_tsx"
     },
     {
       "relation": "imports_from",
@@ -4342,9 +4369,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_separator_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_separator_tsx"
     },
     {
       "relation": "imports_from",
@@ -4353,9 +4380,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_sheet_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_sheet_tsx"
     },
     {
       "relation": "imports_from",
@@ -4364,9 +4391,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_skeleton_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_skeleton_tsx"
     },
     {
       "relation": "imports_from",
@@ -4375,9 +4402,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_tabs_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_tabs_tsx"
     },
     {
       "relation": "imports_from",
@@ -4386,9 +4413,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_textarea_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_textarea_tsx"
     },
     {
       "relation": "imports_from",
@@ -4397,9 +4424,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_tooltip_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_tooltip_tsx"
     },
     {
       "relation": "imports_from",
@@ -4408,9 +4435,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_components_ui_tui_container_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_tui_container_tsx"
     },
     {
       "relation": "imports_from",
@@ -4419,9 +4446,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L18",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "src_lib_utils_ts",
-      "confidence_score": 1.0
+      "target": "src_lib_utils_ts"
     },
     {
       "relation": "contains",
@@ -4429,9 +4456,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L162",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "tui_template_components_section_componentssection",
-      "confidence_score": 1.0
+      "target": "tui_template_components_section_componentssection"
     },
     {
       "relation": "contains",
@@ -4439,9 +4466,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L154",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "tui_template_components_section_componentssectionprops",
-      "confidence_score": 1.0
+      "target": "tui_template_components_section_componentssectionprops"
     },
     {
       "relation": "contains",
@@ -4449,9 +4476,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L98",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "tui_template_components_section_icon_list",
-      "confidence_score": 1.0
+      "target": "tui_template_components_section_icon_list"
     },
     {
       "relation": "contains",
@@ -4459,9 +4486,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L91",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "tui_template_components_section_iconitem",
-      "confidence_score": 1.0
+      "target": "tui_template_components_section_iconitem"
     },
     {
       "relation": "contains",
@@ -4469,9 +4496,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L84",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "tui_template_components_section_logmessage",
-      "confidence_score": 1.0
+      "target": "tui_template_components_section_logmessage"
     },
     {
       "relation": "imports",
@@ -4480,9 +4507,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_avatar_avatar",
-      "confidence_score": 1.0
+      "target": "ui_avatar_avatar"
     },
     {
       "relation": "imports",
@@ -4491,9 +4518,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_avatar_avatarfallback",
-      "confidence_score": 1.0
+      "target": "ui_avatar_avatarfallback"
     },
     {
       "relation": "imports",
@@ -4502,9 +4529,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_avatar_avatarimage",
-      "confidence_score": 1.0
+      "target": "ui_avatar_avatarimage"
     },
     {
       "relation": "imports",
@@ -4513,9 +4540,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_badge_badge",
-      "confidence_score": 1.0
+      "target": "ui_badge_badge"
     },
     {
       "relation": "imports",
@@ -4524,9 +4551,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_button_button",
-      "confidence_score": 1.0
+      "target": "ui_button_button"
     },
     {
       "relation": "imports",
@@ -4535,9 +4562,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_card_card",
-      "confidence_score": 1.0
+      "target": "ui_card_card"
     },
     {
       "relation": "imports",
@@ -4546,9 +4573,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_card_cardcontent",
-      "confidence_score": 1.0
+      "target": "ui_card_cardcontent"
     },
     {
       "relation": "imports",
@@ -4557,9 +4584,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_card_carddescription",
-      "confidence_score": 1.0
+      "target": "ui_card_carddescription"
     },
     {
       "relation": "imports",
@@ -4568,9 +4595,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_card_cardfooter",
-      "confidence_score": 1.0
+      "target": "ui_card_cardfooter"
     },
     {
       "relation": "imports",
@@ -4579,9 +4606,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_card_cardheader",
-      "confidence_score": 1.0
+      "target": "ui_card_cardheader"
     },
     {
       "relation": "imports",
@@ -4590,9 +4617,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_card_cardtitle",
-      "confidence_score": 1.0
+      "target": "ui_card_cardtitle"
     },
     {
       "relation": "imports",
@@ -4601,9 +4628,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dialog_dialog",
-      "confidence_score": 1.0
+      "target": "ui_dialog_dialog"
     },
     {
       "relation": "imports",
@@ -4612,9 +4639,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dialog_dialogclose",
-      "confidence_score": 1.0
+      "target": "ui_dialog_dialogclose"
     },
     {
       "relation": "imports",
@@ -4623,9 +4650,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dialog_dialogcontent",
-      "confidence_score": 1.0
+      "target": "ui_dialog_dialogcontent"
     },
     {
       "relation": "imports",
@@ -4634,9 +4661,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dialog_dialogdescription",
-      "confidence_score": 1.0
+      "target": "ui_dialog_dialogdescription"
     },
     {
       "relation": "imports",
@@ -4645,9 +4672,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dialog_dialogfooter",
-      "confidence_score": 1.0
+      "target": "ui_dialog_dialogfooter"
     },
     {
       "relation": "imports",
@@ -4656,9 +4683,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dialog_dialogheader",
-      "confidence_score": 1.0
+      "target": "ui_dialog_dialogheader"
     },
     {
       "relation": "imports",
@@ -4667,9 +4694,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dialog_dialogtitle",
-      "confidence_score": 1.0
+      "target": "ui_dialog_dialogtitle"
     },
     {
       "relation": "imports",
@@ -4678,9 +4705,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dialog_dialogtrigger",
-      "confidence_score": 1.0
+      "target": "ui_dialog_dialogtrigger"
     },
     {
       "relation": "imports",
@@ -4689,9 +4716,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dropdown_menu_dropdownmenu",
-      "confidence_score": 1.0
+      "target": "ui_dropdown_menu_dropdownmenu"
     },
     {
       "relation": "imports",
@@ -4700,9 +4727,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dropdown_menu_dropdownmenucontent",
-      "confidence_score": 1.0
+      "target": "ui_dropdown_menu_dropdownmenucontent"
     },
     {
       "relation": "imports",
@@ -4711,9 +4738,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dropdown_menu_dropdownmenuitem",
-      "confidence_score": 1.0
+      "target": "ui_dropdown_menu_dropdownmenuitem"
     },
     {
       "relation": "imports",
@@ -4722,9 +4749,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dropdown_menu_dropdownmenulabel",
-      "confidence_score": 1.0
+      "target": "ui_dropdown_menu_dropdownmenulabel"
     },
     {
       "relation": "imports",
@@ -4733,9 +4760,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dropdown_menu_dropdownmenuseparator",
-      "confidence_score": 1.0
+      "target": "ui_dropdown_menu_dropdownmenuseparator"
     },
     {
       "relation": "imports",
@@ -4744,9 +4771,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_dropdown_menu_dropdownmenutrigger",
-      "confidence_score": 1.0
+      "target": "ui_dropdown_menu_dropdownmenutrigger"
     },
     {
       "relation": "imports",
@@ -4755,9 +4782,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_input_input",
-      "confidence_score": 1.0
+      "target": "ui_input_input"
     },
     {
       "relation": "imports",
@@ -4766,9 +4793,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_label_label",
-      "confidence_score": 1.0
+      "target": "ui_label_label"
     },
     {
       "relation": "imports",
@@ -4777,9 +4804,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_select_select",
-      "confidence_score": 1.0
+      "target": "ui_select_select"
     },
     {
       "relation": "imports",
@@ -4788,9 +4815,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_select_selectcontent",
-      "confidence_score": 1.0
+      "target": "ui_select_selectcontent"
     },
     {
       "relation": "imports",
@@ -4799,9 +4826,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_select_selectitem",
-      "confidence_score": 1.0
+      "target": "ui_select_selectitem"
     },
     {
       "relation": "imports",
@@ -4810,9 +4837,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_select_selecttrigger",
-      "confidence_score": 1.0
+      "target": "ui_select_selecttrigger"
     },
     {
       "relation": "imports",
@@ -4821,9 +4848,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_select_selectvalue",
-      "confidence_score": 1.0
+      "target": "ui_select_selectvalue"
     },
     {
       "relation": "imports",
@@ -4832,9 +4859,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L17",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_separator_separator",
-      "confidence_score": 1.0
+      "target": "ui_separator_separator"
     },
     {
       "relation": "imports",
@@ -4843,9 +4870,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_sheet_sheet",
-      "confidence_score": 1.0
+      "target": "ui_sheet_sheet"
     },
     {
       "relation": "imports",
@@ -4854,9 +4881,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_sheet_sheetcontent",
-      "confidence_score": 1.0
+      "target": "ui_sheet_sheetcontent"
     },
     {
       "relation": "imports",
@@ -4865,9 +4892,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_sheet_sheetdescription",
-      "confidence_score": 1.0
+      "target": "ui_sheet_sheetdescription"
     },
     {
       "relation": "imports",
@@ -4876,9 +4903,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_sheet_sheetheader",
-      "confidence_score": 1.0
+      "target": "ui_sheet_sheetheader"
     },
     {
       "relation": "imports",
@@ -4887,9 +4914,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_sheet_sheettitle",
-      "confidence_score": 1.0
+      "target": "ui_sheet_sheettitle"
     },
     {
       "relation": "imports",
@@ -4898,9 +4925,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_sheet_sheettrigger",
-      "confidence_score": 1.0
+      "target": "ui_sheet_sheettrigger"
     },
     {
       "relation": "imports",
@@ -4909,9 +4936,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_skeleton_skeleton",
-      "confidence_score": 1.0
+      "target": "ui_skeleton_skeleton"
     },
     {
       "relation": "imports",
@@ -4920,9 +4947,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_tabs_tabs",
-      "confidence_score": 1.0
+      "target": "ui_tabs_tabs"
     },
     {
       "relation": "imports",
@@ -4931,9 +4958,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_tabs_tabscontent",
-      "confidence_score": 1.0
+      "target": "ui_tabs_tabscontent"
     },
     {
       "relation": "imports",
@@ -4942,9 +4969,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_tabs_tabslist",
-      "confidence_score": 1.0
+      "target": "ui_tabs_tabslist"
     },
     {
       "relation": "imports",
@@ -4953,9 +4980,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_tabs_tabstrigger",
-      "confidence_score": 1.0
+      "target": "ui_tabs_tabstrigger"
     },
     {
       "relation": "imports",
@@ -4964,9 +4991,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_textarea_textarea",
-      "confidence_score": 1.0
+      "target": "ui_textarea_textarea"
     },
     {
       "relation": "imports",
@@ -4975,9 +5002,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_tooltip_tooltip",
-      "confidence_score": 1.0
+      "target": "ui_tooltip_tooltip"
     },
     {
       "relation": "imports",
@@ -4986,9 +5013,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_tooltip_tooltipcontent",
-      "confidence_score": 1.0
+      "target": "ui_tooltip_tooltipcontent"
     },
     {
       "relation": "imports",
@@ -4997,9 +5024,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_tooltip_tooltiptrigger",
-      "confidence_score": 1.0
+      "target": "ui_tooltip_tooltiptrigger"
     },
     {
       "relation": "imports",
@@ -5008,9 +5035,9 @@
       "source_file": "src/components/tui-template/components-section.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_components_section_tsx",
-      "target": "ui_tui_container_tuicontainer",
-      "confidence_score": 1.0
+      "target": "ui_tui_container_tuicontainer"
     },
     {
       "relation": "imports_from",
@@ -5019,9 +5046,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_tui_template_components_section_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_tui_template_components_section_tsx"
     },
     {
       "relation": "imports",
@@ -5030,9 +5057,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "tui_template_components_section_logmessage",
-      "confidence_score": 1.0
+      "target": "tui_template_components_section_logmessage"
     },
     {
       "relation": "imports",
@@ -5041,9 +5068,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "tui_template_components_section_componentssection",
-      "confidence_score": 1.0
+      "target": "tui_template_components_section_componentssection"
     },
     {
       "relation": "calls",
@@ -5063,9 +5090,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "lib_utils_cn",
-      "confidence_score": 1.0
+      "target": "lib_utils_cn"
     },
     {
       "relation": "imports_from",
@@ -5074,9 +5101,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_tui_template_style_section_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_tui_template_style_section_tsx"
     },
     {
       "relation": "imports_from",
@@ -5085,9 +5112,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_tui_template_tactical_widgets_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_tui_template_tactical_widgets_tsx"
     },
     {
       "relation": "imports_from",
@@ -5096,9 +5123,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_tui_template_telemetry_section_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_tui_template_telemetry_section_tsx"
     },
     {
       "relation": "imports_from",
@@ -5107,9 +5134,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_ui_badge_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_badge_tsx"
     },
     {
       "relation": "imports_from",
@@ -5118,9 +5145,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_ui_button_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_button_tsx"
     },
     {
       "relation": "imports_from",
@@ -5129,9 +5156,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_ui_separator_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_separator_tsx"
     },
     {
       "relation": "imports_from",
@@ -5140,9 +5167,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_ui_tabs_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_tabs_tsx"
     },
     {
       "relation": "imports_from",
@@ -5151,9 +5178,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_components_ui_tooltip_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_tooltip_tsx"
     },
     {
       "relation": "imports_from",
@@ -5162,9 +5189,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "src_lib_utils_ts",
-      "confidence_score": 1.0
+      "target": "src_lib_utils_ts"
     },
     {
       "relation": "contains",
@@ -5172,9 +5199,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L27",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "tui_template_showcase_telemetrybaseline",
-      "confidence_score": 1.0
+      "target": "tui_template_showcase_telemetrybaseline"
     },
     {
       "relation": "contains",
@@ -5182,9 +5209,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L37",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "tui_template_showcase_tuishowcase",
-      "confidence_score": 1.0
+      "target": "tui_template_showcase_tuishowcase"
     },
     {
       "relation": "imports",
@@ -5193,9 +5220,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "tui_template_style_section_stylesection",
-      "confidence_score": 1.0
+      "target": "tui_template_style_section_stylesection"
     },
     {
       "relation": "imports",
@@ -5204,9 +5231,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L14",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "tui_template_tactical_widgets_tacticalwidgets",
-      "confidence_score": 1.0
+      "target": "tui_template_tactical_widgets_tacticalwidgets"
     },
     {
       "relation": "imports",
@@ -5215,9 +5242,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "tui_template_telemetry_section_telemetrysection",
-      "confidence_score": 1.0
+      "target": "tui_template_telemetry_section_telemetrysection"
     },
     {
       "relation": "imports",
@@ -5226,9 +5253,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "ui_badge_badge",
-      "confidence_score": 1.0
+      "target": "ui_badge_badge"
     },
     {
       "relation": "imports",
@@ -5237,9 +5264,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "ui_button_button",
-      "confidence_score": 1.0
+      "target": "ui_button_button"
     },
     {
       "relation": "imports",
@@ -5248,9 +5275,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "ui_separator_separator",
-      "confidence_score": 1.0
+      "target": "ui_separator_separator"
     },
     {
       "relation": "imports",
@@ -5259,9 +5286,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "ui_tabs_tabs",
-      "confidence_score": 1.0
+      "target": "ui_tabs_tabs"
     },
     {
       "relation": "imports",
@@ -5270,9 +5297,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "ui_tabs_tabscontent",
-      "confidence_score": 1.0
+      "target": "ui_tabs_tabscontent"
     },
     {
       "relation": "imports",
@@ -5281,9 +5308,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "ui_tabs_tabslist",
-      "confidence_score": 1.0
+      "target": "ui_tabs_tabslist"
     },
     {
       "relation": "imports",
@@ -5292,9 +5319,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "ui_tabs_tabstrigger",
-      "confidence_score": 1.0
+      "target": "ui_tabs_tabstrigger"
     },
     {
       "relation": "imports",
@@ -5303,9 +5330,9 @@
       "source_file": "src/components/tui-template/showcase.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_showcase_tsx",
-      "target": "ui_tooltip_tooltipprovider",
-      "confidence_score": 1.0
+      "target": "ui_tooltip_tooltipprovider"
     },
     {
       "relation": "imports_from",
@@ -5314,9 +5341,9 @@
       "source_file": "src/components/tui-template/style-section.tsx",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_style_section_tsx",
-      "target": "src_components_ui_badge_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_badge_tsx"
     },
     {
       "relation": "imports_from",
@@ -5325,9 +5352,9 @@
       "source_file": "src/components/tui-template/style-section.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_style_section_tsx",
-      "target": "src_components_ui_tui_container_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_tui_container_tsx"
     },
     {
       "relation": "contains",
@@ -5335,9 +5362,9 @@
       "source_file": "src/components/tui-template/style-section.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_style_section_tsx",
-      "target": "tui_template_style_section_stylesection",
-      "confidence_score": 1.0
+      "target": "tui_template_style_section_stylesection"
     },
     {
       "relation": "imports",
@@ -5346,9 +5373,9 @@
       "source_file": "src/components/tui-template/style-section.tsx",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_style_section_tsx",
-      "target": "ui_badge_badge",
-      "confidence_score": 1.0
+      "target": "ui_badge_badge"
     },
     {
       "relation": "imports",
@@ -5357,9 +5384,9 @@
       "source_file": "src/components/tui-template/style-section.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_style_section_tsx",
-      "target": "ui_tui_container_tuicontainer",
-      "confidence_score": 1.0
+      "target": "ui_tui_container_tuicontainer"
     },
     {
       "relation": "imports",
@@ -5368,9 +5395,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "lib_utils_cn",
-      "confidence_score": 1.0
+      "target": "lib_utils_cn"
     },
     {
       "relation": "imports_from",
@@ -5379,9 +5406,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_components_ui_avatar_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_avatar_tsx"
     },
     {
       "relation": "imports_from",
@@ -5390,9 +5417,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_components_ui_badge_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_badge_tsx"
     },
     {
       "relation": "imports_from",
@@ -5401,9 +5428,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_components_ui_button_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_button_tsx"
     },
     {
       "relation": "imports_from",
@@ -5412,9 +5439,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_components_ui_input_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_input_tsx"
     },
     {
       "relation": "imports_from",
@@ -5423,9 +5450,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_components_ui_label_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_label_tsx"
     },
     {
       "relation": "imports_from",
@@ -5434,9 +5461,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_components_ui_select_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_select_tsx"
     },
     {
       "relation": "imports_from",
@@ -5445,9 +5472,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_components_ui_separator_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_separator_tsx"
     },
     {
       "relation": "imports_from",
@@ -5456,9 +5483,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_components_ui_textarea_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_textarea_tsx"
     },
     {
       "relation": "imports_from",
@@ -5467,9 +5494,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_components_ui_tui_container_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_tui_container_tsx"
     },
     {
       "relation": "imports_from",
@@ -5478,9 +5505,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L11",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "src_lib_utils_ts",
-      "confidence_score": 1.0
+      "target": "src_lib_utils_ts"
     },
     {
       "relation": "contains",
@@ -5488,9 +5515,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L42",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "tui_template_tactical_widgets_brutalistslider",
-      "confidence_score": 1.0
+      "target": "tui_template_tactical_widgets_brutalistslider"
     },
     {
       "relation": "contains",
@@ -5498,9 +5525,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L33",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "tui_template_tactical_widgets_brutalistsliderprops",
-      "confidence_score": 1.0
+      "target": "tui_template_tactical_widgets_brutalistsliderprops"
     },
     {
       "relation": "contains",
@@ -5508,9 +5535,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L74",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "tui_template_tactical_widgets_logmessage",
-      "confidence_score": 1.0
+      "target": "tui_template_tactical_widgets_logmessage"
     },
     {
       "relation": "contains",
@@ -5518,9 +5545,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "tui_template_tactical_widgets_tacticalwidgets",
-      "confidence_score": 1.0
+      "target": "tui_template_tactical_widgets_tacticalwidgets"
     },
     {
       "relation": "contains",
@@ -5528,9 +5555,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L81",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "tui_template_tactical_widgets_tacticalwidgetsprops",
-      "confidence_score": 1.0
+      "target": "tui_template_tactical_widgets_tacticalwidgetsprops"
     },
     {
       "relation": "imports",
@@ -5539,9 +5566,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_avatar_avatar",
-      "confidence_score": 1.0
+      "target": "ui_avatar_avatar"
     },
     {
       "relation": "imports",
@@ -5550,9 +5577,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_avatar_avatarfallback",
-      "confidence_score": 1.0
+      "target": "ui_avatar_avatarfallback"
     },
     {
       "relation": "imports",
@@ -5561,9 +5588,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_badge_badge",
-      "confidence_score": 1.0
+      "target": "ui_badge_badge"
     },
     {
       "relation": "imports",
@@ -5572,9 +5599,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_button_button",
-      "confidence_score": 1.0
+      "target": "ui_button_button"
     },
     {
       "relation": "imports",
@@ -5583,9 +5610,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_input_input",
-      "confidence_score": 1.0
+      "target": "ui_input_input"
     },
     {
       "relation": "imports",
@@ -5594,9 +5621,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_label_label",
-      "confidence_score": 1.0
+      "target": "ui_label_label"
     },
     {
       "relation": "imports",
@@ -5605,9 +5632,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_select_select",
-      "confidence_score": 1.0
+      "target": "ui_select_select"
     },
     {
       "relation": "imports",
@@ -5616,9 +5643,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_select_selectcontent",
-      "confidence_score": 1.0
+      "target": "ui_select_selectcontent"
     },
     {
       "relation": "imports",
@@ -5627,9 +5654,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_select_selectitem",
-      "confidence_score": 1.0
+      "target": "ui_select_selectitem"
     },
     {
       "relation": "imports",
@@ -5638,9 +5665,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_select_selecttrigger",
-      "confidence_score": 1.0
+      "target": "ui_select_selecttrigger"
     },
     {
       "relation": "imports",
@@ -5649,9 +5676,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_select_selectvalue",
-      "confidence_score": 1.0
+      "target": "ui_select_selectvalue"
     },
     {
       "relation": "imports",
@@ -5660,9 +5687,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_separator_separator",
-      "confidence_score": 1.0
+      "target": "ui_separator_separator"
     },
     {
       "relation": "imports",
@@ -5671,9 +5698,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_textarea_textarea",
-      "confidence_score": 1.0
+      "target": "ui_textarea_textarea"
     },
     {
       "relation": "imports",
@@ -5682,9 +5709,9 @@
       "source_file": "src/components/tui-template/tactical-widgets.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_tactical_widgets_tsx",
-      "target": "ui_tui_container_tuicontainer",
-      "confidence_score": 1.0
+      "target": "ui_tui_container_tuicontainer"
     },
     {
       "relation": "calls",
@@ -5715,9 +5742,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "src_components_ui_badge_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_badge_tsx"
     },
     {
       "relation": "imports_from",
@@ -5726,9 +5753,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "src_components_ui_button_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_button_tsx"
     },
     {
       "relation": "imports_from",
@@ -5737,9 +5764,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "src_components_ui_chart_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_chart_tsx"
     },
     {
       "relation": "imports_from",
@@ -5748,9 +5775,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "src_components_ui_tui_container_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_ui_tui_container_tsx"
     },
     {
       "relation": "contains",
@@ -5758,9 +5785,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L71",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "tui_template_telemetry_section_latencydata",
-      "confidence_score": 1.0
+      "target": "tui_template_telemetry_section_latencydata"
     },
     {
       "relation": "contains",
@@ -5768,9 +5795,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L45",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "tui_template_telemetry_section_processdata",
-      "confidence_score": 1.0
+      "target": "tui_template_telemetry_section_processdata"
     },
     {
       "relation": "contains",
@@ -5778,9 +5805,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L52",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "tui_template_telemetry_section_radardata",
-      "confidence_score": 1.0
+      "target": "tui_template_telemetry_section_radardata"
     },
     {
       "relation": "contains",
@@ -5788,9 +5815,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L97",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "tui_template_telemetry_section_telemetrysection",
-      "confidence_score": 1.0
+      "target": "tui_template_telemetry_section_telemetrysection"
     },
     {
       "relation": "contains",
@@ -5798,9 +5825,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L85",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "tui_template_telemetry_section_telemetrysectionprops",
-      "confidence_score": 1.0
+      "target": "tui_template_telemetry_section_telemetrysectionprops"
     },
     {
       "relation": "contains",
@@ -5808,9 +5835,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L61",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "tui_template_telemetry_section_weeklydata",
-      "confidence_score": 1.0
+      "target": "tui_template_telemetry_section_weeklydata"
     },
     {
       "relation": "imports",
@@ -5819,9 +5846,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "ui_badge_badge",
-      "confidence_score": 1.0
+      "target": "ui_badge_badge"
     },
     {
       "relation": "imports",
@@ -5830,9 +5857,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L1",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "ui_button_button",
-      "confidence_score": 1.0
+      "target": "ui_button_button"
     },
     {
       "relation": "imports",
@@ -5841,9 +5868,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "ui_chart_chartconfig",
-      "confidence_score": 1.0
+      "target": "ui_chart_chartconfig"
     },
     {
       "relation": "imports",
@@ -5852,9 +5879,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "ui_chart_chartcontainer",
-      "confidence_score": 1.0
+      "target": "ui_chart_chartcontainer"
     },
     {
       "relation": "imports",
@@ -5863,9 +5890,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "ui_chart_charttooltipcontent",
-      "confidence_score": 1.0
+      "target": "ui_chart_charttooltipcontent"
     },
     {
       "relation": "imports",
@@ -5874,9 +5901,9 @@
       "source_file": "src/components/tui-template/telemetry-section.tsx",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_template_telemetry_section_tsx",
-      "target": "ui_tui_container_tuicontainer",
-      "confidence_score": 1.0
+      "target": "ui_tui_container_tuicontainer"
     },
     {
       "relation": "imports",
@@ -8001,6 +8028,36 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L38",
+      "weight": 1.0,
+      "source": "template_tui_readme_template_tui_retro_brutalist_tui_design_system",
+      "target": "template_tui_readme_template_management_cleanup_restore",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L42",
+      "weight": 1.0,
+      "source": "template_tui_readme_template_management_cleanup_restore",
+      "target": "template_tui_readme_clean_the_template_start_fresh",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "README.md",
+      "source_location": "L48",
+      "weight": 1.0,
+      "source": "template_tui_readme_template_management_cleanup_restore",
+      "target": "template_tui_readme_restore_initialize_the_template",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": ".agents/rules/graphify.md",
       "source_location": "L6",
       "weight": 1.0,
@@ -8040,5 +8097,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "0a28c73ba8a7ff702d55ba9b4606a6943fa797bb"
+  "built_at_commit": "d5bd09159b455fa26086ee6572534ca8d21298a0"
 }

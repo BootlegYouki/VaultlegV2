@@ -35,14 +35,22 @@ pnpm run build
 
 ---
 
-## 🧹 How to Clean the Template (Start Fresh)
+## 🧹 Template Management (Cleanup & Restore)
 
-The design system showcase is fully isolated from the core application canvas. To delete the showcase and start building your custom blank application:
+The design system showcase is fully isolated from the core application canvas. We provide automated, cross-platform scripts to easily clear the showcase or restore it back at any time:
 
-1.  **Open [src/App.tsx](file:///e:/Github/template-tui/src/App.tsx)**:
-    Delete the `<TuiShowcase />` component call and its corresponding import statement, leaving a clean `<App />` canvas.
-2.  **Delete the Showcase Assets**:
-    Delete the entire `src/components/tui-template/` directory. All telemetry sections, tactical buttons, and icon grids are self-contained inside this folder and can be safely deleted in a single click without breaking the shell.
+### 🧼 Clean the Template (Start Fresh)
+To delete the entire showcase folder, clean the imports, and set up a clean, minimal retro-brutalist starter page in `src/App.tsx`:
+```bash
+pnpm run rm-template
+```
+
+### 📟 Restore/Initialize the Template
+If you want to restore the design system showcase files and the original `src/App.tsx` back (without affecting your other custom work or modified files in the repository):
+```bash
+pnpm run int-template
+```
+*(Note: This utilizes local Git history to cleanly restore `src/components/tui-template` and the original `src/App.tsx` from `HEAD`, leaving any other files you have created or modified completely untouched.)*
 
 ---
 
