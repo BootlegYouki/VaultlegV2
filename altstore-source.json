@@ -1,0 +1,18 @@
+{
+  "name": "Vaultleg",
+  "identifier": "com.darren.vaultleg.source",
+  "apps": [
+    {
+      "name": "Vaultleg",
+      "bundleIdentifier": "com.darren.vaultleg",
+      "developerName": "Darren",
+      "version": "1.0.0",
+      "versionDate": "2026-06-01T09:42:44Z",
+      "downloadURL": "https://github.com/BootlegYouki/VaultlegV2/releases/download/v1.0.0/Vaultleg.ipa",
+      "localizedDescription": "Personal finance tracker.",
+      "iconURL": "https://raw.githubusercontent.com/BootlegYouki/VaultlegV2/main/assets/icon.png",
+      "tintColor": "00E5FF",
+      "size": 0
+    }
+  ]
+}
