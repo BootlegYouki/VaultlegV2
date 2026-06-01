@@ -19,6 +19,7 @@ import { TuiTabBar, ScreenType } from './src/components/tui-nav';
 import { TuiText } from './src/components/tui-text';
 import { TuiContainer } from './src/components/tui-container';
 import { TuiButton } from './src/components/tui-button';
+import { TuiSkeletonLoader } from './src/components/tui-skeleton';
 import { Transaction } from './src/types';
 import { storage } from './src/utils/storage';
 import { logger } from './src/utils/logger';
@@ -145,30 +146,10 @@ function MainApp() {
     logger.log('OPERATION', `DELETED_TRANSACTION_ID_${id}`);
   };
 
-  // Render retro loader while assets are initializing
+  // Render retro skeleton loader while assets are initializing
   if (!fontsLoaded || !dataLoaded) {
-    return (
-      <View style={[styles.loaderContainer, { backgroundColor: '#09090B' }]}>
-        <View style={styles.loaderBox}>
-          <ActivityIndicator size="small" color="#FFFFFF" />
-          <TuiText
-            weight="bold"
-            size="sm"
-            style={{ color: '#FFFFFF', marginTop: 16, letterSpacing: 0.5 }}
-          >
-            [ Loading Tracker... ]
-          </TuiText>
-          <TuiText
-            size="xs"
-            style={{ color: '#71717A', marginTop: 8, letterSpacing: 0.5 }}
-          >
-            Setting up typography...
-          </TuiText>
-        </View>
-      </View>
-    );
+    return <TuiSkeletonLoader />;
   }
-
   const borderAccent = isDark ? colors.primary : '#000000';
 
   return (

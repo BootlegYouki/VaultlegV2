@@ -1,16 +1,16 @@
 # Graph Report - VaultlegV2  (2026-06-01)
 
 ## Corpus Check
-- 32 files · ~12,408 words
+- 33 files · ~13,660 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 278 nodes · 417 edges · 19 communities (13 shown, 6 thin omitted)
+- 285 nodes · 432 edges · 19 communities (13 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1cf27346`
+- Built from commit: `a5583534`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -35,13 +35,13 @@
 - [[_COMMUNITY_Community 19|Community 19]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `useTheme()` - 33 edges
-2. `TuiText()` - 16 edges
-3. `scripts` - 12 edges
-4. `expo` - 11 edges
+1. `useTheme()` - 35 edges
+2. `TuiText()` - 17 edges
+3. `expo` - 12 edges
+4. `scripts` - 12 edges
 5. `Transaction` - 11 edges
-6. `scripts` - 8 edges
-7. `TuiContainer()` - 8 edges
+6. `TuiContainer()` - 9 edges
+7. `scripts` - 8 edges
 8. `TuiButton()` - 7 edges
 9. `TuiLogger` - 7 edges
 10. `📟 template-tui — Retro-Brutalist TUI Design System` - 7 edges
@@ -61,16 +61,16 @@
 ## Communities (19 total, 6 thin omitted)
 
 ### Community 0 - "Community 0"
-Cohesion: 0.17
-Nodes (12): dependencies, expo, expo-font, @expo-google-fonts/jetbrains-mono, expo-status-bar, lucide-react-native, react, react-dom (+4 more)
+Cohesion: 0.20
+Nodes (10): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, @types/node (+2 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.50
 Nodes (3): apps, identifier, name
 
 ### Community 3 - "Community 3"
-Cohesion: 0.10
-Nodes (20): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, predictiveBackGestureEnabled, expo, android (+12 more)
+Cohesion: 0.08
+Nodes (24): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, predictiveBackGestureEnabled, expo, android (+16 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.13
@@ -82,15 +82,15 @@ Nodes (21): APP_TSX_PATH, __dirname, __filename, ROOT_DIR, TEMPLATE_DIR_PATH, AP
 
 ### Community 7 - "Community 7"
 Cohesion: 0.07
-Nodes (26): name, private, type, version, devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks (+18 more)
+Nodes (28): name, private, type, version, dependencies, expo, expo-font, @expo-google-fonts/jetbrains-mono (+20 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.14
 Nodes (14): dependencies, class-variance-authority, clsx, @fontsource-variable/jetbrains-mono, radix-ui, react, react-dom, recharts (+6 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.08
-Nodes (37): styles, TuiButton(), TuiButtonProps, ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps (+29 more)
+Cohesion: 0.10
+Nodes (33): styles, TuiButton(), TuiButtonProps, ChartItem, TuiContainer(), AddTransaction(), AddTransactionProps, styles (+25 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.10
@@ -105,11 +105,11 @@ Cohesion: 0.20
 Nodes (9): compilerOptions, paths, files, @/*, references, compilerOptions, strict, exclude (+1 more)
 
 ### Community 18 - "Community 18"
-Cohesion: 0.09
-Nodes (35): styles, TuiCheckbox(), TuiCheckboxProps, styles, TuiContainer(), TuiContainerProps, styles, TuiDrawer() (+27 more)
+Cohesion: 0.07
+Nodes (41): MeterSegment, styles, TuiBarChart(), TuiBarChartProps, TuiProgressMeter(), TuiProgressMeterProps, TuiSegmentedMeter(), TuiSegmentedMeterProps (+33 more)
 
 ## Knowledge Gaps
-- **172 isolated node(s):** `name`, `identifier`, `apps`, `name`, `slug` (+167 more)
+- **176 isolated node(s):** `name`, `identifier`, `apps`, `name`, `slug` (+171 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -117,15 +117,15 @@ Nodes (35): styles, TuiCheckbox(), TuiCheckboxProps, styles, TuiContainer(), Tui
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `scripts` connect `Community 6` to `Community 7`?**
-  _High betweenness centrality (0.044) - this node is a cross-community bridge._
+  _High betweenness centrality (0.042) - this node is a cross-community bridge._
 - **Why does `devDependencies` connect `Community 4` to `Community 7`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+  _High betweenness centrality (0.029) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `Community 8` to `Community 7`?**
-  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+  _High betweenness centrality (0.027) - this node is a cross-community bridge._
 - **What connects `name`, `identifier`, `apps` to the rest of the system?**
-  _175 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _179 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.09523809523809523 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.08 - nodes in this community are weakly interconnected._
 - **Should `Community 4` be split into smaller, more focused modules?**
   _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._
 - **Should `Community 6` be split into smaller, more focused modules?**
