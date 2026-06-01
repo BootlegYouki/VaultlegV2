@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\App.tsx": {
-    "mtime": 1780301373.394115,
-    "ast_hash": "bc46734e3be165c6732cdb9c4b334929",
+    "mtime": 1780307533.6532564,
+    "ast_hash": "48d959e31a5279466535329ef50411f0",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\index.ts": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\package.json": {
-    "mtime": 1780298677.9372623,
-    "ast_hash": "68e1f30dbdbd268abe1d431c47e50c88",
+    "mtime": 1780307533.6613975,
+    "ast_hash": "a0fbfd0b4aa5a844e7a434caaa46be42",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\tsconfig.json": {
@@ -240,8 +240,8 @@
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\components\\tui-chart.tsx": {
-    "mtime": 1780297927.9427195,
-    "ast_hash": "ada403233c91ef1081ec2b5ad82020e3",
+    "mtime": 1780302851.5745947,
+    "ast_hash": "c3ff5dc0ea4a8694fcb6a127871fe498",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\components\\tui-checkbox.tsx": {
@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\screens\\dashboard.tsx": {
-    "mtime": 1780300386.8955083,
-    "ast_hash": "59d2dcc9fea16651e737c9ce4a494cc0",
+    "mtime": 1780307533.6962175,
+    "ast_hash": "f5e20367f27cacf165712ba6da8fb07a",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\theme\\theme-provider.tsx": {
@@ -335,28 +335,38 @@
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\components\\tui-nav.tsx": {
-    "mtime": 1780299763.3943691,
-    "ast_hash": "071c062a2e0c528548db2acb9f2e3d7e",
+    "mtime": 1780307533.6819088,
+    "ast_hash": "d10d68df5d5e1ad4a96cbbfad0c03879",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\screens\\budgets.tsx": {
-    "mtime": 1780301435.4387949,
-    "ast_hash": "712a8ee31ec6476e565e29e276c5a4a4",
+    "mtime": 1780307533.6892247,
+    "ast_hash": "db25acdcff6040fdc6955d80871a1a05",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\screens\\debts.tsx": {
-    "mtime": 1780298249.9535205,
-    "ast_hash": "a67f22e769a8cdf9d0a8c9269376b555",
+    "mtime": 1780307533.7021234,
+    "ast_hash": "87142d00899af97d305a9594a956bfcb",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\screens\\expenses.tsx": {
-    "mtime": 1780299497.972433,
-    "ast_hash": "4158efc971de10b9a2546c4e9e65631d",
+    "mtime": 1780307533.7098134,
+    "ast_hash": "7fcfe81a952aa61a2c0b0b1b4d0cdf68",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\components\\tui-drawer.tsx": {
-    "mtime": 1780301535.6896427,
-    "ast_hash": "1890b1d0246148e98d36bbabfb2a2a6d",
+    "mtime": 1780301937.677445,
+    "ast_hash": "f32d0cd720696a4ef112f5037cb0afc8",
+    "semantic_hash": ""
+  },
+  "E:\\Github\\VaultlegV2\\altstore-source.json": {
+    "mtime": 1780307530.6848311,
+    "ast_hash": "a7ee9eadb2eadaddcabe50e41e3c1895",
+    "semantic_hash": ""
+  },
+  "E:\\Github\\VaultlegV2\\.github\\workflows\\build-ios-ipa.yml": {
+    "mtime": 1780305784.007512,
+    "ast_hash": "5187b2331911346ab221ada55c713585",
     "semantic_hash": ""
   }
 }

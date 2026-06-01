@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { LayoutGrid, FileText, PiggyBank, Landmark, Plus } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type ScreenType = 'dashboard' | 'expenses' | 'add-transaction' | 'budgets' | 'debts';
 
@@ -16,6 +17,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
   onNavigate,
 }) => {
   const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
   const [buttonWidths, setButtonWidths] = React.useState<Record<string, number>>({});
   const [legendWidths, setLegendWidths] = React.useState<Record<string, number>>({});
 
@@ -31,7 +33,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
   const isPlusActive = currentScreen === 'add-transaction';
 
   return (
-    <View style={styles.shadowWrapper}>
+    <View style={[styles.shadowWrapper, { bottom: 32 + insets.bottom }]}>
       <View style={styles.navRow}>
         
         {/* 4 MENU TABS */}

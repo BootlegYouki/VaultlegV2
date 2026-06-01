@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Pressable, TextInput } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Wallet,
   TrendingUp,
@@ -63,6 +64,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onDeleteTransaction,
 }) => {
   const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
 
   // Aggregate Calculations
   const totalIncome = transactions
@@ -92,7 +94,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </View>
 
       {/* 02: SCROLLABLE BODY SECTION */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContentContainer}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContentContainer, { paddingBottom: 100 + insets.bottom }]}>
         
         {/* Overall Budget Card */}
         <TuiContainer label="Overall Budget" badge={budgetLimit > 0 ? `₱${budgetLimit.toFixed(0)}` : undefined}>

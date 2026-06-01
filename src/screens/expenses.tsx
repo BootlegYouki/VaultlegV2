@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Search, Trash2, Tag, ArrowUp, ArrowDown } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
@@ -20,6 +21,7 @@ export const Expenses: React.FC<ExpensesProps> = ({
   onDeleteTransaction,
 }) => {
   const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -91,7 +93,7 @@ export const Expenses: React.FC<ExpensesProps> = ({
       </View>
 
       {/* 02: SCROLLABLE LEDGER */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 + insets.bottom }]}>
         <TuiContainer label="Ledger List" badge={`${filteredTransactions.length} logs`}>
           {filteredTransactions.length === 0 ? (
             <TuiText size="xs" variant="muted" style={styles.emptyState}>

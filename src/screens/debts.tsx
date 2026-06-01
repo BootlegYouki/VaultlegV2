@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Landmark, ArrowUpCircle, ArrowDownCircle } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
@@ -7,6 +8,7 @@ import { TuiText } from '../components/tui-text';
 
 export const Debts: React.FC = () => {
   const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
 
   // High fidelity visual mock portfolios
   const payables = [
@@ -23,7 +25,7 @@ export const Debts: React.FC = () => {
   const totalReceivable = receivables.reduce((sum, d) => sum + d.amount, 0);
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.scrollContent}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 + insets.bottom }]}>
       
       {/* 01: OVERVIEW CARD */}
       <TuiContainer label="Debts Summary" badge="Totals">

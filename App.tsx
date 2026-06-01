@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, SafeAreaView, ActivityIndicator, Pressable, ScrollView, useWindowDimensions } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import {
   useFonts,
@@ -24,6 +25,7 @@ import { logger } from './src/utils/logger';
 
 function MainApp() {
   const { colors, isDark, setThemeMode } = useTheme();
+  const insets = useSafeAreaInsets();
   const [activeScreen, setActiveScreen] = useState<ScreenType>('dashboard');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [categoryBudgets, setCategoryBudgets] = useState<Record<string, number>>({});
@@ -280,7 +282,7 @@ function MainApp() {
 
       {/* FAB Choices stacked directly on top of the LOG button */}
       {logMenuOpen && (
-        <View style={styles.fabMenuContainer}>
+        <View style={[styles.fabMenuContainer, { bottom: 90 + insets.bottom }]}>
           
           {/* BUDGET KEY (Top) */}
           <Pressable
@@ -406,11 +408,15 @@ function MainApp() {
   );
 }
 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 export default function App() {
   return (
-    <ThemeProvider>
-      <MainApp />
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <MainApp />
+      </ThemeProvider>
+    </SafeAreaProvider>
   );
 }
 
