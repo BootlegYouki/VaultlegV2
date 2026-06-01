@@ -24,14 +24,14 @@ export const TuiText: React.FC<TuiTextProps> = ({
 
   const getFontSize = () => {
     switch (size) {
-      case 'xs': return 10;
-      case 'sm': return 12;
-      case 'md': return 14;
-      case 'lg': return 16;
-      case 'xl': return 18;
-      case '2xl': return 22;
-      case '3xl': return 28;
-      default: return 14;
+      case 'xs': return 12;
+      case 'sm': return 14;
+      case 'md': return 16; // Default standard body size
+      case 'lg': return 18;
+      case 'xl': return 21;
+      case '2xl': return 26;
+      case '3xl': return 32;
+      default: return 16;
     }
   };
 

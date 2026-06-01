@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   legendWrapper: {
     position: 'absolute',
-    top: -11,
+    top: -12,
     left: 12,
     flexDirection: 'row',
     alignItems: 'center',

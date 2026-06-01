@@ -94,11 +94,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     paddingHorizontal: 12,
     paddingVertical: 4,
-    height: 48,
+    height: 52,
     justifyContent: 'center',
   },
   textInput: {
-    fontSize: 14,
+    fontSize: 16,
     padding: 0,
     margin: 0,
   },
