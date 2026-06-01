@@ -2,11 +2,6 @@ name: Build Unsigned iOS IPA
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release version (e.g. 1.0.1)'
-        required: true
-        default: '1.0.0'
 
 jobs:
   build:
@@ -29,6 +24,12 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+
+      - name: Get version from app.json
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./app.json').expo.version")
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: pnpm install
@@ -62,7 +63,6 @@ jobs:
 
       - name: Generate AltStore source.json
         run: |
-          VERSION="${{ github.event.inputs.version }}"
           DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           REPO="${{ github.repository }}"
           cat > altstore-source.json << EOF
@@ -89,10 +89,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.event.inputs.version }}
-          name: Vaultleg v${{ github.event.inputs.version }}
+          tag_name: v${{ env.VERSION }}
+          name: Vaultleg v${{ env.VERSION }}
           body: |
-            ## Vaultleg v${{ github.event.inputs.version }}
+            ## Vaultleg v${{ env.VERSION }}
             
             ### Install via AltStore / Sideloadly
             Download `Vaultleg.ipa` below and sideload it using AltStore or Sideloadly.
@@ -117,5 +117,5 @@ jobs:
           git checkout main
           cp altstore-source.json.bak altstore-source.json
           git add altstore-source.json
-          git diff --staged --quiet || git commit -m "chore: update AltStore source to v${{ github.event.inputs.version }}"
+          git diff --staged --quiet || git commit -m "chore: update AltStore source to v${VERSION}"
           git push origin main
