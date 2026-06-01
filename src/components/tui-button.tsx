@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Pressable, View, StyleSheet, ViewStyle } from 'react-native';
+import React from 'react';
+import { Pressable, StyleSheet, ViewStyle } from 'react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
 
@@ -19,118 +19,81 @@ export const TuiButton: React.FC<TuiButtonProps> = ({
   disabled = false,
 }) => {
   const { colors, isDark } = useTheme();
-  const [isPressed, setIsPressed] = useState(false);
 
-  // Background and border colors based on variant
-  const getColors = () => {
+  const getColors = (pressed: boolean) => {
     if (disabled) {
       return {
-        bg: isDark ? '#27272A' : '#E4E4E7',
-        border: isDark ? '#3F3F46' : '#A1A1AA',
-        text: isDark ? '#71717A' : '#71717A',
-        shadow: 'transparent',
+        bg: isDark ? '#18181B' : '#F4F4F5',
+        border: isDark ? '#27272A' : '#E4E4E7',
+        text: isDark ? '#52525B' : '#A1A1AA',
       };
     }
 
+    // Monochromatic button colors with inversion logic on press
     switch (variant) {
       case 'accent':
         return {
-          bg: colors.primary,
-          border: isDark ? colors.primary : '#000000',
-          text: colors.primaryForeground,
-          shadow: isDark ? '#FFFFFF' : '#000000',
+          bg: pressed ? 'transparent' : colors.primary,
+          border: colors.primary,
+          text: pressed ? colors.primary : colors.primaryForeground,
         };
       case 'destructive':
         return {
-          bg: colors.destructive,
-          border: isDark ? colors.destructive : '#000000',
-          text: '#FFFFFF',
-          shadow: isDark ? '#FFFFFF' : '#000000',
+          bg: pressed ? 'transparent' : colors.destructive,
+          border: colors.destructive,
+          text: pressed ? colors.destructive : '#FFFFFF',
         };
       case 'outline':
         return {
-          bg: 'transparent',
+          bg: pressed ? colors.primary + '15' : 'transparent',
           border: colors.primary,
           text: colors.primary,
-          shadow: colors.primary + '30',
         };
       default:
         return {
-          bg: isDark ? '#1C1C1E' : '#FFFFFF',
-          border: isDark ? colors.primary : '#000000',
-          text: colors.foreground,
-          shadow: isDark ? colors.primary + '50' : '#000000',
+          bg: pressed ? colors.primary : 'transparent',
+          border: colors.primary,
+          text: pressed ? colors.primaryForeground : colors.foreground,
         };
     }
   };
 
-  const buttonColors = getColors();
-  const shadowOffset = 4;
-
   return (
-    <View style={[styles.container, { paddingBottom: shadowOffset, paddingRight: shadowOffset }, style]}>
-      {/* Shadow layer (does not move) */}
-      {!disabled && !isPressed && (
-        <View
-          style={[
-            styles.shadow,
-            {
-              backgroundColor: buttonColors.shadow,
-              top: shadowOffset,
-              left: shadowOffset,
-            },
-          ]}
-        />
-      )}
-
-      {/* Main button layer (shifts down/right on press) */}
-      <Pressable
-        disabled={disabled}
-        onPressIn={() => !disabled && setIsPressed(true)}
-        onPressOut={() => !disabled && setIsPressed(false)}
-        onPress={onPress}
-        style={[
-          styles.button,
-          {
-            backgroundColor: buttonColors.bg,
-            borderColor: buttonColors.border,
-            transform: isPressed ? [{ translateX: shadowOffset }, { translateY: shadowOffset }] : [],
-          },
-        ]}
-      >
+    <Pressable
+      disabled={disabled}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.button,
+        {
+          backgroundColor: getColors(pressed).bg,
+          borderColor: getColors(pressed).border,
+        },
+        style,
+      ]}
+    >
+      {({ pressed }) => (
         <TuiText
           weight="bold"
           style={{
-            color: buttonColors.text,
+            color: getColors(pressed).text,
             textAlign: 'center',
           }}
         >
           {children}
         </TuiText>
-      </Pressable>
-    </View>
+      )}
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    marginVertical: 6,
-  },
-  shadow: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
-    zIndex: 1,
-  },
   button: {
     borderWidth: 2,
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 2,
+    marginVertical: 6,
+    width: '100%',
   },
 });
