@@ -196,7 +196,7 @@
       "label": "MainApp()",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "id": "vaultlegv2_app_mainapp",
       "community": 0,
       "norm_label": "mainapp()"
@@ -205,7 +205,7 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L146",
+      "source_location": "L142",
       "id": "vaultlegv2_app_app",
       "community": 0,
       "norm_label": "app()"
@@ -214,7 +214,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L154",
+      "source_location": "L150",
       "id": "vaultlegv2_app_styles",
       "community": 0,
       "norm_label": "styles"
@@ -844,7 +844,7 @@
       "label": "TuiConsole()",
       "file_type": "code",
       "source_file": "src/components/tui-console.tsx",
-      "source_location": "L8",
+      "source_location": "L7",
       "id": "components_tui_console_tuiconsole",
       "community": 2,
       "norm_label": "tuiconsole()"
@@ -853,7 +853,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "src/components/tui-console.tsx",
-      "source_location": "L95",
+      "source_location": "L93",
       "id": "components_tui_console_styles",
       "community": 2,
       "norm_label": "styles"
@@ -4194,9 +4194,9 @@
       "source_file": "src/screens/add-transaction.tsx",
       "source_location": "L19",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_add_transaction_tsx",
-      "target": "screens_dashboard_getcategoryicon"
+      "target": "screens_dashboard_getcategoryicon",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -4205,9 +4205,9 @@
       "source_file": "src/screens/add-transaction.tsx",
       "source_location": "L19",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_add_transaction_tsx",
-      "target": "src_screens_dashboard_tsx"
+      "target": "src_screens_dashboard_tsx",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -4345,9 +4345,9 @@
       "source_file": "src/screens/dashboard.tsx",
       "source_location": "L41",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "src_screens_dashboard_tsx",
-      "target": "screens_dashboard_getcategoryicon"
+      "target": "screens_dashboard_getcategoryicon",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
