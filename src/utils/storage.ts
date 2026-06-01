@@ -7,7 +7,7 @@ const KEYS = {
   BUDGET_LIMIT: 'tui_budget_limit',
 };
 
-const DEFAULT_BUDGET_LIMIT = 1000; // Default monthly budget is $1000
+const DEFAULT_BUDGET_LIMIT = 1000; // Default monthly budget is ₱1000
 
 export const storage = {
   /**
@@ -50,7 +50,7 @@ export const storage = {
   async saveBudgetLimit(limit: number): Promise<boolean> {
     try {
       await AsyncStorage.setItem(KEYS.BUDGET_LIMIT, limit.toString());
-      logger.log('DATABASE', `UPDATED_BUDGET_LIMIT_TO_$${limit.toFixed(2)}`);
+      logger.log('DATABASE', `UPDATED_BUDGET_LIMIT_TO_₱${limit.toFixed(2)}`);
       return true;
     } catch (e: any) {
       logger.log('DATABASE_ERROR', `BUDGET_SAVE_FAILED: ${e.message}`);
@@ -66,10 +66,10 @@ export const storage = {
       const val = await AsyncStorage.getItem(KEYS.BUDGET_LIMIT);
       if (val != null) {
         const limit = parseFloat(val);
-        logger.log('DATABASE', `LOADED_BUDGET_LIMIT_$${limit.toFixed(2)}`);
+        logger.log('DATABASE', `LOADED_BUDGET_LIMIT_₱${limit.toFixed(2)}`);
         return isNaN(limit) ? DEFAULT_BUDGET_LIMIT : limit;
       }
-      logger.log('DATABASE', `INITIALIZED_DEFAULT_BUDGET_$${DEFAULT_BUDGET_LIMIT.toFixed(2)}`);
+      logger.log('DATABASE', `INITIALIZED_DEFAULT_BUDGET_₱${DEFAULT_BUDGET_LIMIT.toFixed(2)}`);
       return DEFAULT_BUDGET_LIMIT;
     } catch (e: any) {
       logger.log('DATABASE_ERROR', `BUDGET_LOAD_FAILED: ${e.message}`);

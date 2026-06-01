@@ -11,7 +11,7 @@ import { ThemeProvider, useTheme } from './src/theme/theme-provider';
 import { Wallet } from 'lucide-react-native';
 import { Dashboard } from './src/screens/dashboard';
 import { AddTransaction } from './src/screens/add-transaction';
-import { TuiConsole } from './src/components/tui-console';
+import { TuiTabBar } from './src/components/tui-nav';
 import { TuiText } from './src/components/tui-text';
 import { Transaction } from './src/types';
 import { storage } from './src/utils/storage';
@@ -137,8 +137,8 @@ function MainApp() {
         )}
       </View>
 
-      {/* Retro log terminal sliding tray overlay */}
-      <TuiConsole />
+      {/* Floating Bottom Tab Bar Navigation */}
+      <TuiTabBar currentScreen={activeScreen} onNavigate={setActiveScreen} />
     </SafeAreaView>
   );
 }

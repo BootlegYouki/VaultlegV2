@@ -4,12 +4,8 @@ import {
   Wallet,
   TrendingUp,
   TrendingDown,
-  Plus,
-  Moon,
-  Sun,
   Trash2,
   PiggyBank,
-  Settings,
   Utensils,
   Zap,
   Film,
@@ -19,7 +15,6 @@ import {
   HelpCircle,
   Briefcase,
   Code,
-  PlusCircle,
 } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
@@ -49,7 +44,6 @@ export const getCategoryIcon = (categoryId: string, size = 16, color = '#FFFFFF'
     case 'salary': return <Briefcase size={size} color={color} />;
     case 'freelance': return <Code size={size} color={color} />;
     case 'investments': return <TrendingUp size={size} color={color} />;
-    case 'other_income': return <PlusCircle size={size} color={color} />;
     default: return <HelpCircle size={size} color={color} />;
   }
 };
@@ -99,7 +93,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       label: c.label,
       value: c.value,
       total: maxSpending || 1,
-      formattedValue: `$${c.value.toFixed(2)}`,
+      formattedValue: `₱${c.value.toFixed(2)}`,
     }));
 
   const handleSaveBudget = () => {
@@ -107,7 +101,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     if (!isNaN(val) && val > 0) {
       onUpdateBudget(val);
       setEditingBudget(false);
-      logger.log('System', `CONFIGURED_BUDGET_TO_$${val.toFixed(2)}`);
+      logger.log('System', `CONFIGURED_BUDGET_TO_₱${val.toFixed(2)}`);
     }
   };
 
@@ -129,7 +123,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <TuiText size="xs" variant="muted" weight="bold">TOTAL BALANCE</TuiText>
             </View>
             <TuiText size="2xl" weight="bold" style={{ color: balance >= 0 ? colors.primary : colors.destructive }}>
-              ${balance.toFixed(2)}
+              ₱{balance.toFixed(2)}
             </TuiText>
           </View>
           
@@ -140,7 +134,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <TuiText size="xs" variant="muted" weight="bold">INCOME</TuiText>
               </View>
               <TuiText size="sm" weight="bold" style={{ color: colors.primary }}>
-                +${totalIncome.toFixed(2)}
+                +₱{totalIncome.toFixed(2)}
               </TuiText>
             </View>
             <View style={styles.subBalanceItem}>
@@ -149,7 +143,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <TuiText size="xs" variant="muted" weight="bold">EXPENSES</TuiText>
               </View>
               <TuiText size="sm" weight="bold" style={{ color: colors.destructive }}>
-                -${totalExpense.toFixed(2)}
+                -₱{totalExpense.toFixed(2)}
               </TuiText>
             </View>
           </View>
@@ -167,7 +161,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         
         <TuiProgressMeter
           progress={budgetProgress}
-          label={`Spent so far: $${totalExpense.toFixed(2)} of $${budgetLimit.toFixed(2)}`}
+          label={`Spent so far: ₱${totalExpense.toFixed(2)} of ₱${budgetLimit.toFixed(2)}`}
         />
         
         {editingBudget ? (
@@ -202,12 +196,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             }}
             variant="outline"
           >
-            <View style={styles.inlineButtonContent}>
-              <Settings size={12} color={colors.primary} style={styles.inlineIcon} />
-              <TuiText size="xs" weight="bold" style={{ color: colors.primary }}>
-                Change Budget Limit
-              </TuiText>
-            </View>
+            Change Budget Limit
           </TuiButton>
         )}
       </TuiContainer>
@@ -226,25 +215,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {/* 04: QUICK ACTIONS */}
       <TuiContainer label="Actions">
         <TuiButton onPress={onNavigateToAdd} variant="accent" style={styles.logBtn}>
-          <View style={styles.inlineButtonContent}>
-            <Plus size={14} color={colors.primaryForeground} style={styles.inlineIcon} />
-            <TuiText size="sm" weight="bold" style={{ color: colors.primaryForeground }}>
-              Add Transaction
-            </TuiText>
-          </View>
+          + Add Transaction
         </TuiButton>
 
         <TuiButton onPress={handleToggleMode} variant="outline">
-          <View style={styles.inlineButtonContent}>
-            {isDark ? (
-              <Sun size={14} color={colors.primary} style={styles.inlineIcon} />
-            ) : (
-              <Moon size={14} color={colors.primary} style={styles.inlineIcon} />
-            )}
-            <TuiText size="xs" weight="bold" style={{ color: colors.primary }}>
-              Switch to {isDark ? 'Light' : 'Dark'} Mode
-            </TuiText>
-          </View>
+          Switch to {isDark ? 'Light' : 'Dark'} Mode
         </TuiButton>
       </TuiContainer>
 
@@ -296,7 +271,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       marginRight: 10,
                     }}
                   >
-                    {t.type === 'income' ? '+' : '-'}${t.amount.toFixed(2)}
+                    {t.type === 'income' ? '+' : '-'}₱{t.amount.toFixed(2)}
                   </TuiText>
                   
                   {/* Delete button (Trash icon) */}
@@ -332,14 +307,6 @@ const styles = StyleSheet.create({
   },
   titleIcon: {
     marginRight: 4,
-  },
-  inlineButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inlineIcon: {
-    marginRight: 6,
   },
   budgetHeader: {
     flexDirection: 'row',

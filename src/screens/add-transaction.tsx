@@ -6,8 +6,6 @@ import {
   DollarSign,
   FileText,
   Calendar,
-  Check,
-  X,
 } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
@@ -77,7 +75,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
       });
       logger.log(
         'Operation',
-        `LOGGED_${type.toUpperCase()}: $${parsedAmount.toFixed(2)} [${category.toUpperCase()}] "${description.trim()}"`
+        `LOGGED_${type.toUpperCase()}: ₱${parsedAmount.toFixed(2)} [${category.toUpperCase()}] "${description.trim()}"`
       );
       onNavigateBack();
     } else {
@@ -146,7 +144,7 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
       <TuiContainer label="Transaction Details">
         <View style={styles.inputLabelHeader}>
           <DollarSign size={11} color={colors.primary} style={styles.inputLabelIcon} />
-          <TuiText size="xs" weight="bold" variant="muted">AMOUNT ($)</TuiText>
+          <TuiText size="xs" weight="bold" variant="muted">AMOUNT (₱)</TuiText>
         </View>
         <TuiInput
           value={amount}
@@ -224,21 +222,11 @@ export const AddTransaction: React.FC<AddTransactionProps> = ({
       {/* 04: EXECUTE MATRIX */}
       <TuiContainer label="Actions">
         <TuiButton onPress={handleSubmit} variant="accent" style={styles.submitBtn}>
-          <View style={styles.inlineButtonContent}>
-            <Check size={14} color={colors.primaryForeground} style={styles.inlineIcon} />
-            <TuiText size="sm" weight="bold" style={{ color: colors.primaryForeground }}>
-              Save Transaction
-            </TuiText>
-          </View>
+          Save Transaction
         </TuiButton>
 
         <TuiButton onPress={onNavigateBack} variant="outline">
-          <View style={styles.inlineButtonContent}>
-            <X size={14} color={colors.primary} style={styles.inlineIcon} />
-            <TuiText size="sm" weight="bold" style={{ color: colors.primary }}>
-              Cancel
-            </TuiText>
-          </View>
+          Cancel
         </TuiButton>
       </TuiContainer>
     </ScrollView>
