@@ -33,7 +33,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
   const isPlusActive = currentScreen === 'add-transaction';
 
   return (
-    <View style={[styles.shadowWrapper, { bottom: 16 + insets.bottom }]}>
+    <View style={[styles.shadowWrapper, { bottom: 5 + insets.bottom }]}>
       <View style={styles.navRow}>
 
         {/* 4 MENU TABS */}
@@ -91,7 +91,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
                 </TuiText>
               </View>
 
-              <View style={styles.tabContent}>
+              <View style={styles.tabContent} pointerEvents="none">
                 <item.Icon
                   size={18}
                   color={isActive ? colors.primary : colors.mutedForeground}
@@ -163,7 +163,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
             </TuiText>
           </View>
 
-          <View style={styles.tabContent}>
+          <View style={styles.tabContent} pointerEvents="none">
             <Plus
               size={18}
               color={isPlusActive ? colors.primary : colors.mutedForeground}

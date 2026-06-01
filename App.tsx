@@ -338,7 +338,7 @@ function MainApp() {
               </TuiText>
             </View>
 
-            <View style={styles.fabContent}>
+            <View style={styles.fabContent} pointerEvents="none">
               <PiggyBank size={18} color={colors.primary} />
             </View>
           </Pressable>
@@ -397,7 +397,7 @@ function MainApp() {
               </TuiText>
             </View>
 
-            <View style={styles.fabContent}>
+            <View style={styles.fabContent} pointerEvents="none">
               <FileText size={18} color={colors.primary} />
             </View>
           </Pressable>
