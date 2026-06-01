@@ -112,10 +112,46 @@
       "norm_label": "userinterfacestyle"
     },
     {
-      "label": "ios",
+      "label": "splash",
       "file_type": "code",
       "source_file": "app.json",
       "source_location": "L9",
+      "id": "vaultlegv2_app_expo_splash",
+      "community": 3,
+      "norm_label": "splash"
+    },
+    {
+      "label": "image",
+      "file_type": "code",
+      "source_file": "app.json",
+      "source_location": "L10",
+      "id": "vaultlegv2_app_splash_image",
+      "community": 3,
+      "norm_label": "image"
+    },
+    {
+      "label": "resizeMode",
+      "file_type": "code",
+      "source_file": "app.json",
+      "source_location": "L11",
+      "id": "vaultlegv2_app_splash_resizemode",
+      "community": 3,
+      "norm_label": "resizemode"
+    },
+    {
+      "label": "backgroundColor",
+      "file_type": "code",
+      "source_file": "app.json",
+      "source_location": "L12",
+      "id": "vaultlegv2_app_splash_backgroundcolor",
+      "community": 3,
+      "norm_label": "backgroundcolor"
+    },
+    {
+      "label": "ios",
+      "file_type": "code",
+      "source_file": "app.json",
+      "source_location": "L14",
       "id": "vaultlegv2_app_expo_ios",
       "community": 3,
       "norm_label": "ios"
@@ -124,7 +160,7 @@
       "label": "supportsTablet",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L10",
+      "source_location": "L15",
       "id": "vaultlegv2_app_ios_supportstablet",
       "community": 3,
       "norm_label": "supportstablet"
@@ -133,7 +169,7 @@
       "label": "bundleIdentifier",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L11",
+      "source_location": "L16",
       "id": "vaultlegv2_app_ios_bundleidentifier",
       "community": 3,
       "norm_label": "bundleidentifier"
@@ -142,7 +178,7 @@
       "label": "android",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L13",
+      "source_location": "L18",
       "id": "vaultlegv2_app_expo_android",
       "community": 3,
       "norm_label": "android"
@@ -151,7 +187,7 @@
       "label": "adaptiveIcon",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L14",
+      "source_location": "L19",
       "id": "vaultlegv2_app_android_adaptiveicon",
       "community": 3,
       "norm_label": "adaptiveicon"
@@ -160,7 +196,7 @@
       "label": "backgroundColor",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L15",
+      "source_location": "L20",
       "id": "vaultlegv2_app_adaptiveicon_backgroundcolor",
       "community": 3,
       "norm_label": "backgroundcolor"
@@ -169,7 +205,7 @@
       "label": "foregroundImage",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L16",
+      "source_location": "L21",
       "id": "vaultlegv2_app_adaptiveicon_foregroundimage",
       "community": 3,
       "norm_label": "foregroundimage"
@@ -178,7 +214,7 @@
       "label": "backgroundImage",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L17",
+      "source_location": "L22",
       "id": "vaultlegv2_app_adaptiveicon_backgroundimage",
       "community": 3,
       "norm_label": "backgroundimage"
@@ -187,7 +223,7 @@
       "label": "monochromeImage",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L18",
+      "source_location": "L23",
       "id": "vaultlegv2_app_adaptiveicon_monochromeimage",
       "community": 3,
       "norm_label": "monochromeimage"
@@ -196,7 +232,7 @@
       "label": "predictiveBackGestureEnabled",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L20",
+      "source_location": "L25",
       "id": "vaultlegv2_app_android_predictivebackgestureenabled",
       "community": 3,
       "norm_label": "predictivebackgestureenabled"
@@ -205,7 +241,7 @@
       "label": "web",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L22",
+      "source_location": "L27",
       "id": "vaultlegv2_app_expo_web",
       "community": 3,
       "norm_label": "web"
@@ -214,7 +250,7 @@
       "label": "favicon",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L23",
+      "source_location": "L28",
       "id": "vaultlegv2_app_web_favicon",
       "community": 3,
       "norm_label": "favicon"
@@ -223,7 +259,7 @@
       "label": "plugins",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L25",
+      "source_location": "L30",
       "id": "vaultlegv2_app_expo_plugins",
       "community": 3,
       "norm_label": "plugins"
@@ -774,7 +810,7 @@
       "source_file": "src/components/tui-button.tsx",
       "source_location": "L1",
       "id": "src_components_tui_button_tsx",
-      "community": 9,
+      "community": 18,
       "norm_label": "tui-button.tsx"
     },
     {
@@ -783,7 +819,7 @@
       "source_file": "src/components/tui-button.tsx",
       "source_location": "L6",
       "id": "components_tui_button_tuibuttonprops",
-      "community": 9,
+      "community": 18,
       "norm_label": "tuibuttonprops"
     },
     {
@@ -792,7 +828,7 @@
       "source_file": "src/components/tui-button.tsx",
       "source_location": "L14",
       "id": "components_tui_button_tuibutton",
-      "community": 9,
+      "community": 18,
       "norm_label": "tuibutton()"
     },
     {
@@ -801,7 +837,7 @@
       "source_file": "src/components/tui-button.tsx",
       "source_location": "L89",
       "id": "components_tui_button_styles",
-      "community": 9,
+      "community": 18,
       "norm_label": "styles"
     },
     {
@@ -1152,7 +1188,7 @@
       "source_file": "src/screens/add-transaction.tsx",
       "source_location": "L1",
       "id": "src_screens_add_transaction_tsx",
-      "community": 9,
+      "community": 18,
       "norm_label": "add-transaction.tsx"
     },
     {
@@ -1179,7 +1215,7 @@
       "source_file": "src/screens/add-transaction.tsx",
       "source_location": "L236",
       "id": "screens_add_transaction_styles",
-      "community": 9,
+      "community": 18,
       "norm_label": "styles"
     },
     {
@@ -1251,7 +1287,7 @@
       "source_file": "src/screens/dashboard.tsx",
       "source_location": "L1",
       "id": "src_screens_dashboard_tsx",
-      "community": 9,
+      "community": 18,
       "norm_label": "dashboard.tsx"
     },
     {
@@ -1260,7 +1296,7 @@
       "source_file": "src/screens/dashboard.tsx",
       "source_location": "L30",
       "id": "screens_dashboard_budget_colors",
-      "community": 9,
+      "community": 18,
       "norm_label": "budget_colors"
     },
     {
@@ -1278,7 +1314,7 @@
       "source_file": "src/screens/dashboard.tsx",
       "source_location": "L44",
       "id": "screens_dashboard_getcategoryicon",
-      "community": 9,
+      "community": 18,
       "norm_label": "getcategoryicon()"
     },
     {
@@ -1296,7 +1332,7 @@
       "source_file": "src/screens/dashboard.tsx",
       "source_location": "L213",
       "id": "screens_dashboard_styles",
-      "community": 9,
+      "community": 18,
       "norm_label": "styles"
     },
     {
@@ -1332,7 +1368,7 @@
       "source_file": "src/screens/expenses.tsx",
       "source_location": "L1",
       "id": "src_screens_expenses_tsx",
-      "community": 9,
+      "community": 18,
       "norm_label": "expenses.tsx"
     },
     {
@@ -1350,7 +1386,7 @@
       "source_file": "src/screens/expenses.tsx",
       "source_location": "L17",
       "id": "screens_expenses_filtertype",
-      "community": 9,
+      "community": 18,
       "norm_label": "filtertype"
     },
     {
@@ -1359,7 +1395,7 @@
       "source_file": "src/screens/expenses.tsx",
       "source_location": "L19",
       "id": "screens_expenses_expenses",
-      "community": 9,
+      "community": 18,
       "norm_label": "expenses()"
     },
     {
@@ -1368,7 +1404,7 @@
       "source_file": "src/screens/expenses.tsx",
       "source_location": "L165",
       "id": "screens_expenses_styles",
-      "community": 9,
+      "community": 18,
       "norm_label": "styles"
     },
     {
@@ -2560,9 +2596,9 @@
       "source_file": "altstore-source.json",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "altstore_source_json",
-      "target": "vaultlegv2_altstore_source_apps",
-      "confidence_score": 1.0
+      "target": "vaultlegv2_altstore_source_apps"
     },
     {
       "relation": "contains",
@@ -2570,9 +2606,9 @@
       "source_file": "altstore-source.json",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "altstore_source_json",
-      "target": "vaultlegv2_altstore_source_identifier",
-      "confidence_score": 1.0
+      "target": "vaultlegv2_altstore_source_identifier"
     },
     {
       "relation": "contains",
@@ -2580,9 +2616,9 @@
       "source_file": "altstore-source.json",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "altstore_source_json",
-      "target": "vaultlegv2_altstore_source_name",
-      "confidence_score": 1.0
+      "target": "vaultlegv2_altstore_source_name"
     },
     {
       "relation": "contains",
@@ -2668,6 +2704,16 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "app.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "vaultlegv2_app_expo",
+      "target": "vaultlegv2_app_expo_splash",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app.json",
       "source_location": "L8",
       "weight": 1.0,
       "confidence_score": 1.0,
@@ -2693,6 +2739,36 @@
       "confidence_score": 1.0,
       "source": "vaultlegv2_app_expo",
       "target": "vaultlegv2_app_expo_web"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "source": "vaultlegv2_app_expo_splash",
+      "target": "vaultlegv2_app_splash_backgroundcolor",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "vaultlegv2_app_expo_splash",
+      "target": "vaultlegv2_app_splash_image",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "source": "vaultlegv2_app_expo_splash",
+      "target": "vaultlegv2_app_splash_resizemode",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
@@ -3450,9 +3526,9 @@
       "source_file": "package.json",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "vaultlegv2_package_dependencies",
-      "target": "vaultlegv2_package_dependencies_react_native_safe_area_context",
-      "confidence_score": 1.0
+      "target": "vaultlegv2_package_dependencies_react_native_safe_area_context"
     },
     {
       "relation": "contains",
@@ -3953,9 +4029,9 @@
       "source_file": "src/components/tui-chart.tsx",
       "source_location": "L59",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_chart_tsx",
-      "target": "components_tui_chart_metersegment",
-      "confidence_score": 1.0
+      "target": "components_tui_chart_metersegment"
     },
     {
       "relation": "contains",
@@ -4013,9 +4089,9 @@
       "source_file": "src/components/tui-chart.tsx",
       "source_location": "L73",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_chart_tsx",
-      "target": "components_tui_chart_tuisegmentedmeter",
-      "confidence_score": 1.0
+      "target": "components_tui_chart_tuisegmentedmeter"
     },
     {
       "relation": "contains",
@@ -4023,9 +4099,9 @@
       "source_file": "src/components/tui-chart.tsx",
       "source_location": "L64",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_components_tui_chart_tsx",
-      "target": "components_tui_chart_tuisegmentedmeterprops",
-      "confidence_score": 1.0
+      "target": "components_tui_chart_tuisegmentedmeterprops"
     },
     {
       "relation": "imports",
@@ -4144,9 +4220,9 @@
       "source_file": "src/screens/budgets.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_budgets_tsx",
-      "target": "components_tui_chart_tuisegmentedmeter",
-      "confidence_score": 1.0
+      "target": "components_tui_chart_tuisegmentedmeter"
     },
     {
       "relation": "imports",
@@ -4155,9 +4231,9 @@
       "source_file": "src/screens/dashboard.tsx",
       "source_location": "L25",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_dashboard_tsx",
-      "target": "components_tui_chart_tuisegmentedmeter",
-      "confidence_score": 1.0
+      "target": "components_tui_chart_tuisegmentedmeter"
     },
     {
       "relation": "imports",
@@ -5229,9 +5305,9 @@
       "source_file": "src/screens/budgets.tsx",
       "source_location": "L24",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_budgets_tsx",
-      "target": "screens_budgets_budget_colors",
-      "confidence_score": 1.0
+      "target": "screens_budgets_budget_colors"
     },
     {
       "relation": "contains",
@@ -5259,9 +5335,9 @@
       "source_file": "src/screens/budgets.tsx",
       "source_location": "L47",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_budgets_tsx",
-      "target": "screens_budgets_categorybudgetcard",
-      "confidence_score": 1.0
+      "target": "screens_budgets_categorybudgetcard"
     },
     {
       "relation": "contains",
@@ -5269,9 +5345,9 @@
       "source_file": "src/screens/budgets.tsx",
       "source_location": "L38",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_budgets_tsx",
-      "target": "screens_budgets_categorybudgetcardprops",
-      "confidence_score": 1.0
+      "target": "screens_budgets_categorybudgetcardprops"
     },
     {
       "relation": "contains",
@@ -5431,9 +5507,9 @@
       "source_file": "src/screens/dashboard.tsx",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_dashboard_tsx",
-      "target": "screens_dashboard_budget_colors",
-      "confidence_score": 1.0
+      "target": "screens_dashboard_budget_colors"
     },
     {
       "relation": "contains",
@@ -6895,5 +6971,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "1cf273460379e1185ab68502e09035b7275924fe"
+  "built_at_commit": "728ac5cbc960995d40142084d8adce1ff02683d8"
 }
