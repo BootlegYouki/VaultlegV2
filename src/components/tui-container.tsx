@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle, Pressable } from 'react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
 
@@ -10,6 +10,7 @@ interface TuiContainerProps {
   style?: ViewStyle;
   contentStyle?: ViewStyle;
   accentBorder?: boolean;
+  onBadgePress?: () => void;
 }
 
 export const TuiContainer: React.FC<TuiContainerProps> = ({
@@ -19,8 +20,10 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
   style,
   contentStyle,
   accentBorder = false,
+  onBadgePress,
 }) => {
   const { colors, isDark } = useTheme();
+  const [legendWidth, setLegendWidth] = React.useState(0);
 
   // Brutalist double-line border style, or clean solid border
   const borderColor = accentBorder ? colors.primary : (isDark ? colors.primary + '40' : '#000000');
@@ -31,38 +34,57 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
       style={[
         styles.outerContainer,
         {
-          borderColor,
           backgroundColor,
         },
         style,
       ]}
     >
+      {/* Custom Segmented Borders to support transparent legend background without intersection */}
+      <View style={[styles.borderLeft, { backgroundColor: borderColor }]} />
+      <View style={[styles.borderRight, { backgroundColor: borderColor }]} />
+      <View style={[styles.borderBottom, { backgroundColor: borderColor }]} />
+      <View style={[styles.borderTopLeft, { backgroundColor: borderColor }]} />
+      <View 
+        style={[
+          styles.borderTopRight, 
+          { 
+            backgroundColor: borderColor, 
+            left: 12 + legendWidth,
+          }
+        ]} 
+      />
+
       {/* Legend Container */}
       <View
+        onLayout={(e) => setLegendWidth(e.nativeEvent.layout.width)}
         style={[
           styles.legendWrapper,
           {
-            backgroundColor: colors.background, // Match screen background to cover the line
+            backgroundColor: 'transparent',
           },
         ]}
       >
         <TuiText weight="bold" size="sm" style={{ color: colors.primary }}>
-          [{label}]
+          {label}
         </TuiText>
         {badge && (
-          <View
-            style={[
+          <Pressable
+            disabled={!onBadgePress}
+            onPress={onBadgePress}
+            style={({ pressed }) => [
               styles.badgeContainer,
               {
                 borderColor: colors.primary,
-                backgroundColor: isDark ? colors.primary + '15' : colors.primary + '10',
+                backgroundColor: pressed 
+                  ? colors.primary + '30' 
+                  : (isDark ? colors.primary + '15' : colors.primary + '10'),
               },
             ]}
           >
             <TuiText size="xs" weight="bold" style={{ color: colors.primary }}>
               {badge}
             </TuiText>
-          </View>
+          </Pressable>
         )}
       </View>
 
@@ -74,7 +96,6 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
 
 const styles = StyleSheet.create({
   outerContainer: {
-    borderWidth: 2,
     marginTop: 14,
     marginBottom: 8,
     padding: 12,
@@ -82,9 +103,48 @@ const styles = StyleSheet.create({
     width: '100%',
     position: 'relative',
   },
+  borderLeft: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 1.5,
+    zIndex: 5,
+  },
+  borderRight: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 1.5,
+    zIndex: 5,
+  },
+  borderBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 1.5,
+    zIndex: 5,
+  },
+  borderTopLeft: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: 12,
+    height: 1.5,
+    zIndex: 5,
+  },
+  borderTopRight: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    height: 1.5,
+    zIndex: 5,
+  },
   legendWrapper: {
     position: 'absolute',
-    top: -12,
+    top: -9,
     left: 12,
     flexDirection: 'row',
     alignItems: 'center',
@@ -101,3 +161,4 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
+

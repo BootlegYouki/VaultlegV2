@@ -88,7 +88,7 @@ export const TuiButton: React.FC<TuiButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    borderWidth: 2,
+    borderWidth: 1.5,
     paddingVertical: 12,
     paddingHorizontal: 16,
     alignItems: 'center',

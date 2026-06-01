@@ -5,6 +5,7 @@ import { logger } from './logger';
 const KEYS = {
   TRANSACTIONS: 'tui_transactions',
   BUDGET_LIMIT: 'tui_budget_limit',
+  CATEGORY_BUDGETS: 'tui_category_budgets',
 };
 
 const DEFAULT_BUDGET_LIMIT = 1000; // Default monthly budget is ₱1000
@@ -74,6 +75,39 @@ export const storage = {
     } catch (e: any) {
       logger.log('DATABASE_ERROR', `BUDGET_LOAD_FAILED: ${e.message}`);
       return DEFAULT_BUDGET_LIMIT;
+    }
+  },
+
+  /**
+   * Save category-specific budget limits dictionary to storage
+   */
+  async saveCategoryBudgets(budgets: Record<string, number>): Promise<boolean> {
+    try {
+      const jsonValue = JSON.stringify(budgets);
+      await AsyncStorage.setItem(KEYS.CATEGORY_BUDGETS, jsonValue);
+      logger.log('DATABASE', `SAVED_CATEGORY_BUDGETS_OK`);
+      return true;
+    } catch (e: any) {
+      logger.log('DATABASE_ERROR', `CATEGORY_BUDGET_SAVE_FAILED: ${e.message}`);
+      return false;
+    }
+  },
+
+  /**
+   * Load category-specific budget limits dictionary from storage
+   */
+  async loadCategoryBudgets(): Promise<Record<string, number>> {
+    try {
+      const jsonValue = await AsyncStorage.getItem(KEYS.CATEGORY_BUDGETS);
+      if (jsonValue != null) {
+        const budgets = JSON.parse(jsonValue) as Record<string, number>;
+        logger.log('DATABASE', `LOADED_CATEGORY_BUDGETS_OK`);
+        return budgets;
+      }
+      return {};
+    } catch (e: any) {
+      logger.log('DATABASE_ERROR', `CATEGORY_BUDGET_LOAD_FAILED: ${e.message}`);
+      return {};
     }
   },
 };

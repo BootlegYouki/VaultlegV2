@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, Pressable, Dimensions } from 'react-native';
-import { LayoutGrid, PlusSquare } from 'lucide-react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
+import { LayoutGrid, FileText, PiggyBank, Landmark, Plus } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
 
-export type ScreenType = 'dashboard' | 'add-transaction';
+export type ScreenType = 'dashboard' | 'expenses' | 'add-transaction' | 'budgets' | 'debts';
 
 interface TuiTabBarProps {
   currentScreen: ScreenType;
@@ -16,92 +16,159 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
   onNavigate,
 }) => {
   const { colors, isDark } = useTheme();
-
-  const getColors = (isActive: boolean, pressed: boolean) => {
-    // Monochromatic highlights
-    if (isActive) {
-      return {
-        bg: colors.primary,
-        text: colors.primaryForeground,
-        icon: colors.primaryForeground,
-      };
-    }
-    return {
-      bg: pressed ? colors.primary + '15' : 'transparent',
-      text: colors.mutedForeground,
-      icon: colors.mutedForeground,
-    };
-  };
+  const [buttonWidths, setButtonWidths] = React.useState<Record<string, number>>({});
+  const [legendWidths, setLegendWidths] = React.useState<Record<string, number>>({});
 
   const borderAccent = isDark ? colors.primary : '#000000';
 
+  const menuItems: { screen: ScreenType; label: string; Icon: React.ComponentType<any> }[] = [
+    { screen: 'dashboard', label: 'Home', Icon: LayoutGrid },
+    { screen: 'expenses', label: 'Ledger', Icon: FileText },
+    { screen: 'budgets', label: 'Budget', Icon: PiggyBank },
+    { screen: 'debts', label: 'Debts', Icon: Landmark },
+  ];
+
+  const isPlusActive = currentScreen === 'add-transaction';
+
   return (
     <View style={styles.shadowWrapper}>
-      <View
-        style={[
-          styles.container,
-          {
-            borderColor: borderAccent,
-            backgroundColor: colors.card,
-          },
-        ]}
-      >
-        {/* HOME TAB */}
-        <Pressable
-          onPress={() => onNavigate('dashboard')}
-          style={({ pressed }) => [
-            styles.tab,
-            {
-              backgroundColor: getColors(currentScreen === 'dashboard', pressed).bg,
-            },
-          ]}
-        >
-          {({ pressed }) => {
-            const activeColors = getColors(currentScreen === 'dashboard', pressed);
-            return (
-              <View style={styles.tabContent}>
-                <LayoutGrid size={18} color={activeColors.icon} style={styles.tabIcon} />
+      <View style={styles.navRow}>
+        
+        {/* 4 MENU TABS */}
+        {menuItems.map((item, idx) => {
+          const isActive = currentScreen === item.screen;
+          const bWidth = buttonWidths[item.screen] || 70;
+          const lWidth = legendWidths[item.screen] || 32;
+          const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
+          
+          return (
+            <Pressable
+              key={item.screen}
+              onPress={() => onNavigate(item.screen)}
+              onLayout={(e) => {
+                const width = e.nativeEvent.layout.width;
+                setButtonWidths(prev => ({ ...prev, [item.screen]: width }));
+              }}
+              style={[
+                styles.tabSquare,
+                {
+                  backgroundColor: isActive ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                  marginRight: idx === menuItems.length - 1 ? 14 : 4, // 14px gap before '+' button, 4px between menu tabs
+                },
+              ]}
+            >
+              {/* Dynamic Segmented Borders */}
+              <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
+              <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
+              <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
+              <View style={[styles.borderTopLeft, { backgroundColor: borderAccent, width: topSegmentWidth }]} />
+              <View style={[styles.borderTopRight, { backgroundColor: borderAccent, width: topSegmentWidth }]} />
+
+              {/* Brutalist legend resting on top border */}
+              <View 
+                onLayout={(e) => {
+                  const width = e.nativeEvent.layout.width;
+                  setLegendWidths(prev => ({ ...prev, [item.screen]: width }));
+                }}
+                style={[
+                  styles.legendWrapper, 
+                  { 
+                    backgroundColor: 'transparent',
+                    paddingHorizontal: 2,
+                  }
+                ]}
+              >
                 <TuiText
                   weight="bold"
-                  size="sm"
-                  style={{ color: activeColors.text }}
+                  style={[
+                    styles.legendText,
+                    { color: isActive ? colors.primary : colors.mutedForeground },
+                  ]}
                 >
-                  Home
+                  {item.label.toUpperCase()}
                 </TuiText>
               </View>
-            );
-          }}
-        </Pressable>
 
-        {/* Vertical Separator */}
-        <View style={[styles.separator, { backgroundColor: borderAccent }]} />
+              <View style={styles.tabContent}>
+                <item.Icon
+                  size={18}
+                  color={isActive ? colors.primary : colors.mutedForeground}
+                />
+              </View>
+            </Pressable>
+          );
+        })}
 
-        {/* ADD TRANSACTION TAB */}
+        {/* STANDALONE PLUS LOG BUTTON */}
         <Pressable
           onPress={() => onNavigate('add-transaction')}
-          style={({ pressed }) => [
-            styles.tab,
+          onLayout={(e) => {
+            const width = e.nativeEvent.layout.width;
+            setButtonWidths(prev => ({ ...prev, ['add-transaction']: width }));
+          }}
+          style={[
+            styles.plusBtnSquare,
             {
-              backgroundColor: getColors(currentScreen === 'add-transaction', pressed).bg,
+              backgroundColor: isPlusActive ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
             },
           ]}
         >
-          {({ pressed }) => {
-            const activeColors = getColors(currentScreen === 'add-transaction', pressed);
-            return (
-              <View style={styles.tabContent}>
-                <PlusSquare size={18} color={activeColors.icon} style={styles.tabIcon} />
-                <TuiText
-                  weight="bold"
-                  size="sm"
-                  style={{ color: activeColors.text }}
-                >
-                  Add Expense
-                </TuiText>
-              </View>
-            );
-          }}
+          {/* Dynamic Segmented Borders */}
+          <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
+          <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
+          <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
+          <View 
+            style={[
+              styles.borderTopLeft, 
+              { 
+                backgroundColor: borderAccent, 
+                width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2) 
+              }
+            ]} 
+          />
+          <View 
+            style={[
+              styles.borderTopRight, 
+              { 
+                backgroundColor: borderAccent, 
+                width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2) 
+              }
+            ]} 
+          />
+
+          {/* Brutalist legend resting on top border */}
+          <View 
+            onLayout={(e) => {
+              const width = e.nativeEvent.layout.width;
+              setLegendWidths(prev => ({ ...prev, ['add-transaction']: width }));
+            }}
+            style={[
+              styles.legendWrapper, 
+              { 
+                backgroundColor: 'transparent',
+                paddingHorizontal: 2,
+              }
+            ]}
+          >
+            <TuiText
+              weight="bold"
+              style={[
+                styles.legendText,
+                { color: isPlusActive ? colors.primary : colors.mutedForeground },
+              ]}
+            >
+              LOG
+            </TuiText>
+          </View>
+
+          <View style={styles.tabContent}>
+            <Plus
+              size={18}
+              color={isPlusActive ? colors.primary : colors.mutedForeground}
+            />
+          </View>
         </Pressable>
+
       </View>
     </View>
   );
@@ -111,34 +178,81 @@ const styles = StyleSheet.create({
   shadowWrapper: {
     position: 'absolute',
     bottom: 24,
-    left: 20,
-    right: 20,
+    left: 20, // Comfortable breathing room
+    right: 20, // Comfortable breathing room
     zIndex: 99,
   },
-  container: {
+  navRow: {
     flexDirection: 'row',
-    borderWidth: 2.5,
-    height: 58,
     alignItems: 'center',
-    justifyContent: 'space-between',
     width: '100%',
+    marginTop: 10, // Margin to protect top overlapping legends
   },
-  tab: {
-    flex: 1,
-    height: '100%',
-    justifyContent: 'center',
+  tabSquare: {
+    flex: 1, // Uniform responsive width sharing
+    height: 52, // Balanced vertical square height
     alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  plusBtnSquare: {
+    height: 52,
+    width: 52, // Fixed width matching height exactly to be a perfect square
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  borderLeft: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 1.5,
+    zIndex: 5,
+  },
+  borderRight: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 1.5,
+    zIndex: 5,
+  },
+  borderBottom: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 1.5,
+    zIndex: 5,
+  },
+  borderTopLeft: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    height: 1.5,
+    zIndex: 5,
+  },
+  borderTopRight: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    height: 1.5,
+    zIndex: 5,
+  },
+  legendWrapper: {
+    position: 'absolute',
+    top: -8,
+    alignSelf: 'center',
+    paddingHorizontal: 2,
+    zIndex: 10,
+  },
+  legendText: {
+    fontSize: 14,
+    letterSpacing: 0.2,
   },
   tabContent: {
-    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  tabIcon: {
-    marginRight: 6,
-  },
-  separator: {
-    width: 2.5,
-    height: '100%',
   },
 });

@@ -1,0 +1,63 @@
+name: Build Unsigned iOS IPA
+
+on:
+  workflow_dispatch: # Allows you to manually trigger the build from the GitHub Actions tab
+
+jobs:
+  build:
+    name: Build IPA
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Expo Prebuild (Generate iOS folder)
+        run: npx expo prebuild --platform ios --clean
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+          
+      - name: Build Unsigned App
+        run: |
+          cd ios
+          # Using xcodebuild to compile the app without any certificates.
+          xcodebuild -workspace Vaultleg.xcworkspace \
+            -scheme Vaultleg \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Package into IPA
+        run: |
+          # An .ipa file is essentially a zip folder containing a "Payload" folder with the .app inside
+          cd ios/build/Build/Products/Release-iphoneos
+          mkdir Payload
+          mv Vaultleg.app Payload/
+          zip -qr ../../../../../Vaultleg.ipa Payload
+          
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Vaultleg-Unsigned-IPA
+          path: Vaultleg.ipa
+          retention-days: 7

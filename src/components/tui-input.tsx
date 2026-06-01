@@ -91,14 +91,14 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   inputContainer: {
-    borderWidth: 2,
+    borderWidth: 1.5,
     paddingHorizontal: 12,
     paddingVertical: 4,
-    height: 52,
+    height: 44,
     justifyContent: 'center',
   },
   textInput: {
-    fontSize: 16,
+    fontSize: 14,
     padding: 0,
     margin: 0,
   },

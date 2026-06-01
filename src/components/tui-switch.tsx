@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
   switchBox: {
     flexDirection: 'row',
-    borderWidth: 2,
+    borderWidth: 1.5,
     width: 90,
     height: 28,
     alignItems: 'center',

@@ -5,7 +5,6 @@ import {
   TrendingUp,
   TrendingDown,
   Trash2,
-  PiggyBank,
   Utensils,
   Zap,
   Film,
@@ -15,20 +14,28 @@ import {
   HelpCircle,
   Briefcase,
   Code,
+  Landmark,
+  Check,
 } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
 import { TuiText } from '../components/tui-text';
 import { TuiButton } from '../components/tui-button';
-import { TuiProgressMeter, TuiBarChart, ChartItem } from '../components/tui-chart';
+import { TuiSegmentedMeter } from '../components/tui-chart';
 import { Transaction, CATEGORIES } from '../types';
 import { logger } from '../utils/logger';
+
+// Shared palette — must match budgets.tsx order
+const BUDGET_COLORS = [
+  '#00E5FF', '#69FF47', '#FF6B6B', '#FFD93D', '#C77DFF',
+  '#FF9F1C', '#2EC4B6', '#FF4D6D', '#A8FF78', '#4D96FF',
+];
 
 interface DashboardProps {
   transactions: Transaction[];
   budgetLimit: number;
+  categoryBudgets: Record<string, number>;
   onNavigateToAdd: () => void;
-  onUpdateBudget: (newLimit: number) => void;
   onDeleteTransaction: (id: string) => void;
 }
 
@@ -51,13 +58,11 @@ export const getCategoryIcon = (categoryId: string, size = 16, color = '#FFFFFF'
 export const Dashboard: React.FC<DashboardProps> = ({
   transactions,
   budgetLimit,
+  categoryBudgets,
   onNavigateToAdd,
-  onUpdateBudget,
   onDeleteTransaction,
 }) => {
-  const { colors, isDark, setThemeMode } = useTheme();
-  const [editingBudget, setEditingBudget] = useState(false);
-  const [budgetInput, setBudgetInput] = useState(budgetLimit.toString());
+  const { colors, isDark } = useTheme();
 
   // Aggregate Calculations
   const totalIncome = transactions
@@ -70,294 +75,224 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   const balance = totalIncome - totalExpense;
 
-  // Budget progress percentage
-  const budgetProgress = budgetLimit > 0 ? totalExpense / budgetLimit : 0;
-
-  // Spending by category calculations
-  const categorySpending = CATEGORIES.map((cat) => {
-    const amount = transactions
-      .filter((t) => t.type === 'expense' && t.category === cat.id)
-      .reduce((sum, t) => sum + t.amount, 0);
-    return {
-      id: cat.id,
-      label: cat.label,
-      value: amount,
-    };
-  });
-
-  const maxSpending = Math.max(...categorySpending.map((c) => c.value), 0);
-
-  const chartData: ChartItem[] = categorySpending
-    .filter((c) => c.value > 0)
-    .map((c) => ({
-      label: c.label,
-      value: c.value,
-      total: maxSpending || 1,
-      formattedValue: `₱${c.value.toFixed(2)}`,
-    }));
-
-  const handleSaveBudget = () => {
-    const val = parseFloat(budgetInput);
-    if (!isNaN(val) && val > 0) {
-      onUpdateBudget(val);
-      setEditingBudget(false);
-      logger.log('System', `CONFIGURED_BUDGET_TO_₱${val.toFixed(2)}`);
-    }
-  };
-
-  const handleToggleMode = () => {
-    const nextMode = isDark ? 'light' : 'dark';
-    setThemeMode(nextMode);
-    logger.log('Theme', `SWAPPED_TO_${nextMode.toUpperCase()}_MODE`);
-  };
-
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <View style={[styles.mainWrapper, { backgroundColor: colors.background }]}>
       
-      {/* 01: MY BALANCES */}
-      <TuiContainer label="Balances" badge="Live">
-        <View style={styles.balanceGrid}>
-          <View style={[styles.balanceItem, { borderRightWidth: 1, borderColor: colors.border }]}>
-            <View style={styles.titleRow}>
-              <Wallet size={12} color={colors.mutedForeground} style={styles.titleIcon} />
-              <TuiText size="xs" variant="muted" weight="bold">TOTAL BALANCE</TuiText>
-            </View>
-            <TuiText size="2xl" weight="bold" style={{ color: balance >= 0 ? colors.primary : colors.destructive }}>
-              ₱{balance.toFixed(2)}
-            </TuiText>
-          </View>
-          
-          <View style={styles.balanceSubGrid}>
-            <View style={[styles.subBalanceItem, { borderBottomWidth: 1, borderColor: colors.border }]}>
-              <View style={styles.titleRow}>
-                <TrendingUp size={10} color={colors.primary} style={styles.titleIcon} />
-                <TuiText size="xs" variant="muted" weight="bold">INCOME</TuiText>
-              </View>
-              <TuiText size="sm" weight="bold" style={{ color: colors.primary }}>
-                +₱{totalIncome.toFixed(2)}
-              </TuiText>
-            </View>
-            <View style={styles.subBalanceItem}>
-              <View style={styles.titleRow}>
-                <TrendingDown size={10} color={colors.destructive} style={styles.titleIcon} />
-                <TuiText size="xs" variant="muted" weight="bold">EXPENSES</TuiText>
-              </View>
-              <TuiText size="sm" weight="bold" style={{ color: colors.destructive }}>
-                -₱{totalExpense.toFixed(2)}
-              </TuiText>
-            </View>
-          </View>
-        </View>
-      </TuiContainer>
-
-      {/* 02: MONTHLY BUDGET */}
-      <TuiContainer label="Monthly Budget">
-        <View style={styles.budgetHeader}>
-          <PiggyBank size={14} color={colors.primary} style={styles.titleIcon} />
-          <TuiText size="sm" weight="bold" style={{ flex: 1 }}>
-            Budget Limits
+      {/* 01: FIXED TOP SECTION (HEADER & BALANCES CARD) */}
+      <View style={[styles.fixedTopSection, { backgroundColor: colors.background, borderColor: colors.border }]}>
+        {/* Net Balance Card */}
+        <TuiContainer label="Balances">
+          <TuiText size="3xl" weight="bold" style={{ color: balance >= 0 ? colors.primary : colors.destructive, marginVertical: 4 }}>
+            ₱{balance.toFixed(2)}
           </TuiText>
-        </View>
+          <TuiText size="xs" variant="muted" style={{ marginTop: 2 }}>
+            Income: +₱{totalIncome.toFixed(2)}  |  Expenses: -₱{totalExpense.toFixed(2)}
+          </TuiText>
+        </TuiContainer>
+      </View>
+
+      {/* 02: SCROLLABLE BODY SECTION */}
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContentContainer}>
         
-        <TuiProgressMeter
-          progress={budgetProgress}
-          label={`Spent so far: ₱${totalExpense.toFixed(2)} of ₱${budgetLimit.toFixed(2)}`}
-        />
-        
-        {editingBudget ? (
-          <View style={styles.budgetEditRow}>
-            <TextInput
-              value={budgetInput}
-              onChangeText={setBudgetInput}
-              keyboardType="numeric"
-              placeholder="Enter limit"
-              placeholderTextColor={colors.mutedForeground}
-              style={[
-                styles.budgetInput,
-                {
-                  color: colors.foreground,
-                  borderColor: colors.primary,
-                  backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-                },
-              ]}
+        {/* Overall Budget Card */}
+        <TuiContainer label="Overall Budget" badge={budgetLimit > 0 ? `₱${budgetLimit.toFixed(0)}` : undefined}>
+          {budgetLimit > 0 ? (
+            <TuiSegmentedMeter
+              segments={CATEGORIES.filter(cat => categoryBudgets[cat.id] > 0).map((cat, index) => ({
+                color: BUDGET_COLORS[(index + 1) % BUDGET_COLORS.length],
+                value: categoryBudgets[cat.id] || 0,
+              }))}
+              totalLimit={budgetLimit}
+              totalSpent={totalExpense}
+              label={`Spent: ₱${totalExpense.toFixed(2)} of ₱${budgetLimit.toFixed(2)}`}
             />
-            <TuiButton onPress={handleSaveBudget} style={styles.saveBudgetBtn} variant="accent">
-              Save
-            </TuiButton>
-            <TuiButton onPress={() => setEditingBudget(false)} style={styles.cancelBudgetBtn}>
-              Cancel
-            </TuiButton>
+          ) : (
+            <TuiText size="xs" variant="muted" style={styles.emptyState}>
+              No active category budgets configured.
+            </TuiText>
+          )}
+        </TuiContainer>
+
+        {/* My Debts (Divided Column TuiContainer) */}
+        <TuiContainer label="My Debts">
+          <View style={styles.debtsGrid}>
+            <View style={[styles.debtCol, { borderRightWidth: 1, borderColor: colors.border }]}>
+              <View style={styles.titleRow}>
+                <Landmark size={12} color={colors.destructive} style={styles.titleIcon} />
+                <TuiText size="xs" variant="muted" weight="bold">I OWE</TuiText>
+              </View>
+              <TuiText size="lg" weight="bold" style={{ color: colors.destructive, marginTop: 4 }}>
+                ₱12,500.00
+              </TuiText>
+            </View>
+
+            <View style={[styles.debtCol, { paddingLeft: 12 }]}>
+              <View style={styles.titleRow}>
+                <Landmark size={12} color={colors.primary} style={styles.titleIcon} />
+                <TuiText size="xs" variant="muted" weight="bold">OWES ME</TuiText>
+              </View>
+              <TuiText size="lg" weight="bold" style={{ color: colors.primary, marginTop: 4 }}>
+                ₱8,200.00
+              </TuiText>
+            </View>
           </View>
-        ) : (
-          <TuiButton
-            onPress={() => {
-              setBudgetInput(budgetLimit.toString());
-              setEditingBudget(true);
-            }}
-            variant="outline"
-          >
-            Change Budget Limit
-          </TuiButton>
-        )}
-      </TuiContainer>
+        </TuiContainer>
 
-      {/* 03: EXPENSES BY CATEGORY */}
-      <TuiContainer label="Expenses by Category" badge="Analytics">
-        {chartData.length === 0 ? (
-          <TuiText size="xs" variant="muted" style={styles.emptyState}>
-            No expenses recorded yet.
-          </TuiText>
-        ) : (
-          <TuiBarChart data={chartData} />
-        )}
-      </TuiContainer>
-
-      {/* 04: QUICK ACTIONS */}
-      <TuiContainer label="Actions">
-        <TuiButton onPress={onNavigateToAdd} variant="accent" style={styles.logBtn}>
-          + Add Transaction
-        </TuiButton>
-
-        <TuiButton onPress={handleToggleMode} variant="outline">
-          Switch to {isDark ? 'Light' : 'Dark'} Mode
-        </TuiButton>
-      </TuiContainer>
-
-      {/* 05: RECENT TRANSACTIONS */}
-      <TuiContainer label="Recent Transactions" badge="Latest">
-        {transactions.length === 0 ? (
-          <TuiText size="xs" variant="muted" style={styles.emptyState}>
-            No transactions recorded yet.
-          </TuiText>
-        ) : (
-          <View style={styles.logsList}>
-            {transactions.slice(0, 5).map((t) => (
-              <View
-                key={t.id}
-                style={[
-                  styles.logRow,
-                  {
-                    borderColor: isDark ? '#27272A' : '#E4E4E7',
-                  },
-                ]}
-              >
-                {/* Visual Category Icon */}
+        {/* Recent Transactions Container */}
+        <TuiContainer label="Recent Transactions">
+          {transactions.length === 0 ? (
+            <TuiText size="xs" variant="muted" style={styles.emptyState}>
+              No transactions recorded yet.
+            </TuiText>
+          ) : (
+            <View style={styles.logsList}>
+              {transactions.slice(0, 5).map((t) => (
                 <View
+                  key={t.id}
                   style={[
-                    styles.rowIconContainer,
+                    styles.logRow,
                     {
-                      borderColor: isDark ? '#3F3F46' : '#000000',
-                      backgroundColor: isDark ? '#27272A' : '#FFFFFF',
+                      borderColor: isDark ? '#27272A' : '#E4E4E7',
                     },
                   ]}
                 >
-                  {getCategoryIcon(t.category, 14, isDark ? '#FAFAFA' : '#000000')}
-                </View>
-
-                <View style={styles.logLeft}>
-                  <TuiText weight="bold" size="sm">
-                    {t.description}
-                  </TuiText>
-                  <TuiText size="xs" variant="muted">
-                    {t.date} | {t.category.toUpperCase()}
-                  </TuiText>
-                </View>
-
-                <View style={styles.logRight}>
-                  <TuiText
-                    weight="bold"
-                    style={{
-                      color: t.type === 'income' ? colors.primary : colors.destructive,
-                      marginRight: 10,
-                    }}
+                  {/* Visual Category Icon */}
+                  <View
+                    style={[
+                      styles.rowIconContainer,
+                      {
+                        borderColor: isDark ? '#3F3F46' : '#000000',
+                        backgroundColor: isDark ? '#27272A' : '#FFFFFF',
+                      },
+                    ]}
                   >
-                    {t.type === 'income' ? '+' : '-'}₱{t.amount.toFixed(2)}
-                  </TuiText>
-                  
-                  {/* Delete button (Trash icon) */}
-                  <Pressable
-                    onPress={() => onDeleteTransaction(t.id)}
-                    style={styles.deletePressable}
-                  >
-                    <Trash2 size={13} color={colors.destructive} />
-                  </Pressable>
+                    {getCategoryIcon(t.category, 14, isDark ? '#FAFAFA' : '#000000')}
+                  </View>
+
+                  <View style={styles.logLeft}>
+                    <TuiText weight="bold" size="sm">
+                      {t.description}
+                    </TuiText>
+                    <TuiText size="xs" variant="muted">
+                      {t.date} | {t.category.toUpperCase()}
+                    </TuiText>
+                  </View>
+
+                  <View style={styles.logRight}>
+                    <TuiText
+                      weight="bold"
+                      style={{
+                        color: t.type === 'income' ? colors.primary : colors.destructive,
+                        marginRight: 10,
+                      }}
+                    >
+                      {t.type === 'income' ? '+' : '-'}₱{t.amount.toFixed(2)}
+                    </TuiText>
+                    
+                    {/* Delete button (Trash icon) */}
+                    <Pressable
+                      onPress={() => onDeleteTransaction(t.id)}
+                      style={styles.deletePressable}
+                    >
+                      <Trash2 size={13} color={colors.destructive} />
+                    </Pressable>
+                  </View>
                 </View>
-              </View>
-            ))}
-          </View>
-        )}
-      </TuiContainer>
-    </ScrollView>
+              ))}
+            </View>
+          )}
+        </TuiContainer>
+
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  mainWrapper: {
     flex: 1,
   },
-  contentContainer: {
+  fixedTopSection: {
     paddingHorizontal: 12,
-    paddingTop: 10,
-    paddingBottom: 230, // Clear active terminal overlays
+    paddingTop: 12,
+    paddingBottom: 6,
+    borderBottomWidth: 1.5,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
   },
   titleIcon: {
     marginRight: 4,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContentContainer: {
+    paddingHorizontal: 12,
+    paddingTop: 4,
+    paddingBottom: 60, // Clear floating bottom nav safely
   },
   budgetHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 6,
   },
-  balanceGrid: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 4,
-  },
-  balanceItem: {
-    flex: 1.1,
-    justifyContent: 'center',
-    paddingRight: 12,
-  },
-  balanceSubGrid: {
-    flex: 0.9,
-    paddingLeft: 12,
-  },
-  subBalanceItem: {
-    paddingVertical: 3,
-  },
   budgetEditRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 4,
   },
+  changeBudgetBtn: {
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 0,
+    marginVertical: 4,
+  },
   budgetInput: {
     flex: 1,
-    height: 38,
-    borderWidth: 2,
-    paddingHorizontal: 10,
+    height: 44,
+    borderWidth: 1.5,
+    paddingHorizontal: 12,
     fontFamily: 'JetBrainsMono_400Regular',
-    fontSize: 13,
+    fontSize: 14,
   },
   saveBudgetBtn: {
     marginLeft: 8,
     marginVertical: 0,
+    width: 44,
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
   cancelBudgetBtn: {
     marginLeft: 4,
     marginVertical: 0,
+    width: 38,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 0,
+    paddingHorizontal: 0,
   },
+
+  debtsGrid: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  debtCol: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+
   emptyState: {
     textAlign: 'center',
     paddingVertical: 20,
     letterSpacing: 0.5,
-  },
-  logBtn: {
-    marginVertical: 8,
   },
   logsList: {
     marginTop: 4,
