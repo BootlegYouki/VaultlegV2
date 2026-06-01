@@ -1,13 +1,20 @@
 name: Build Unsigned iOS IPA
 
 on:
-  workflow_dispatch: # Allows you to manually trigger the build from the GitHub Actions tab
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 1.0.1)'
+        required: true
+        default: '1.0.0'
 
 jobs:
   build:
     name: Build IPA
     runs-on: macos-latest
-    
+    permissions:
+      contents: write # Required to create GitHub Releases
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,7 +44,6 @@ jobs:
       - name: Build Unsigned App
         run: |
           cd ios
-          # Using xcodebuild to compile the app without any certificates.
           xcodebuild -workspace Vaultleg.xcworkspace \
             -scheme Vaultleg \
             -configuration Release \
@@ -49,15 +55,67 @@ jobs:
 
       - name: Package into IPA
         run: |
-          # An .ipa file is essentially a zip folder containing a "Payload" folder with the .app inside
           cd ios/build/Build/Products/Release-iphoneos
           mkdir Payload
           mv Vaultleg.app Payload/
           zip -qr ../../../../../Vaultleg.ipa Payload
-          
-      - name: Upload IPA Artifact
-        uses: actions/upload-artifact@v4
+
+      - name: Generate AltStore source.json
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          REPO="${{ github.repository }}"
+          cat > altstore-source.json << EOF
+          {
+            "name": "Vaultleg",
+            "identifier": "com.darren.vaultleg.source",
+            "apps": [
+              {
+                "name": "Vaultleg",
+                "bundleIdentifier": "com.darren.vaultleg",
+                "developerName": "Darren",
+                "version": "${VERSION}",
+                "versionDate": "${DATE}",
+                "downloadURL": "https://github.com/${REPO}/releases/download/v${VERSION}/Vaultleg.ipa",
+                "localizedDescription": "Personal finance tracker.",
+                "iconURL": "https://raw.githubusercontent.com/${REPO}/main/assets/icon.png",
+                "tintColor": "00E5FF",
+                "size": 0
+              }
+            ]
+          }
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: Vaultleg-Unsigned-IPA
-          path: Vaultleg.ipa
-          retention-days: 7
+          tag_name: v${{ github.event.inputs.version }}
+          name: Vaultleg v${{ github.event.inputs.version }}
+          body: |
+            ## Vaultleg v${{ github.event.inputs.version }}
+            
+            ### Install via AltStore / Sideloadly
+            Download `Vaultleg.ipa` below and sideload it using AltStore or Sideloadly.
+            
+            ### AltStore Source URL
+            Add this source to AltStore for auto-updates:
+            ```
+            https://raw.githubusercontent.com/${{ github.repository }}/main/altstore-source.json
+            ```
+          files: |
+            Vaultleg.ipa
+            altstore-source.json
+          draft: false
+          prerelease: false
+
+      - name: Commit updated altstore-source.json to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          cp altstore-source.json altstore-source.json.bak
+          git fetch origin main
+          git checkout main
+          cp altstore-source.json.bak altstore-source.json
+          git add altstore-source.json
+          git diff --staged --quiet || git commit -m "chore: update AltStore source to v${{ github.event.inputs.version }}"
+          git push origin main

@@ -177,7 +177,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
 const styles = StyleSheet.create({
   shadowWrapper: {
     position: 'absolute',
-    bottom: 24,
+    bottom: 32,
     left: 20, // Comfortable breathing room
     right: 20, // Comfortable breathing room
     zIndex: 99,
