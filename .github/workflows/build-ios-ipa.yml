@@ -25,11 +25,27 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Get version from app.json
-        id: get_version
+      - name: Auto-increment version in app.json
+        id: bump_version
         run: |
-          VERSION=$(node -p "require('./app.json').expo.version")
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          node -e "
+            const fs = require('fs');
+            const app = require('./app.json');
+            const currentVersion = app.expo.version || '1.0.0';
+            const parts = currentVersion.split('.').map(Number);
+            if (parts.length === 3) {
+              parts[2] += 1;
+            } else {
+              parts.push(1);
+            }
+            const nextVersion = parts.join('.');
+            app.expo.version = nextVersion;
+            fs.writeFileSync('./app.json', JSON.stringify(app, null, 2) + '\n');
+            console.log('Next version calculated:', nextVersion);
+            
+            // Output to environment for subsequent steps
+            fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION=' + nextVersion + '\n');
+          "
 
       - name: Install dependencies
         run: pnpm install
@@ -108,14 +124,15 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Commit updated altstore-source.json to main
+      - name: Commit updated app.json and altstore-source.json to main
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          cp altstore-source.json altstore-source.json.bak
+          git add app.json altstore-source.json
+          git stash
           git fetch origin main
-          git checkout main
-          cp altstore-source.json.bak altstore-source.json
-          git add altstore-source.json
-          git diff --staged --quiet || git commit -m "chore: update AltStore source to v${VERSION}"
+          git rebase origin/main
+          git stash pop
+          git add app.json altstore-source.json
+          git diff --staged --quiet || git commit -m "chore: release v${VERSION} and update AltStore source [skip ci]"
           git push origin main
