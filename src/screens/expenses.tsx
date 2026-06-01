@@ -93,7 +93,7 @@ export const Expenses: React.FC<ExpensesProps> = ({
       </View>
 
       {/* 02: SCROLLABLE LEDGER */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 + insets.bottom }]}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContent, { paddingBottom: 80 + insets.bottom }]}>
         <TuiContainer label="Ledger List" badge={`${filteredTransactions.length} logs`}>
           {filteredTransactions.length === 0 ? (
             <TuiText size="xs" variant="muted" style={styles.emptyState}>

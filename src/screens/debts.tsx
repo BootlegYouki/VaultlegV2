@@ -25,7 +25,7 @@ export const Debts: React.FC = () => {
   const totalReceivable = receivables.reduce((sum, d) => sum + d.amount, 0);
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 + insets.bottom }]}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={[styles.scrollContent, { paddingBottom: 80 + insets.bottom }]}>
       
       {/* 01: OVERVIEW CARD */}
       <TuiContainer label="Debts Summary" badge="Totals">

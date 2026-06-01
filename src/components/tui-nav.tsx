@@ -33,16 +33,16 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
   const isPlusActive = currentScreen === 'add-transaction';
 
   return (
-    <View style={[styles.shadowWrapper, { bottom: 32 + insets.bottom }]}>
+    <View style={[styles.shadowWrapper, { bottom: 16 + insets.bottom }]}>
       <View style={styles.navRow}>
-        
+
         {/* 4 MENU TABS */}
         {menuItems.map((item, idx) => {
           const isActive = currentScreen === item.screen;
           const bWidth = buttonWidths[item.screen] || 70;
           const lWidth = legendWidths[item.screen] || 32;
           const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
-          
+
           return (
             <Pressable
               key={item.screen}
@@ -67,14 +67,14 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
               <View style={[styles.borderTopRight, { backgroundColor: borderAccent, width: topSegmentWidth }]} />
 
               {/* Brutalist legend resting on top border */}
-              <View 
+              <View
                 onLayout={(e) => {
                   const width = e.nativeEvent.layout.width;
                   setLegendWidths(prev => ({ ...prev, [item.screen]: width }));
                 }}
                 style={[
-                  styles.legendWrapper, 
-                  { 
+                  styles.legendWrapper,
+                  {
                     backgroundColor: 'transparent',
                     paddingHorizontal: 2,
                   }
@@ -119,34 +119,34 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
           <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
           <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
           <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
-          <View 
+          <View
             style={[
-              styles.borderTopLeft, 
-              { 
-                backgroundColor: borderAccent, 
-                width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2) 
+              styles.borderTopLeft,
+              {
+                backgroundColor: borderAccent,
+                width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2)
               }
-            ]} 
+            ]}
           />
-          <View 
+          <View
             style={[
-              styles.borderTopRight, 
-              { 
-                backgroundColor: borderAccent, 
-                width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2) 
+              styles.borderTopRight,
+              {
+                backgroundColor: borderAccent,
+                width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2)
               }
-            ]} 
+            ]}
           />
 
           {/* Brutalist legend resting on top border */}
-          <View 
+          <View
             onLayout={(e) => {
               const width = e.nativeEvent.layout.width;
               setLegendWidths(prev => ({ ...prev, ['add-transaction']: width }));
             }}
             style={[
-              styles.legendWrapper, 
-              { 
+              styles.legendWrapper,
+              {
                 backgroundColor: 'transparent',
                 paddingHorizontal: 2,
               }
@@ -179,7 +179,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
 const styles = StyleSheet.create({
   shadowWrapper: {
     position: 'absolute',
-    bottom: 32,
+    bottom: 15,
     left: 20, // Comfortable breathing room
     right: 20, // Comfortable breathing room
     zIndex: 99,

@@ -94,7 +94,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       </View>
 
       {/* 02: SCROLLABLE BODY SECTION */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContentContainer, { paddingBottom: 100 + insets.bottom }]}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContentContainer, { paddingBottom: 80 + insets.bottom }]}>
         
         {/* Overall Budget Card */}
         <TuiContainer label="Overall Budget" badge={budgetLimit > 0 ? `₱${budgetLimit.toFixed(0)}` : undefined}>

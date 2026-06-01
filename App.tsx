@@ -282,7 +282,7 @@ function MainApp() {
 
       {/* FAB Choices stacked directly on top of the LOG button */}
       {logMenuOpen && (
-        <View style={[styles.fabMenuContainer, { bottom: 90 + insets.bottom }]}>
+        <View style={[styles.fabMenuContainer, { bottom: 82 + insets.bottom }]}>
           
           {/* BUDGET KEY (Top) */}
           <Pressable
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   },
   fabMenuContainer: {
     position: 'absolute',
-    bottom: 90, // Sits exactly 14px above the tab bar top edge (76px)
+    bottom: 82, // Sits exactly 14px above the tab bar top edge (68px)
     right: 20, // Aligns perfectly with the standalone Plus LOG button's right boundary
     width: 52, // Exact same 52px width
     zIndex: 9999,

@@ -157,7 +157,7 @@ export const Budgets: React.FC<BudgetsProps> = ({
 
   return (
     <View style={{ flex: 1 }}>
-      <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 + insets.bottom }]}>
+      <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={[styles.scrollContent, { paddingBottom: 80 + insets.bottom }]}>
 
         {/* 01: PROGRESS & CONFIG CONTAINER */}
         <TuiContainer label="Overall Budget" badge={budgetLimit > 0 ? `₱${budgetLimit.toFixed(0)}` : undefined}>
