@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 445 93"
+     width="100%" height="100%">
+  <path d="M 383 79 L 383 85 L 425 85 L 425 79 L 422 79 L 421 83 L 385 82 L 385 79 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 324 79 L 324 85 L 372 85 L 372 79 L 370 79 L 369 83 L 327 82 L 327 79 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 272 79 L 272 85 L 320 85 L 320 79 L 317 79 L 316 83 L 274 82 L 274 79 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 232 79 L 232 85 L 248 85 L 248 79 L 245 79 L 244 83 L 235 82 L 235 79 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 180 79 L 180 85 L 228 85 L 228 79 L 226 79 L 225 83 L 182 82 L 182 79 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 128 79 L 128 85 L 169 85 L 169 79 L 167 79 L 166 83 L 130 82 L 130 79 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 101 79 L 101 85 L 117 85 L 117 79 L 114 79 L 113 83 L 104 82 L 104 79 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 69 79 L 69 85 L 84 85 L 84 79 L 82 79 L 81 83 L 71 82 L 71 79 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 23 79 L 23 85 L 51 85 L 51 79 L 49 79 L 48 83 L 25 82 L 25 79 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 429 65 L 428 69 L 422 69 L 422 77 L 425 77 L 426 71 L 431 71 L 431 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 376 65 L 376 71 L 381 72 L 381 77 L 420 77 L 420 65 L 381 65 L 380 69 L 379 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 322 65 L 322 77 L 368 77 L 369 71 L 370 77 L 372 77 L 372 69 L 368 68 L 368 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 270 65 L 270 77 L 315 77 L 316 71 L 317 77 L 320 77 L 320 69 L 315 68 L 315 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 245 65 L 245 77 L 248 77 L 248 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 230 65 L 230 77 L 243 77 L 243 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 178 65 L 178 77 L 224 77 L 225 71 L 226 77 L 228 77 L 228 69 L 224 68 L 224 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 173 65 L 172 69 L 167 69 L 167 77 L 169 77 L 170 71 L 176 71 L 176 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 121 65 L 121 71 L 126 72 L 126 77 L 165 77 L 165 65 L 126 65 L 123 68 L 123 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 114 65 L 114 77 L 117 77 L 117 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 99 65 L 99 77 L 112 77 L 112 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 82 65 L 82 77 L 84 77 L 84 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 67 65 L 67 77 L 80 77 L 80 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 55 65 L 54 69 L 49 69 L 49 77 L 51 77 L 52 71 L 58 71 L 58 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 16 65 L 16 71 L 21 72 L 21 77 L 47 77 L 47 65 L 21 65 L 20 69 L 19 65 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 429 51 L 429 63 L 431 63 L 431 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 414 51 L 414 63 L 427 63 L 427 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 390 51 L 390 63 L 392 63 L 392 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 374 51 L 374 63 L 387 63 L 387 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 357 51 L 356 55 L 337 55 L 337 63 L 340 63 L 341 57 L 359 57 L 359 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 322 51 L 322 63 L 335 63 L 335 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 285 51 L 285 63 L 287 63 L 287 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 270 51 L 270 63 L 283 63 L 283 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 245 51 L 245 63 L 248 63 L 248 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 230 51 L 230 63 L 243 63 L 243 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 193 51 L 193 63 L 196 63 L 196 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 178 51 L 178 63 L 191 63 L 191 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 173 51 L 173 63 L 176 63 L 176 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 158 51 L 158 63 L 171 63 L 171 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 134 51 L 134 63 L 137 63 L 137 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 119 51 L 119 63 L 132 63 L 132 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 114 51 L 114 63 L 117 63 L 117 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 99 51 L 98 55 L 82 55 L 82 63 L 84 63 L 85 57 L 99 58 L 99 63 L 112 63 L 112 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 67 51 L 67 63 L 80 63 L 80 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 62 51 L 61 55 L 55 55 L 55 63 L 58 63 L 59 57 L 65 57 L 65 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 40 51 L 40 63 L 53 63 L 53 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 10 51 L 10 57 L 14 58 L 14 63 L 27 63 L 28 57 L 29 63 L 32 63 L 32 55 L 27 54 L 27 51 L 14 51 L 13 55 L 12 51 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 407 37 L 407 49 L 427 49 L 428 43 L 429 49 L 431 49 L 431 41 L 427 40 L 427 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 390 37 L 390 49 L 392 49 L 392 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 374 37 L 374 49 L 387 49 L 387 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 322 37 L 322 49 L 355 49 L 356 43 L 357 49 L 359 49 L 359 41 L 355 40 L 355 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 285 37 L 285 49 L 287 49 L 287 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 270 37 L 270 49 L 283 49 L 283 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 245 37 L 245 49 L 248 49 L 248 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 230 37 L 230 49 L 243 49 L 243 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 193 37 L 193 49 L 196 49 L 196 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 178 37 L 178 49 L 191 49 L 191 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 173 37 L 173 49 L 176 49 L 176 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 158 37 L 158 49 L 171 49 L 171 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 134 37 L 134 49 L 137 49 L 137 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 119 37 L 119 49 L 132 49 L 132 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 114 37 L 114 49 L 117 49 L 117 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 67 37 L 67 49 L 112 49 L 112 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 62 37 L 62 49 L 65 49 L 65 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 47 37 L 47 49 L 60 49 L 60 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 23 37 L 23 49 L 25 49 L 25 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 8 37 L 8 49 L 21 49 L 21 37 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 422 23 L 421 27 L 390 27 L 390 35 L 392 35 L 393 29 L 425 29 L 425 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 374 23 L 374 35 L 387 35 L 387 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 370 23 L 369 27 L 337 27 L 337 35 L 340 35 L 341 29 L 372 29 L 372 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 322 23 L 322 35 L 335 35 L 335 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 285 23 L 285 35 L 287 35 L 287 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 270 23 L 270 35 L 283 35 L 283 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 265 23 L 264 27 L 245 27 L 245 35 L 248 35 L 249 29 L 268 29 L 268 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 213 23 L 213 29 L 230 30 L 230 35 L 243 35 L 243 23 L 230 23 L 229 27 L 215 26 L 215 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 193 23 L 193 35 L 196 35 L 196 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 178 23 L 178 35 L 191 35 L 191 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 173 23 L 173 35 L 176 35 L 176 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 158 23 L 158 35 L 171 35 L 171 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 134 23 L 134 35 L 137 35 L 137 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 119 23 L 119 35 L 132 35 L 132 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 99 23 L 98 27 L 82 27 L 82 35 L 84 35 L 85 29 L 99 30 L 99 35 L 112 35 L 113 29 L 114 35 L 117 35 L 117 27 L 112 26 L 112 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 67 23 L 67 35 L 80 35 L 80 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 62 23 L 62 35 L 65 35 L 65 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 47 23 L 47 35 L 60 35 L 60 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 23 23 L 23 35 L 25 35 L 25 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 8 23 L 8 35 L 21 35 L 21 23 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 381 9 L 381 21 L 420 21 L 421 15 L 422 21 L 425 21 L 425 13 L 420 12 L 420 9 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 322 9 L 322 21 L 368 21 L 369 15 L 370 21 L 372 21 L 372 13 L 368 12 L 368 9 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 270 9 L 270 21 L 283 21 L 284 15 L 285 21 L 287 21 L 287 13 L 283 12 L 283 9 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 211 9 L 211 21 L 263 21 L 264 15 L 265 21 L 268 21 L 268 13 L 263 12 L 263 9 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 178 9 L 178 21 L 191 21 L 192 15 L 193 21 L 196 21 L 196 13 L 191 12 L 191 9 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 158 9 L 158 21 L 171 21 L 172 15 L 173 21 L 176 21 L 176 13 L 171 12 L 171 9 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 119 9 L 119 21 L 132 21 L 133 15 L 134 21 L 137 21 L 137 13 L 132 12 L 132 9 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 73 9 L 73 21 L 106 21 L 107 15 L 108 21 L 110 21 L 110 13 L 106 12 L 106 9 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 47 9 L 47 21 L 60 21 L 61 15 L 62 21 L 65 21 L 65 13 L 60 12 L 60 9 Z" fill="currentColor" fill-rule="evenodd" />
+  <path d="M 8 9 L 8 21 L 21 21 L 22 15 L 23 21 L 25 21 L 25 13 L 21 12 L 21 9 Z" fill="currentColor" fill-rule="evenodd" />
+</svg>

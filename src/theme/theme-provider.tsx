@@ -3,7 +3,7 @@ import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
-export type AccentTheme = 'gray' | 'amber' | 'green' | 'rose' | 'cobalt';
+export type AccentTheme = 'classic' | 'gray' | 'amber' | 'green' | 'rose' | 'cobalt';
 
 export interface ThemeColors {
   background: string;
@@ -32,7 +32,8 @@ interface ThemeContextType {
   setAccentTheme: (theme: AccentTheme) => void;
 }
 
-const ACCENT_COLORS = {
+export const ACCENT_COLORS = {
+  classic: { dark: '#FFFFFF', light: '#000000' },
   gray: { dark: '#71717A', light: '#71717A' },
   amber: { dark: '#F59E0B', light: '#D97706' },
   green: { dark: '#10B981', light: '#059669' },
@@ -45,7 +46,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const systemScheme = useColorScheme();
   const [themeMode, setThemeModeState] = useState<ThemeMode>('dark');
-  const [accentTheme, setAccentThemeState] = useState<AccentTheme>('gray');
+  const [accentTheme, setAccentThemeState] = useState<AccentTheme>('classic');
 
   // Load preferences on startup
   useEffect(() => {
@@ -55,7 +56,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const savedAccent = await AsyncStorage.getItem('accent_theme');
         
         if (savedMode) setThemeModeState(savedMode as ThemeMode);
-        if (savedAccent) setAccentThemeState(savedAccent as AccentTheme || 'gray');
+        if (savedAccent) setAccentThemeState(savedAccent as AccentTheme || 'classic');
       } catch (e) {
         console.error('Failed to load theme preferences', e);
       }
@@ -83,12 +84,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const isDark = themeMode === 'system' ? systemScheme === 'dark' : themeMode === 'dark';
 
-  // Pure monochromatic accent color: bright white in dark mode, jet black in light mode.
-  const dynamicAccent = isDark ? '#FFFFFF' : '#000000';
+  // Dynamic accent color based on chosen accent theme!
+  const dynamicAccent = ACCENT_COLORS[accentTheme] ? ACCENT_COLORS[accentTheme][isDark ? 'dark' : 'light'] : (isDark ? '#FFFFFF' : '#000000');
 
   const colors: ThemeColors = isDark
     ? {
-        background: '#09090B',
+        background: '#18181B',
         foreground: '#FAFAFA',
         card: '#18181B',
         cardForeground: '#FAFAFA',
@@ -105,7 +106,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         destructive: '#EF4444',
       }
     : {
-        background: '#FFFFFF',
+        background: '#F4F4F5',
         foreground: '#09090B',
         card: '#F4F4F5',
         cardForeground: '#09090B',

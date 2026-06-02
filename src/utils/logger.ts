@@ -24,15 +24,18 @@ class TuiLogger {
     } else if (message.startsWith('SAVED_') && message.endsWith('_TRANSACTIONS_OK')) {
       const count = message.split('_')[1];
       cleanMessage = `Saved ${count} transactions successfully.`;
-    } else if (message.startsWith('UPDATED_BUDGET_LIMIT_TO_')) {
-      const amount = message.replace('UPDATED_BUDGET_LIMIT_TO_', '');
-      cleanMessage = `Changed monthly budget limit to ${amount}.`;
-    } else if (message.startsWith('INITIALIZED_DEFAULT_BUDGET_')) {
-      const amount = message.replace('INITIALIZED_DEFAULT_BUDGET_', '');
-      cleanMessage = `Set default monthly budget limit to ${amount}.`;
-    } else if (message.startsWith('LOADED_BUDGET_LIMIT_')) {
-      const amount = message.replace('LOADED_BUDGET_LIMIT_', '');
-      cleanMessage = `Loaded budget limit of ${amount}.`;
+    } else if (message.startsWith('UPDATED_BUDGET_LIMIT_TO_') || message.startsWith('UPDATED_STATS_LIMIT_TO_')) {
+      const amount = message.replace('UPDATED_BUDGET_LIMIT_TO_', '').replace('UPDATED_STATS_LIMIT_TO_', '');
+      cleanMessage = `Changed monthly limit to ${amount}.`;
+    } else if (message.startsWith('INITIALIZED_DEFAULT_BUDGET_') || message.startsWith('INITIALIZED_DEFAULT_STATS_LIMIT_')) {
+      const amount = message.replace('INITIALIZED_DEFAULT_BUDGET_', '').replace('INITIALIZED_DEFAULT_STATS_LIMIT_', '');
+      cleanMessage = `Set default monthly limit to ${amount}.`;
+    } else if (message.startsWith('LOADED_BUDGET_LIMIT_') || message.startsWith('LOADED_STATS_LIMIT_')) {
+      const amount = message.replace('LOADED_BUDGET_LIMIT_', '').replace('LOADED_STATS_LIMIT_', '');
+      cleanMessage = `Loaded limit of ${amount}.`;
+    } else if (message.startsWith('MIGRATED_BUDGET_LIMIT_')) {
+      const amount = message.replace('MIGRATED_BUDGET_LIMIT_', '').split('_')[0];
+      cleanMessage = `Migrated monthly limit of ${amount} to new system.`;
     }
     
     // System boot mapping
@@ -71,9 +74,9 @@ class TuiLogger {
       }
     } else if (message.startsWith('DELETED_TRANSACTION_ID_')) {
       cleanMessage = 'Removed transaction from history.';
-    } else if (message.startsWith('CONFIGURED_BUDGET_TO_')) {
-      const amt = message.replace('CONFIGURED_BUDGET_TO_', '');
-      cleanMessage = `Changed monthly budget limit to ${amt}.`;
+    } else if (message.startsWith('CONFIGURED_BUDGET_TO_') || message.startsWith('CONFIGURED_LIMIT_TO_')) {
+      const amt = message.replace('CONFIGURED_BUDGET_TO_', '').replace('CONFIGURED_LIMIT_TO_', '');
+      cleanMessage = `Changed monthly limit to ${amt}.`;
     } else if (message === 'BUFFER_CLEARED') {
       cleanMessage = 'Activity logs cleared.';
     }

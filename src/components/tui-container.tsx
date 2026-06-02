@@ -26,7 +26,7 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
   const [legendWidth, setLegendWidth] = React.useState(0);
 
   // Brutalist double-line border style, or clean solid border
-  const borderColor = accentBorder ? colors.primary : (isDark ? colors.primary + '40' : '#000000');
+  const borderColor = accentBorder ? colors.primary : (isDark ? colors.primary + '40' : colors.primary + '30');
   const backgroundColor = colors.card;
 
   return (
@@ -64,7 +64,7 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
           },
         ]}
       >
-        <TuiText weight="bold" size="sm" style={{ color: colors.primary }}>
+        <TuiText weight="bold" size="md" style={{ color: colors.primary }}>
           {label}
         </TuiText>
         {badge && (
@@ -96,10 +96,11 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
 
 const styles = StyleSheet.create({
   outerContainer: {
-    marginTop: 14,
-    marginBottom: 8,
-    padding: 12,
-    paddingTop: 16,
+    marginTop: 10,
+    marginBottom: 6,
+    padding: 8,
+    paddingTop: 12,
+    paddingHorizontal: 12,
     width: '100%',
     position: 'relative',
   },
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
   },
   legendWrapper: {
     position: 'absolute',
-    top: -9,
+    top: -11,
     left: 12,
     flexDirection: 'row',
     alignItems: 'center',

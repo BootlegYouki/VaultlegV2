@@ -1,14 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Transaction } from '../types';
+import { Transaction, Debt } from '../types';
 import { logger } from './logger';
 
 const KEYS = {
   TRANSACTIONS: 'tui_transactions',
-  BUDGET_LIMIT: 'tui_budget_limit',
-  CATEGORY_BUDGETS: 'tui_category_budgets',
+  BUDGET_LIMIT: 'tui_budget_limit', // Fallback key
+  CATEGORY_BUDGETS: 'tui_category_budgets', // Fallback key
+  STATS_LIMIT: 'tui_stats_limit',
+  CATEGORY_LIMITS: 'tui_category_limits',
+  DEBTS: 'tui_debts',
 };
 
-const DEFAULT_BUDGET_LIMIT = 1000; // Default monthly budget is ₱1000
+const DEFAULT_STATS_LIMIT = 1000; // Default monthly limit is ₱1000
 
 export const storage = {
   /**
@@ -46,68 +49,126 @@ export const storage = {
   },
 
   /**
-   * Save monthly budget limit
+   * Save monthly limit
    */
-  async saveBudgetLimit(limit: number): Promise<boolean> {
+  async saveStatsLimit(limit: number): Promise<boolean> {
     try {
-      await AsyncStorage.setItem(KEYS.BUDGET_LIMIT, limit.toString());
-      logger.log('DATABASE', `UPDATED_BUDGET_LIMIT_TO_₱${limit.toFixed(2)}`);
+      await AsyncStorage.setItem(KEYS.STATS_LIMIT, limit.toString());
+      logger.log('DATABASE', `UPDATED_STATS_LIMIT_TO_₱${limit.toFixed(2)}`);
       return true;
     } catch (e: any) {
-      logger.log('DATABASE_ERROR', `BUDGET_SAVE_FAILED: ${e.message}`);
+      logger.log('DATABASE_ERROR', `STATS_LIMIT_SAVE_FAILED: ${e.message}`);
       return false;
     }
   },
 
   /**
-   * Load monthly budget limit
+   * Load monthly limit
    */
-  async loadBudgetLimit(): Promise<number> {
+  async loadStatsLimit(): Promise<number> {
     try {
-      const val = await AsyncStorage.getItem(KEYS.BUDGET_LIMIT);
+      // 1. Try loading from new stats limit key
+      let val = await AsyncStorage.getItem(KEYS.STATS_LIMIT);
       if (val != null) {
         const limit = parseFloat(val);
-        logger.log('DATABASE', `LOADED_BUDGET_LIMIT_₱${limit.toFixed(2)}`);
-        return isNaN(limit) ? DEFAULT_BUDGET_LIMIT : limit;
+        logger.log('DATABASE', `LOADED_STATS_LIMIT_₱${limit.toFixed(2)}`);
+        return isNaN(limit) ? DEFAULT_STATS_LIMIT : limit;
       }
-      logger.log('DATABASE', `INITIALIZED_DEFAULT_BUDGET_₱${DEFAULT_BUDGET_LIMIT.toFixed(2)}`);
-      return DEFAULT_BUDGET_LIMIT;
+
+      // 2. Fall back to old budget limit key
+      val = await AsyncStorage.getItem(KEYS.BUDGET_LIMIT);
+      if (val != null) {
+        const limit = parseFloat(val);
+        logger.log('DATABASE', `MIGRATED_BUDGET_LIMIT_₱${limit.toFixed(2)}_TO_STATS`);
+        // Migrate to the new key
+        await AsyncStorage.setItem(KEYS.STATS_LIMIT, limit.toString());
+        return isNaN(limit) ? DEFAULT_STATS_LIMIT : limit;
+      }
+
+      logger.log('DATABASE', `INITIALIZED_DEFAULT_STATS_LIMIT_₱${DEFAULT_STATS_LIMIT.toFixed(2)}`);
+      return DEFAULT_STATS_LIMIT;
     } catch (e: any) {
-      logger.log('DATABASE_ERROR', `BUDGET_LOAD_FAILED: ${e.message}`);
-      return DEFAULT_BUDGET_LIMIT;
+      logger.log('DATABASE_ERROR', `STATS_LIMIT_LOAD_FAILED: ${e.message}`);
+      return DEFAULT_STATS_LIMIT;
     }
   },
 
   /**
-   * Save category-specific budget limits dictionary to storage
+   * Save category-specific limits dictionary to storage
    */
-  async saveCategoryBudgets(budgets: Record<string, number>): Promise<boolean> {
+  async saveCategoryLimits(limits: Record<string, number>): Promise<boolean> {
     try {
-      const jsonValue = JSON.stringify(budgets);
-      await AsyncStorage.setItem(KEYS.CATEGORY_BUDGETS, jsonValue);
-      logger.log('DATABASE', `SAVED_CATEGORY_BUDGETS_OK`);
+      const jsonValue = JSON.stringify(limits);
+      await AsyncStorage.setItem(KEYS.CATEGORY_LIMITS, jsonValue);
+      logger.log('DATABASE', `SAVED_CATEGORY_LIMITS_OK`);
       return true;
     } catch (e: any) {
-      logger.log('DATABASE_ERROR', `CATEGORY_BUDGET_SAVE_FAILED: ${e.message}`);
+      logger.log('DATABASE_ERROR', `CATEGORY_LIMITS_SAVE_FAILED: ${e.message}`);
       return false;
     }
   },
 
   /**
-   * Load category-specific budget limits dictionary from storage
+   * Load category-specific limits dictionary from storage
    */
-  async loadCategoryBudgets(): Promise<Record<string, number>> {
+  async loadCategoryLimits(): Promise<Record<string, number>> {
     try {
-      const jsonValue = await AsyncStorage.getItem(KEYS.CATEGORY_BUDGETS);
+      // 1. Try loading from new limits key
+      let jsonValue = await AsyncStorage.getItem(KEYS.CATEGORY_LIMITS);
       if (jsonValue != null) {
-        const budgets = JSON.parse(jsonValue) as Record<string, number>;
-        logger.log('DATABASE', `LOADED_CATEGORY_BUDGETS_OK`);
-        return budgets;
+        const limits = JSON.parse(jsonValue) as Record<string, number>;
+        logger.log('DATABASE', `LOADED_CATEGORY_LIMITS_OK`);
+        return limits;
       }
+
+      // 2. Fall back to old category budgets key
+      jsonValue = await AsyncStorage.getItem(KEYS.CATEGORY_BUDGETS);
+      if (jsonValue != null) {
+        const limits = JSON.parse(jsonValue) as Record<string, number>;
+        logger.log('DATABASE', `MIGRATED_CATEGORY_BUDGETS_TO_LIMITS`);
+        // Migrate to the new key
+        await AsyncStorage.setItem(KEYS.CATEGORY_LIMITS, jsonValue);
+        return limits;
+      }
+
       return {};
     } catch (e: any) {
-      logger.log('DATABASE_ERROR', `CATEGORY_BUDGET_LOAD_FAILED: ${e.message}`);
+      logger.log('DATABASE_ERROR', `CATEGORY_LIMITS_LOAD_FAILED: ${e.message}`);
       return {};
+    }
+  },
+
+  /**
+   * Save debts list to storage
+   */
+  async saveDebts(debts: Debt[]): Promise<boolean> {
+    try {
+      const jsonValue = JSON.stringify(debts);
+      await AsyncStorage.setItem(KEYS.DEBTS, jsonValue);
+      logger.log('DATABASE', `SAVED_${debts.length}_DEBTS_OK`);
+      return true;
+    } catch (e: any) {
+      logger.log('DATABASE_ERROR', `SAVE_DEBTS_FAILED: ${e.message}`);
+      return false;
+    }
+  },
+
+  /**
+   * Load debts list from storage
+   */
+  async loadDebts(): Promise<Debt[]> {
+    try {
+      const jsonValue = await AsyncStorage.getItem(KEYS.DEBTS);
+      if (jsonValue != null) {
+        const debts = JSON.parse(jsonValue) as Debt[];
+        logger.log('DATABASE', `LOADED_${debts.length}_DEBTS_OK`);
+        return debts;
+      }
+      logger.log('DATABASE', 'INITIALIZED_EMPTY_DEBTS_BUFFER');
+      return [];
+    } catch (e: any) {
+      logger.log('DATABASE_ERROR', `LOAD_DEBTS_FAILED: ${e.message}`);
+      return [];
     }
   },
 };

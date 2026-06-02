@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TextInput, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, TextInput, Pressable, RefreshControl } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Search, Trash2, Tag, ArrowUp, ArrowDown } from 'lucide-react-native';
+import { Search, Trash2, Tag, ArrowUp, ArrowDown, Plus } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
 import { TuiText } from '../components/tui-text';
@@ -12,6 +12,10 @@ import { getCategoryIcon } from './dashboard';
 interface ExpensesProps {
   transactions: Transaction[];
   onDeleteTransaction: (id: string) => void;
+  onEditTransaction?: (tx: Transaction) => void;
+  onLogTransaction: (initialType?: 'income' | 'expense') => void;
+  refreshing: boolean;
+  onRefresh: () => void;
 }
 
 type FilterType = 'all' | 'income' | 'expense';
@@ -19,6 +23,10 @@ type FilterType = 'all' | 'income' | 'expense';
 export const Expenses: React.FC<ExpensesProps> = ({
   transactions,
   onDeleteTransaction,
+  onEditTransaction,
+  onLogTransaction,
+  refreshing,
+  onRefresh,
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -68,7 +76,7 @@ export const Expenses: React.FC<ExpensesProps> = ({
               variant={filter === 'all' ? 'accent' : 'outline'}
               style={styles.segmentBtn}
             >
-              [ALL]
+              All
             </TuiButton>
           </View>
           <View style={styles.segmentCol}>
@@ -77,7 +85,7 @@ export const Expenses: React.FC<ExpensesProps> = ({
               variant={filter === 'income' ? 'accent' : 'outline'}
               style={styles.segmentBtn}
             >
-              [INFLOW]
+              Inflow
             </TuiButton>
           </View>
           <View style={styles.segmentCol}>
@@ -86,15 +94,38 @@ export const Expenses: React.FC<ExpensesProps> = ({
               variant={filter === 'expense' ? 'accent' : 'outline'}
               style={styles.segmentBtn}
             >
-              [OUTFLOW]
+              Outflow
             </TuiButton>
           </View>
         </View>
       </View>
 
-      {/* 02: SCROLLABLE LEDGER */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContent, { paddingBottom: 80 + insets.bottom }]}>
-        <TuiContainer label="Ledger List" badge={`${filteredTransactions.length} logs`}>
+      {/* 02: SCROLLABLE LOGS */}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 80 + insets.bottom }]}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+            progressBackgroundColor={isDark ? '#1C1C1E' : '#FFFFFF'}
+          />
+        }
+      >
+        <TuiContainer
+          label="Logs List"
+        >
+          <TuiButton
+            onPress={() => {
+              onLogTransaction(filter === 'all' ? undefined : filter);
+            }}
+            variant="accent"
+            style={styles.addTransactionBtn}
+          >
+            {filter === 'income' ? 'LOG INCOME' : filter === 'expense' ? 'LOG EXPENSE' : 'LOG TRANSACTION'}
+          </TuiButton>
           {filteredTransactions.length === 0 ? (
             <TuiText size="xs" variant="muted" style={styles.emptyState}>
               No matching transaction logs found.
@@ -102,12 +133,14 @@ export const Expenses: React.FC<ExpensesProps> = ({
           ) : (
             <View style={styles.logsList}>
               {filteredTransactions.map((t) => (
-                <View
+                <Pressable
                   key={t.id}
-                  style={[
+                  onPress={() => onEditTransaction?.(t)}
+                  style={({ pressed }) => [
                     styles.logRow,
                     {
                       borderColor: isDark ? '#27272A' : '#E4E4E7',
+                      opacity: pressed ? 0.7 : 1,
                     },
                   ]}
                 >
@@ -125,10 +158,10 @@ export const Expenses: React.FC<ExpensesProps> = ({
                   </View>
 
                   <View style={styles.logLeft}>
-                    <TuiText weight="bold" size="sm">
+                    <TuiText weight="bold" size="md">
                       {t.description}
                     </TuiText>
-                    <TuiText size="xs" variant="muted">
+                    <TuiText size="sm" variant="muted">
                       {t.date} | {t.category.toUpperCase()}
                     </TuiText>
                   </View>
@@ -138,21 +171,12 @@ export const Expenses: React.FC<ExpensesProps> = ({
                       weight="bold"
                       style={{
                         color: t.type === 'income' ? colors.primary : colors.destructive,
-                        marginRight: 12,
                       }}
                     >
                       {t.type === 'income' ? '+' : '-'}₱{t.amount.toFixed(2)}
                     </TuiText>
-                    
-                    {/* Delete Action button */}
-                    <Pressable
-                      onPress={() => onDeleteTransaction(t.id)}
-                      style={styles.deleteBtn}
-                    >
-                      <Trash2 size={13} color={colors.destructive} />
-                    </Pressable>
                   </View>
-                </View>
+                </Pressable>
               ))}
             </View>
           )}
@@ -167,7 +191,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   controlsHeader: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     paddingTop: 12,
     paddingBottom: 6,
   },
@@ -205,7 +229,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     paddingTop: 4,
     paddingBottom: 60, // Clear bottom navbar overlays
   },
@@ -219,10 +243,11 @@ const styles = StyleSheet.create({
   },
   logRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 10,
-    borderBottomWidth: 1,
+    paddingHorizontal: 12,
+    borderWidth: 1.5,
+    marginBottom: 8,
   },
   iconBox: {
     width: 28,
@@ -233,15 +258,22 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   logLeft: {
-    flex: 1.2,
+    flex: 1,
   },
   logRight: {
-    flex: 0.8,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
   deleteBtn: {
     padding: 6,
+  },
+  addTransactionBtn: {
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 0,
+    marginVertical: 4,
+    marginBottom: 12,
   },
 });

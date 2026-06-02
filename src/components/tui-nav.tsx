@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
-import { LayoutGrid, FileText, PiggyBank, Landmark, Plus } from 'lucide-react-native';
+import { LayoutGrid, FileText, Landmark, Plus, TrendingUp } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-export type ScreenType = 'dashboard' | 'expenses' | 'add-transaction' | 'budgets' | 'debts';
+export type ScreenType = 'dashboard' | 'expenses' | 'add-transaction' | 'stats' | 'debts' | 'settings';
 
 interface TuiTabBarProps {
   currentScreen: ScreenType;
@@ -21,19 +21,19 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
   const [buttonWidths, setButtonWidths] = React.useState<Record<string, number>>({});
   const [legendWidths, setLegendWidths] = React.useState<Record<string, number>>({});
 
-  const borderAccent = isDark ? colors.primary : '#000000';
+  const borderAccent = colors.primary;
 
   const menuItems: { screen: ScreenType; label: string; Icon: React.ComponentType<any> }[] = [
     { screen: 'dashboard', label: 'Home', Icon: LayoutGrid },
-    { screen: 'expenses', label: 'Ledger', Icon: FileText },
-    { screen: 'budgets', label: 'Budget', Icon: PiggyBank },
+    { screen: 'expenses', label: 'Logs', Icon: FileText },
+    { screen: 'stats', label: 'Stats', Icon: TrendingUp },
     { screen: 'debts', label: 'Debts', Icon: Landmark },
   ];
 
   const isPlusActive = currentScreen === 'add-transaction';
 
   return (
-    <View style={[styles.shadowWrapper, { bottom: 5 + insets.bottom }]}>
+    <View style={[styles.shadowWrapper, { bottom: insets.bottom }]}>
       <View style={styles.navRow}>
 
         {/* 4 MENU TABS */}
@@ -55,7 +55,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
                 styles.tabSquare,
                 {
                   backgroundColor: isActive ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                  marginRight: idx === menuItems.length - 1 ? 14 : 4, // 14px gap before '+' button, 4px between menu tabs
+                  marginRight: idx === menuItems.length - 1 ? 48 : 8, // 14px gap before '+' button, 4px between menu tabs
                 },
               ]}
             >
@@ -87,7 +87,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
                     { color: isActive ? colors.primary : colors.mutedForeground },
                   ]}
                 >
-                  {item.label.toUpperCase()}
+                  {item.label}
                 </TuiText>
               </View>
 
@@ -159,7 +159,7 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
                 { color: isPlusActive ? colors.primary : colors.mutedForeground },
               ]}
             >
-              LOG
+              Add
             </TuiText>
           </View>
 

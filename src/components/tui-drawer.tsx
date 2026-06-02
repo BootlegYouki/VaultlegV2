@@ -1,7 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Modal, Pressable, KeyboardAvoidingView, Platform, Animated, PanResponder } from 'react-native';
+import { View, StyleSheet, Modal, Pressable, Animated, Dimensions, Keyboard, Easing } from 'react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
+
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+const SPRING_CONFIG_OPEN = {
+  stiffness: 300,
+  damping: 28,
+  mass: 0.8,
+  useNativeDriver: true,
+};
 
 interface TuiDrawerProps {
   visible: boolean;
@@ -22,55 +31,36 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
   const [cardHeight, setCardHeight] = useState(300);
   const [legendWidth, setLegendWidth] = useState(0);
 
-  const slideAnim = useRef(new Animated.Value(400)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
   const borderTopLeftWidth = Math.max(0, (cardWidth - legendWidth) / 2);
   const borderTopRightLeft = Math.max(0, (cardWidth + legendWidth) / 2);
 
-  // Track gestures for swipe-down to dismiss
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        // Intercept downwards drags
-        return gestureState.dy > 5;
-      },
-      onPanResponderMove: (_, gestureState) => {
-        if (gestureState.dy > 0) {
-          slideAnim.setValue(gestureState.dy);
-        }
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        const threshold = cardHeight * 0.4;
-        if (gestureState.dy > threshold || gestureState.vy > 0.4) {
-          onClose();
-        } else {
-          Animated.spring(slideAnim, {
-            toValue: 0,
-            useNativeDriver: true,
-            bounciness: 4,
-          }).start();
-        }
-      },
-    })
-  ).current;
+  // Interpolate backdrop opacity dynamically based on slide position
+  const backdropOpacity = slideAnim.interpolate({
+    inputRange: [0, cardHeight || 300],
+    outputRange: [0.65, 0],
+    extrapolate: 'clamp',
+  });
+
+
 
   // Sync animations with visible state changes
   useEffect(() => {
     if (visible) {
       setModalVisible(true);
-      slideAnim.setValue(400);
-      fadeAnim.setValue(0);
-      Animated.parallel([
-        Animated.timing(fadeAnim, { toValue: 1, duration: 250, useNativeDriver: true }),
-        Animated.timing(slideAnim, { toValue: 0, duration: 250, useNativeDriver: true }),
-      ]).start();
+      slideAnim.setValue(cardHeight || 300);
+      Animated.spring(slideAnim, {
+        toValue: 0,
+        ...SPRING_CONFIG_OPEN,
+      }).start();
     } else if (modalVisible) {
-      Animated.parallel([
-        Animated.timing(fadeAnim, { toValue: 0, duration: 200, useNativeDriver: true }),
-        Animated.timing(slideAnim, { toValue: 400, duration: 200, useNativeDriver: true }),
-      ]).start(() => {
+      Animated.timing(slideAnim, {
+        toValue: cardHeight || 300,
+        duration: 200,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start(() => {
         setModalVisible(false);
       });
     }
@@ -86,20 +76,17 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        {/* Dimmed backdrop view fading in/out independently */}
+        {/* Dimmed backdrop view fading in/out during open/close transitions */}
         <Animated.View
           style={[
             StyleSheet.absoluteFillObject,
-            { backgroundColor: 'rgba(0, 0, 0, 0.65)', opacity: fadeAnim }
+            { backgroundColor: '#000000', opacity: backdropOpacity }
           ]}
         />
         {/* Tap backdrop to close */}
         <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
         
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={styles.drawerKeyboardAvoidingView}
-        >
+        <View style={styles.drawerKeyboardAvoidingView}>
           <Animated.View
             onLayout={(e) => {
               setCardWidth(e.nativeEvent.layout.width);
@@ -113,10 +100,10 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
               }
             ]}
           >
-            {/* Custom Segmented Borders to support transparent legend background */}
-            <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
-            <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
-            <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
+            {/* Dismiss keyboard when clicking empty space inside the drawer */}
+            <Pressable style={StyleSheet.absoluteFill} onPress={Keyboard.dismiss} />
+
+            {/* Custom Segmented Borders: only the top has a border to act as the shelf boundary */}
             <View style={[styles.borderTopLeft, { backgroundColor: borderAccent, width: borderTopLeftWidth }]} />
             <View 
               style={[
@@ -128,26 +115,22 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
               ]} 
             />
 
-            {/* Legend title resting on top border acting as the grab handle */}
+            {/* Legend title resting on top border */}
             <View
-              {...panResponder.panHandlers}
               onLayout={(e) => setLegendWidth(e.nativeEvent.layout.width)}
               style={styles.legendWrapper}
             >
               <TuiText weight="bold" size="md" style={{ color: colors.primary }}>
-                {title.toUpperCase()}
+                {title}
               </TuiText>
             </View>
-
-            {/* Grab/Drag Zone (No handle pill) */}
-            <View {...panResponder.panHandlers} style={styles.dragZone} />
 
             {/* Form/Children Content */}
             <View style={styles.content}>
               {children}
             </View>
           </Animated.View>
-        </KeyboardAvoidingView>
+        </View>
       </View>
     </Modal>
   );
@@ -167,30 +150,7 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     position: 'relative',
   },
-  borderLeft: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    bottom: 0,
-    width: 1.5,
-    zIndex: 5,
-  },
-  borderRight: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
-    width: 1.5,
-    zIndex: 5,
-  },
-  borderBottom: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 1.5,
-    zIndex: 5,
-  },
+
   borderTopLeft: {
     position: 'absolute',
     left: 0,
@@ -207,22 +167,13 @@ const styles = StyleSheet.create({
   },
   legendWrapper: {
     position: 'absolute',
-    top: -12,
+    top: -15,
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
     zIndex: 100,
-  },
-  dragZone: {
-    width: '100%',
-    height: 30,
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 90,
   },
   content: {
     width: '100%',

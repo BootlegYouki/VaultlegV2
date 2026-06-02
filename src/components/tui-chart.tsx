@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
+import { getCategoryIcon } from '../screens/dashboard';
 
 // ----------------------------------------------------
 // TELEMETRY METER: [██████░░░░] style progress bar
@@ -12,23 +13,24 @@ interface TuiProgressMeterProps {
   style?: ViewStyle;
   totalBlocks?: number;
   color?: string;
+  mode?: 'deplete' | 'grow';
 }
 
 export const TuiProgressMeter: React.FC<TuiProgressMeterProps> = ({
   progress,
   label,
   style,
-  totalBlocks = 32,
+  totalBlocks = 44,
   color,
+  mode = 'deplete',
 }) => {
   const { colors, isDark } = useTheme();
   const cappedProgress = Math.max(0, Math.min(1, progress));
   const percentage = Math.round(cappedProgress * 100);
 
-  const activeBlocks = Math.round((1 - cappedProgress) * totalBlocks);
-  const inactiveBlocks = totalBlocks - activeBlocks;
-  const asciiBar = '█'.repeat(activeBlocks) + '░'.repeat(inactiveBlocks);
-
+  const activeBlocks = mode === 'grow'
+    ? Math.round(cappedProgress * totalBlocks)
+    : Math.round((1 - cappedProgress) * totalBlocks);
   const baseColor = color ?? colors.primary;
   const barColor = cappedProgress >= 0.9 ? colors.destructive : baseColor;
 
@@ -37,7 +39,7 @@ export const TuiProgressMeter: React.FC<TuiProgressMeterProps> = ({
       <View style={styles.meterHeader}>
         {label && (
           <TuiText size="xs" weight="bold" style={styles.meterLabel}>
-            {label.toUpperCase()}
+            {label}
           </TuiText>
         )}
         <TuiText size="xs" weight="bold" style={{ color: barColor }}>
@@ -45,16 +47,31 @@ export const TuiProgressMeter: React.FC<TuiProgressMeterProps> = ({
         </TuiText>
       </View>
 
-      {/* Main ASCII progress bar */}
-      <TuiText style={[styles.asciiProgressText, { color: barColor }]}>
-        {asciiBar}
-      </TuiText>
+      {/* Main segmented progress bar */}
+      <View style={styles.barRow}>
+        {Array.from({ length: totalBlocks }).map((_, index) => {
+          const isActive = index < activeBlocks;
+          return (
+            <View
+              key={index}
+              style={[
+                styles.barSegment,
+                {
+                  backgroundColor: isActive ? barColor : (isDark ? '#27272A' : '#E4E4E7'),
+                  marginRight: index === totalBlocks - 1 ? 0 : 1.5,
+                  ...(isDark ? {} : { borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.55)' }),
+                },
+              ]}
+            />
+          );
+        })}
+      </View>
     </View>
   );
 };
 
 // ----------------------------------------------------
-// SEGMENTED METER: Multi-color ASCII bar (one color per category)
+// SEGMENTED METER: Multi-color bar (one color per category)
 // ----------------------------------------------------
 export interface MeterSegment {
   color: string;
@@ -76,32 +93,36 @@ export const TuiSegmentedMeter: React.FC<TuiSegmentedMeterProps> = ({
   totalSpent,
   label,
   style,
-  totalBlocks = 32,
+  totalBlocks = 44,
 }) => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const percentage = totalLimit > 0 ? Math.round((totalSpent / totalLimit) * 100) : 0;
   const overallProgress = totalLimit > 0 ? totalSpent / totalLimit : 0;
   const headerColor = overallProgress >= 0.9 ? colors.destructive : colors.mutedForeground;
 
-  // Calculate how many filled blocks each segment gets
-  // Each block = 1/totalBlocks of totalLimit spent
-  let blocksUsed = 0;
-  const segmentBlocks: { color: string; count: number }[] = segments.map((seg) => {
+  // Generate list of colors for each block based on segment weights
+  const blockColors: string[] = [];
+  segments.forEach((seg) => {
     const raw = totalLimit > 0 ? (seg.value / totalLimit) * totalBlocks : 0;
     const count = Math.round(raw);
-    blocksUsed += count;
-    return { color: seg.color, count };
+    for (let i = 0; i < count; i++) {
+      blockColors.push(seg.color);
+    }
   });
 
-  // Clamp total so we never exceed totalBlocks
-  const emptyBlocks = Math.max(0, totalBlocks - blocksUsed);
+  // Pad or slice to match exactly totalBlocks
+  const inactiveColor = isDark ? '#27272A' : '#E4E4E7';
+  while (blockColors.length < totalBlocks) {
+    blockColors.push(inactiveColor);
+  }
+  const finalColors = blockColors.slice(0, totalBlocks);
 
   return (
     <View style={[styles.meterContainer, style]}>
       <View style={styles.meterHeader}>
         {label && (
           <TuiText size="xs" weight="bold" style={styles.meterLabel}>
-            {label.toUpperCase()}
+            {label}
           </TuiText>
         )}
         <TuiText size="xs" weight="bold" style={{ color: headerColor }}>
@@ -109,20 +130,21 @@ export const TuiSegmentedMeter: React.FC<TuiSegmentedMeterProps> = ({
         </TuiText>
       </View>
 
-      {/* Multi-color ASCII bar rendered as inline TuiText segments */}
-      <View style={styles.segmentedBarRow}>
-        {segmentBlocks.map((seg, i) =>
-          seg.count > 0 ? (
-            <TuiText key={i} style={[styles.asciiProgressText, { color: seg.color }]}>
-              {'█'.repeat(seg.count)}
-            </TuiText>
-          ) : null
-        )}
-        {emptyBlocks > 0 && (
-          <TuiText style={[styles.asciiProgressText, { color: colors.mutedForeground }]}>
-            {'░'.repeat(emptyBlocks)}
-          </TuiText>
-        )}
+      {/* Multi-color segmented progress bar */}
+      <View style={styles.barRow}>
+        {finalColors.map((color, index) => (
+          <View
+            key={index}
+            style={[
+              styles.barSegment,
+              {
+                backgroundColor: color,
+                marginRight: index === totalBlocks - 1 ? 0 : 1.5,
+                ...(isDark ? {} : { borderWidth: 0.5, borderColor: 'rgba(0,0,0,0.55)' }),
+              },
+            ]}
+          />
+        ))}
       </View>
     </View>
   );
@@ -130,10 +152,12 @@ export const TuiSegmentedMeter: React.FC<TuiSegmentedMeterProps> = ({
 
 
 export interface ChartItem {
+  id?: string;
   label: string;
   value: number;
   total: number; // For percentage comparison
   formattedValue: string;
+  date?: string;
 }
 
 interface TuiBarChartProps {
@@ -147,12 +171,6 @@ export const TuiBarChart: React.FC<TuiBarChartProps> = ({ data, style }) => {
   return (
     <View style={[styles.chartContainer, style]}>
       {data.map((item, index) => {
-        const percentage = item.total > 0 ? (item.value / item.total) : 0;
-        const cappedProgress = Math.max(0, Math.min(1, percentage));
-        const activeBlocks = Math.round(cappedProgress * 8);
-        const inactiveBlocks = 8 - activeBlocks;
-        const asciiBar = '█'.repeat(activeBlocks) + '░'.repeat(inactiveBlocks);
-
         return (
           <View
             key={index}
@@ -164,26 +182,37 @@ export const TuiBarChart: React.FC<TuiBarChartProps> = ({ data, style }) => {
               },
             ]}
           >
-            {/* Category label */}
-            <View style={styles.rowLabelCell}>
-              <TuiText size="xs" weight="bold">
-                {item.label.toUpperCase().padEnd(10)}
-              </TuiText>
-            </View>
-
-            {/* Visual ASCII bar */}
-            <View style={styles.rowBarCell}>
-              <TuiText size="xs" style={{ color: colors.primary, letterSpacing: 1 }}>
-                {asciiBar}
-              </TuiText>
+            {/* Left Box (Icon + Category Label & Date) */}
+            <View style={styles.chartLeft}>
+              {item.id && (
+                <View
+                  style={[
+                    styles.iconBox,
+                    {
+                      borderColor: isDark ? '#3F3F46' : '#000000',
+                      backgroundColor: isDark ? '#27272A' : '#FFFFFF',
+                    },
+                  ]}
+                >
+                  {getCategoryIcon(item.id, 14, isDark ? '#FAFAFA' : '#000000')}
+                </View>
+              )}
+              <View style={styles.labelContainer}>
+                <TuiText size="sm" weight="bold" style={styles.chartLabel}>
+                  {item.label}
+                </TuiText>
+                {item.date && item.id && (
+                  <TuiText size="sm" variant="muted" style={styles.chartDate}>
+                    {item.date} | {item.id.toUpperCase()}
+                  </TuiText>
+                )}
+              </View>
             </View>
 
             {/* Value display */}
-            <View style={styles.rowValueCell}>
-              <TuiText size="xs" weight="bold" style={{ textAlign: 'right' }}>
-                {item.formattedValue}
-              </TuiText>
-            </View>
+            <TuiText size="sm" weight="bold" style={styles.chartValue}>
+              {item.formattedValue}
+            </TuiText>
           </View>
         );
       })}
@@ -205,19 +234,17 @@ const styles = StyleSheet.create({
   meterLabel: {
     letterSpacing: 0.5,
   },
-  asciiProgressText: {
-    fontSize: 16,
-    lineHeight: 22,
-    letterSpacing: 1.5,
-    marginVertical: 6,
-    textAlign: 'center',
-  },
-  segmentedBarRow: {
+  barRow: {
     flexDirection: 'row',
-    flexWrap: 'nowrap',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 6,
+    width: '100%',
+    height: 28,
+    marginVertical: 8,
+  },
+  barSegment: {
+    flex: 1,
+    height: '100%',
+    borderRadius: 1,
   },
 
   // Bar Chart
@@ -227,16 +254,34 @@ const styles = StyleSheet.create({
   chartRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    justifyContent: 'space-between',
+    paddingVertical: 12,
   },
-  rowLabelCell: {
-    width: '30%',
-  },
-  rowBarCell: {
-    width: '45%',
+  chartLeft: {
+    flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
   },
-  rowValueCell: {
-    width: '25%',
+  iconBox: {
+    width: 28,
+    height: 28,
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  labelContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  chartLabel: {
+    letterSpacing: 0.5,
+  },
+  chartDate: {
+    marginTop: 1,
+  },
+  chartValue: {
+    letterSpacing: 0.5,
   },
 });
+

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Pressable, TextInput } from 'react-native';
+import { StyleSheet, View, ScrollView, Pressable, TextInput, RefreshControl } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Wallet,
@@ -17,27 +17,37 @@ import {
   Code,
   Landmark,
   Check,
+  ShoppingBag,
+  Plane,
+  PlusCircle,
+  ArrowUpCircle,
+  ArrowDownCircle,
 } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
 import { TuiText } from '../components/tui-text';
 import { TuiButton } from '../components/tui-button';
 import { TuiSegmentedMeter } from '../components/tui-chart';
-import { Transaction, CATEGORIES } from '../types';
+import { Transaction, CATEGORIES, Debt } from '../types';
 import { logger } from '../utils/logger';
 
-// Shared palette — must match budgets.tsx order
-const BUDGET_COLORS = [
+// Shared palette — must match stats.tsx order
+const STATS_COLORS = [
   '#00E5FF', '#69FF47', '#FF6B6B', '#FFD93D', '#C77DFF',
   '#FF9F1C', '#2EC4B6', '#FF4D6D', '#A8FF78', '#4D96FF',
 ];
 
 interface DashboardProps {
   transactions: Transaction[];
-  budgetLimit: number;
-  categoryBudgets: Record<string, number>;
+  statsLimit: number;
+  categoryLimits: Record<string, number>;
+  debts: Debt[];
   onNavigateToAdd: () => void;
   onDeleteTransaction: (id: string) => void;
+  onEditTransaction?: (tx: Transaction) => void;
+  onNavigateToStats?: () => void;
+  refreshing: boolean;
+  onRefresh: () => void;
 }
 
 // Icon Helper for Categories
@@ -49,19 +59,27 @@ export const getCategoryIcon = (categoryId: string, size = 16, color = '#FFFFFF'
     case 'transport': return <Car size={size} color={color} />;
     case 'tech': return <Laptop size={size} color={color} />;
     case 'health': return <Heart size={size} color={color} />;
+    case 'shopping': return <ShoppingBag size={size} color={color} />;
+    case 'travel': return <Plane size={size} color={color} />;
     case 'salary': return <Briefcase size={size} color={color} />;
     case 'freelance': return <Code size={size} color={color} />;
     case 'investments': return <TrendingUp size={size} color={color} />;
+    case 'other_income': return <PlusCircle size={size} color={color} />;
     default: return <HelpCircle size={size} color={color} />;
   }
 };
 
 export const Dashboard: React.FC<DashboardProps> = ({
   transactions,
-  budgetLimit,
-  categoryBudgets,
+  statsLimit,
+  categoryLimits,
+  debts,
   onNavigateToAdd,
   onDeleteTransaction,
+  onEditTransaction,
+  onNavigateToStats,
+  refreshing,
+  onRefresh,
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -77,6 +95,31 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   const balance = totalIncome - totalExpense;
 
+  const totalOwe = debts
+    .filter((d) => d.type === 'payable')
+    .reduce((sum, d) => sum + d.amount, 0);
+
+  const totalReceivable = debts
+    .filter((d) => d.type === 'receivable')
+    .reduce((sum, d) => sum + d.amount, 0);
+
+  const totalLimit = totalIncome > statsLimit ? totalIncome : statsLimit;
+
+  const segments: { color: string; value: number }[] = [];
+
+  const remaining = totalLimit - totalExpense;
+  if (remaining > 0) {
+    segments.push({
+      color: colors.primary,
+      value: remaining,
+    });
+  }
+
+  segments.push({
+    color: isDark ? '#3F3F46' : '#D4D4D8',
+    value: totalExpense,
+  });
+
   return (
     <View style={[styles.mainWrapper, { backgroundColor: colors.background }]}>
       
@@ -87,54 +130,64 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <TuiText size="3xl" weight="bold" style={{ color: balance >= 0 ? colors.primary : colors.destructive, marginVertical: 4 }}>
             ₱{balance.toFixed(2)}
           </TuiText>
-          <TuiText size="xs" variant="muted" style={{ marginTop: 2 }}>
-            Income: +₱{totalIncome.toFixed(2)}  |  Expenses: -₱{totalExpense.toFixed(2)}
+          <TuiText size="sm" variant="muted" style={{ marginTop: 2 }}>
+            Income: +₱{totalIncome.toFixed(2)} | Expenses: -₱{totalExpense.toFixed(2)}
           </TuiText>
         </TuiContainer>
       </View>
 
       {/* 02: SCROLLABLE BODY SECTION */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContentContainer, { paddingBottom: 80 + insets.bottom }]}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollContentContainer, { paddingBottom: 80 + insets.bottom }]}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+            progressBackgroundColor={isDark ? '#1C1C1E' : '#FFFFFF'}
+          />
+        }
+      >
         
         {/* Overall Budget Card */}
-        <TuiContainer label="Overall Budget" badge={budgetLimit > 0 ? `₱${budgetLimit.toFixed(0)}` : undefined}>
-          {budgetLimit > 0 ? (
+        <Pressable onPress={onNavigateToStats}>
+          <TuiContainer 
+            label="Overall Budget" 
+          >
             <TuiSegmentedMeter
-              segments={CATEGORIES.filter(cat => categoryBudgets[cat.id] > 0).map((cat, index) => ({
-                color: BUDGET_COLORS[(index + 1) % BUDGET_COLORS.length],
-                value: categoryBudgets[cat.id] || 0,
-              }))}
-              totalLimit={budgetLimit}
+              segments={segments}
+              totalLimit={totalLimit}
               totalSpent={totalExpense}
-              label={`Spent: ₱${totalExpense.toFixed(2)} of ₱${budgetLimit.toFixed(2)}`}
+              label={totalLimit > 0
+                ? `₱${(totalLimit - totalExpense).toFixed(2)} left of ₱${totalLimit.toFixed(2)}`
+                : `₱${(totalLimit - totalExpense).toFixed(2)} left`
+              }
             />
-          ) : (
-            <TuiText size="xs" variant="muted" style={styles.emptyState}>
-              No active category budgets configured.
-            </TuiText>
-          )}
-        </TuiContainer>
+          </TuiContainer>
+        </Pressable>
 
         {/* My Debts (Divided Column TuiContainer) */}
         <TuiContainer label="My Debts">
           <View style={styles.debtsGrid}>
             <View style={[styles.debtCol, { borderRightWidth: 1, borderColor: colors.border }]}>
               <View style={styles.titleRow}>
-                <Landmark size={12} color={colors.destructive} style={styles.titleIcon} />
+                <ArrowDownCircle size={12} color={colors.destructive} style={styles.titleIcon} />
                 <TuiText size="xs" variant="muted" weight="bold">I OWE</TuiText>
               </View>
               <TuiText size="lg" weight="bold" style={{ color: colors.destructive, marginTop: 4 }}>
-                ₱12,500.00
+                ₱{totalOwe.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </TuiText>
             </View>
 
             <View style={[styles.debtCol, { paddingLeft: 12 }]}>
               <View style={styles.titleRow}>
-                <Landmark size={12} color={colors.primary} style={styles.titleIcon} />
+                <ArrowUpCircle size={12} color={colors.primary} style={styles.titleIcon} />
                 <TuiText size="xs" variant="muted" weight="bold">OWES ME</TuiText>
               </View>
               <TuiText size="lg" weight="bold" style={{ color: colors.primary, marginTop: 4 }}>
-                ₱8,200.00
+                ₱{totalReceivable.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </TuiText>
             </View>
           </View>
@@ -148,13 +201,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </TuiText>
           ) : (
             <View style={styles.logsList}>
-              {transactions.slice(0, 5).map((t) => (
-                <View
+              {transactions.slice(0, 4).map((t) => (
+                <Pressable
                   key={t.id}
-                  style={[
+                  onPress={() => onEditTransaction?.(t)}
+                  style={({ pressed }) => [
                     styles.logRow,
                     {
                       borderColor: isDark ? '#27272A' : '#E4E4E7',
+                      opacity: pressed ? 0.7 : 1,
                     },
                   ]}
                 >
@@ -172,10 +227,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </View>
 
                   <View style={styles.logLeft}>
-                    <TuiText weight="bold" size="sm">
+                    <TuiText weight="bold" size="md">
                       {t.description}
                     </TuiText>
-                    <TuiText size="xs" variant="muted">
+                    <TuiText size="sm" variant="muted">
                       {t.date} | {t.category.toUpperCase()}
                     </TuiText>
                   </View>
@@ -185,21 +240,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
                       weight="bold"
                       style={{
                         color: t.type === 'income' ? colors.primary : colors.destructive,
-                        marginRight: 10,
                       }}
                     >
                       {t.type === 'income' ? '+' : '-'}₱{t.amount.toFixed(2)}
                     </TuiText>
-                    
-                    {/* Delete button (Trash icon) */}
-                    <Pressable
-                      onPress={() => onDeleteTransaction(t.id)}
-                      style={styles.deletePressable}
-                    >
-                      <Trash2 size={13} color={colors.destructive} />
-                    </Pressable>
                   </View>
-                </View>
+                </Pressable>
               ))}
             </View>
           )}
@@ -215,7 +261,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   fixedTopSection: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     paddingTop: 12,
     paddingBottom: 6,
     borderBottomWidth: 1.5,
@@ -231,28 +277,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContentContainer: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 8,
     paddingTop: 4,
     paddingBottom: 60, // Clear floating bottom nav safely
   },
-  budgetHeader: {
+  statsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 6,
   },
-  budgetEditRow: {
+  statsEditRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 4,
   },
-  changeBudgetBtn: {
+  changeStatsBtn: {
     height: 44,
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 0,
     marginVertical: 4,
   },
-  budgetInput: {
+  statsInput: {
     flex: 1,
     height: 44,
     borderWidth: 1.5,
@@ -260,7 +306,7 @@ const styles = StyleSheet.create({
     fontFamily: 'JetBrainsMono_400Regular',
     fontSize: 14,
   },
-  saveBudgetBtn: {
+  saveStatsBtn: {
     marginLeft: 8,
     marginVertical: 0,
     width: 44,
@@ -270,7 +316,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingHorizontal: 0,
   },
-  cancelBudgetBtn: {
+  cancelStatsBtn: {
     marginLeft: 4,
     marginVertical: 0,
     width: 38,
@@ -301,10 +347,11 @@ const styles = StyleSheet.create({
   },
   logRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderWidth: 1.5,
+    marginBottom: 8,
   },
   rowIconContainer: {
     width: 28,
@@ -315,10 +362,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   logLeft: {
-    flex: 1.2,
+    flex: 1,
   },
   logRight: {
-    flex: 0.8,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',

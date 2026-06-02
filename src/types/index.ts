@@ -7,18 +7,17 @@ export interface Transaction {
   type: 'income' | 'expense';
 }
 
-export interface Budget {
+export interface Limit {
   limit: number;
   spent: number;
 }
 
 export const CATEGORIES = [
   { id: 'food', label: 'Food', icon: 'utensils' },
-  { id: 'utilities', label: 'Utilities', icon: 'home' },
-  { id: 'entertainment', label: 'Entertainment', icon: 'film' },
-  { id: 'transport', label: 'Transport', icon: 'car' },
-  { id: 'tech', label: 'Tech & Gear', icon: 'laptop' },
-  { id: 'health', label: 'Health', icon: 'heart' },
+  { id: 'utilities', label: 'Bills', icon: 'home' },
+  { id: 'entertainment', label: 'Fun', icon: 'film' },
+  { id: 'transport', label: 'Transit', icon: 'car' },
+  { id: 'shopping', label: 'Shop', icon: 'shopping-bag' },
   { id: 'other', label: 'Other', icon: 'hash' },
 ];
 
@@ -28,3 +27,12 @@ export const INCOME_CATEGORIES = [
   { id: 'investments', label: 'Investments', icon: 'trending-up' },
   { id: 'other_income', label: 'Other Income', icon: 'plus-circle' },
 ];
+
+export interface Debt {
+  id: string;
+  name: string;
+  amount: number;
+  dueDate: string;
+  type: 'payable' | 'receivable';
+}
+

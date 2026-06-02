@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, ScrollView, Animated, useWindowDimensions, SafeAreaView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Wallet, PiggyBank, FileText, Landmark, Plus, LayoutGrid } from 'lucide-react-native';
+import { Wallet, TrendingUp, FileText, Landmark, Plus, LayoutGrid } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from './tui-container';
 import { TuiText } from './tui-text';
@@ -55,12 +55,12 @@ export const TuiSkeletonLoader: React.FC = () => {
     );
   };
 
-  // Static items matching the 4 tabs of TuiTabBar
+  // Static items matching the 4 tabs of TuiTabBar, with all text blocked
   const menuItems = [
-    { label: 'HOME', Icon: LayoutGrid },
-    { label: 'LEDGER', Icon: FileText },
-    { label: 'BUDGET', Icon: PiggyBank },
-    { label: 'DEBTS', Icon: Landmark },
+    { label: '████', Icon: LayoutGrid },
+    { label: '██████', Icon: FileText },
+    { label: '██████', Icon: TrendingUp },
+    { label: '█████', Icon: Landmark },
   ];
 
   return (
@@ -69,11 +69,11 @@ export const TuiSkeletonLoader: React.FC = () => {
       {/* 01: FIXED HEADER STATUS BAR */}
       <View style={[styles.statusBarHeader, { borderColor: borderAccent, backgroundColor: colors.card }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Wallet size={13} color={colors.mutedForeground} style={{ marginRight: 6 }} />
-          <PulseText size="xs" weight="bold" variant="accent">
+          <Wallet size={18} color={colors.mutedForeground} style={{ marginRight: 6 }} />
+          <PulseText size="md" weight="bold" variant="accent">
             ████████
           </PulseText>
-          <PulseText size="xs" weight="bold" variant="muted" style={{ marginLeft: 8 }}>
+          <PulseText size="md" weight="bold" variant="muted" style={{ marginLeft: 8 }}>
             // ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
           </PulseText>
         </View>
@@ -89,7 +89,7 @@ export const TuiSkeletonLoader: React.FC = () => {
             }
           ]}
         >
-          <TuiText size="xs" weight="bold" style={{ color: colors.mutedForeground, fontSize: 10 }}>
+          <TuiText size="xs" weight="bold" style={{ color: colors.mutedForeground, fontSize: 12 }}>
             ████
           </TuiText>
         </Animated.View>
@@ -112,7 +112,7 @@ export const TuiSkeletonLoader: React.FC = () => {
       {/* 03: SCROLLABLE BODY */}
       <ScrollView style={styles.scrollView} contentContainerStyle={[styles.scrollContentContainer, { paddingBottom: 90 + insets.bottom }]}>
         
-        {/* Overall Budget Card */}
+        {/* Overall Stats Card */}
         <TuiContainer label="██████████████" badge="████">
           <View style={styles.meterContainer}>
             <View style={styles.meterHeader}>
@@ -215,13 +215,14 @@ export const TuiSkeletonLoader: React.FC = () => {
             const topSegmentWidth = (screenWidth - 40 - 52 - 14 - 12) / 8; // Est matching top border segments
 
             return (
-              <View
+              <Animated.View
                 key={idx}
                 style={[
                   styles.tabSquare,
                   {
                     backgroundColor: colors.card,
                     marginRight: idx === menuItems.length - 1 ? 14 : 4,
+                    opacity,
                   },
                 ]}
               >
@@ -243,16 +244,17 @@ export const TuiSkeletonLoader: React.FC = () => {
                 <View style={styles.tabContent}>
                   <item.Icon size={18} color={colors.mutedForeground} />
                 </View>
-              </View>
+              </Animated.View>
             );
           })}
 
           {/* Standalone LOG Plus Button Skeleton */}
-          <View
+          <Animated.View
             style={[
               styles.plusBtnSquare,
               {
                 backgroundColor: colors.card,
+                opacity,
               },
             ]}
           >
@@ -264,14 +266,14 @@ export const TuiSkeletonLoader: React.FC = () => {
 
             <View style={styles.legendWrapper}>
               <TuiText weight="bold" style={[styles.legendText, { color: colors.mutedForeground }]}>
-                LOG
+                ███
               </TuiText>
             </View>
 
             <View style={styles.tabContent}>
               <Plus size={18} color={colors.mutedForeground} />
             </View>
-          </View>
+          </Animated.View>
         </View>
       </View>
 
@@ -288,14 +290,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingTop: 0,
+    paddingBottom: 12,
     borderBottomWidth: 1.5,
     zIndex: 10,
   },
   headerThemeBtn: {
     borderWidth: 1.5,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },
