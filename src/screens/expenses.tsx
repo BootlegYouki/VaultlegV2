@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, TextInput, Pressable, RefreshControl } from 'react-native';
+import { View, StyleSheet, ScrollView, TextInput, Pressable, RefreshControl, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Search, Trash2, Tag, ArrowUp, ArrowDown, Plus } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
@@ -12,28 +12,136 @@ import { getCategoryIcon } from '../utils/category-icon';
 interface ExpensesProps {
   transactions: Transaction[];
   onDeleteTransaction: (id: string) => void;
+  onDeleteTransactions?: (ids: string[]) => void;
   onEditTransaction?: (tx: Transaction) => void;
   onLogTransaction: (initialType?: 'income' | 'expense') => void;
   refreshing: boolean;
   onRefresh: () => void;
+  selectedIds?: string[];
+  isSelectionMode?: boolean;
+  onToggleSelect?: (id: string) => void;
+  onLongPressSelect?: (id: string) => void;
+  editingTransactionId?: string;
+  highlightedTransactionId?: string;
 }
 
 type FilterType = 'all' | 'income' | 'expense';
 
+interface TransactionRowProps {
+  t: Transaction;
+  isSelected: boolean;
+  isEditing?: boolean;
+  isSelectionMode: boolean;
+  onPress: () => void;
+  onLongPress: () => void;
+  colors: any;
+  isDark: boolean;
+}
+
+const TransactionRow: React.FC<TransactionRowProps> = ({
+  t,
+  isSelected,
+  isEditing = false,
+  isSelectionMode,
+  onPress,
+  onLongPress,
+  colors,
+  isDark,
+}) => {
+  return (
+    <Pressable
+      onPress={onPress}
+      onLongPress={onLongPress}
+      delayLongPress={350}
+      style={({ pressed }) => [
+        styles.logRow,
+        {
+          borderColor: isEditing ? colors.primary : (isSelected ? colors.primary : (isDark ? colors.primary + '40' : colors.primary + '30')),
+          opacity: pressed ? 0.7 : 1,
+          backgroundColor: isEditing ? colors.primary + '15' : (isSelected ? colors.primary + '10' : (isDark ? '#1C1C1E' : '#FFFFFF')),
+        },
+      ]}
+    >
+      {isSelectionMode && (
+        <View
+          style={{
+            width: 18,
+            height: 18,
+            borderWidth: 1.5,
+            borderColor: isSelected ? colors.primary : (isDark ? '#3F3F46' : '#A1A1AA'),
+            backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginRight: 10,
+          }}
+        >
+          {isSelected && (
+            <View
+              style={{
+                width: 8,
+                height: 8,
+                backgroundColor: colors.primary,
+              }}
+            />
+          )}
+        </View>
+      )}
+
+      <View
+        style={[
+          styles.iconBox,
+          {
+            borderColor: isDark ? '#3F3F46' : '#000000',
+            backgroundColor: isDark ? '#27272A' : '#FFFFFF',
+          },
+        ]}
+      >
+        {getCategoryIcon(t.category, 14, isDark ? '#FAFAFA' : '#000000')}
+      </View>
+
+      <View style={styles.logLeft}>
+        <TuiText weight="bold" size="md">
+          {t.description}
+        </TuiText>
+        <TuiText size="sm" variant="muted">
+          {t.date} | {t.category.toUpperCase()}
+        </TuiText>
+      </View>
+
+      <View style={styles.logRight}>
+        <TuiText
+          weight="bold"
+          style={{
+            color: t.type === 'income' ? colors.primary : colors.destructive,
+          }}
+        >
+          {t.type === 'income' ? '+' : '-'}₱{t.amount.toFixed(2)}
+        </TuiText>
+      </View>
+    </Pressable>
+  );
+};
+
 export const Expenses: React.FC<ExpensesProps> = ({
   transactions,
   onDeleteTransaction,
+  onDeleteTransactions,
   onEditTransaction,
   onLogTransaction,
   refreshing,
   onRefresh,
+  selectedIds = [],
+  isSelectionMode = false,
+  onToggleSelect,
+  onLongPressSelect,
+  editingTransactionId,
+  highlightedTransactionId,
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Apply filters and search query
   const filteredTransactions = transactions.filter((t) => {
     const matchesType =
       filter === 'all' ? true : t.type === filter;
@@ -42,6 +150,14 @@ export const Expenses: React.FC<ExpensesProps> = ({
       t.category.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesType && matchesSearch;
   });
+
+  const handlePressRow = (t: Transaction) => {
+    if (isSelectionMode) {
+      onToggleSelect?.(t.id);
+    } else {
+      onEditTransaction?.(t);
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -132,52 +248,24 @@ export const Expenses: React.FC<ExpensesProps> = ({
             </TuiText>
           ) : (
             <View style={styles.logsList}>
-              {filteredTransactions.map((t) => (
-                <Pressable
-                  key={t.id}
-                  onPress={() => onEditTransaction?.(t)}
-                  style={({ pressed }) => [
-                    styles.logRow,
-                    {
-                      borderColor: isDark ? '#27272A' : '#E4E4E7',
-                      opacity: pressed ? 0.7 : 1,
-                    },
-                  ]}
-                >
-                  {/* Category Indicator Icon */}
-                  <View
-                    style={[
-                      styles.iconBox,
-                      {
-                        borderColor: isDark ? '#3F3F46' : '#000000',
-                        backgroundColor: isDark ? '#27272A' : '#FFFFFF',
-                      },
-                    ]}
-                  >
-                    {getCategoryIcon(t.category, 14, isDark ? '#FAFAFA' : '#000000')}
-                  </View>
-
-                  <View style={styles.logLeft}>
-                    <TuiText weight="bold" size="md">
-                      {t.description}
-                    </TuiText>
-                    <TuiText size="sm" variant="muted">
-                      {t.date} | {t.category.toUpperCase()}
-                    </TuiText>
-                  </View>
-
-                  <View style={styles.logRight}>
-                    <TuiText
-                      weight="bold"
-                      style={{
-                        color: t.type === 'income' ? colors.primary : colors.destructive,
-                      }}
-                    >
-                      {t.type === 'income' ? '+' : '-'}₱{t.amount.toFixed(2)}
-                    </TuiText>
-                  </View>
-                </Pressable>
-              ))}
+              {filteredTransactions.map((t) => {
+                const isSelected = selectedIds.includes(t.id);
+                const isEditing = editingTransactionId === t.id;
+                const isHighlighted = highlightedTransactionId === t.id;
+                return (
+                  <TransactionRow
+                    key={t.id}
+                    t={t}
+                    isSelected={isSelected}
+                    isEditing={isEditing || isHighlighted}
+                    isSelectionMode={isSelectionMode}
+                    onPress={() => handlePressRow(t)}
+                    onLongPress={() => onLongPressSelect?.(t.id)}
+                    colors={colors}
+                    isDark={isDark}
+                  />
+                );
+              })}
             </View>
           )}
         </TuiContainer>
@@ -275,5 +363,23 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     marginVertical: 4,
     marginBottom: 12,
+  },
+  selectionBar: {
+    paddingHorizontal: 8,
+    paddingTop: 12,
+    paddingBottom: 12,
+  },
+  selectionBarHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  actionButtonCompact: {
+    marginVertical: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 12,
+    height: 38,
+    justifyContent: 'center',
+    width: 'auto',
   },
 });

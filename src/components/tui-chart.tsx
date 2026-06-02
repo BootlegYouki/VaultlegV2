@@ -9,7 +9,7 @@ import { getCategoryIcon } from '../utils/category-icon';
 // ----------------------------------------------------
 interface TuiProgressMeterProps {
   progress: number; // 0 to 1
-  label?: string;
+  label?: React.ReactNode;
   style?: ViewStyle;
   totalBlocks?: number;
   color?: string;
@@ -82,7 +82,7 @@ interface TuiSegmentedMeterProps {
   segments: MeterSegment[];
   totalLimit: number;   // sum of all category limits
   totalSpent: number;   // sum of all spending
-  label?: string;
+  label?: React.ReactNode;
   style?: ViewStyle;
   totalBlocks?: number;
 }

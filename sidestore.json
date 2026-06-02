@@ -1,11 +1,11 @@
 {
   "name": "Vaultleg",
-  "identifier": "com.darren.vaultleg.source",
+  "identifier": "com.bootlegyouki.vaultleg.source",
   "apps": [
     {
       "name": "Vaultleg",
-      "bundleIdentifier": "com.darren.vaultleg",
-      "developerName": "Darren",
+      "bundleIdentifier": "com.bootlegyouki.vaultleg",
+      "developerName": "BootlegYouki",
       "version": "1.0.3",
       "versionDate": "2026-06-02T05:48:33Z",
       "downloadURL": "https://github.com/BootlegYouki/VaultlegV2/releases/download/v1.0.3/Vaultleg.ipa",

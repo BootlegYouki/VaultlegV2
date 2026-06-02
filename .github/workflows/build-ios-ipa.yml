@@ -77,19 +77,19 @@ jobs:
           mv Vaultleg.app Payload/
           zip -qr ../../../../../Vaultleg.ipa Payload
 
-      - name: Generate AltStore source.json
+      - name: Generate SideStore source.json
         run: |
           DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           REPO="${{ github.repository }}"
-          cat > altstore-source.json << EOF
+          cat > sidestore.json << EOF
           {
             "name": "Vaultleg",
-            "identifier": "com.darren.vaultleg.source",
+            "identifier": "com.bootlegyouki.vaultleg.source",
             "apps": [
               {
                 "name": "Vaultleg",
-                "bundleIdentifier": "com.darren.vaultleg",
-                "developerName": "Darren",
+                "bundleIdentifier": "com.bootlegyouki.vaultleg",
+                "developerName": "BootlegYouki",
                 "version": "${VERSION}",
                 "versionDate": "${DATE}",
                 "downloadURL": "https://github.com/${REPO}/releases/download/v${VERSION}/Vaultleg.ipa",
@@ -110,29 +110,29 @@ jobs:
           body: |
             ## Vaultleg v${{ env.VERSION }}
             
-            ### Install via AltStore / Sideloadly
-            Download `Vaultleg.ipa` below and sideload it using AltStore or Sideloadly.
+            ### Sideload via SideStore / Sideloadly / AltStore
+            Download `Vaultleg.ipa` below and sideload it.
             
-            ### AltStore Source URL
-            Add this source to AltStore for auto-updates:
+            ### SideStore Source URL
+            Add this source to SideStore for auto-updates:
             ```
-            https://raw.githubusercontent.com/${{ github.repository }}/main/altstore-source.json
+            https://raw.githubusercontent.com/${{ github.repository }}/main/sidestore.json
             ```
           files: |
             Vaultleg.ipa
-            altstore-source.json
+            sidestore.json
           draft: false
           prerelease: false
 
-      - name: Commit updated app.json and altstore-source.json to main
+      - name: Commit updated app.json and sidestore.json to main
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add app.json altstore-source.json
+          git add app.json sidestore.json
           git stash
           git fetch origin main
           git rebase origin/main
           git stash pop
-          git add app.json altstore-source.json
-          git diff --staged --quiet || git commit -m "chore: release v${VERSION} and update AltStore source [skip ci]"
+          git add app.json sidestore.json
+          git diff --staged --quiet || git commit -m "chore: release v${VERSION} and update SideStore source [skip ci]"
           git push origin main

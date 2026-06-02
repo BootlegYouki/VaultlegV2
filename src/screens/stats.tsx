@@ -13,6 +13,7 @@ interface StatsProps {
   categoryLimits?: Record<string, number>;
   onUpdateCategoryLimit?: (category: string, limit: number) => void;
   onEditTransaction?: (tx: Transaction) => void;
+  onTransactionPress?: (tx: Transaction) => void;
   autoOpenDrawer?: boolean;
   onResetAutoOpenDrawer?: () => void;
   refreshing: boolean;
@@ -143,6 +144,7 @@ export const Stats: React.FC<StatsProps> = ({
   categoryLimits,
   onUpdateCategoryLimit,
   onEditTransaction,
+  onTransactionPress,
   autoOpenDrawer,
   onResetAutoOpenDrawer,
   refreshing,
@@ -312,11 +314,11 @@ export const Stats: React.FC<StatsProps> = ({
                 {displayTxs.map((t) => (
                   <Pressable
                     key={t.id}
-                    onPress={() => onEditTransaction?.(t)}
+                    onPress={() => onTransactionPress?.(t)}
                     style={({ pressed }) => [
                       styles.detailRow,
                       {
-                        borderColor: isDark ? '#27272A' : '#E4E4E7',
+                        borderColor: isDark ? colors.primary + '40' : colors.primary + '30',
                         opacity: pressed ? 0.7 : 1,
                       },
                     ]}

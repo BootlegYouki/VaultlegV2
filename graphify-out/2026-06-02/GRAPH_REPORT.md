@@ -1,16 +1,16 @@
 # Graph Report - VaultlegV2  (2026-06-02)
 
 ## Corpus Check
-- 35 files · ~21,963 words
+- 37 files · ~23,689 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 304 nodes · 471 edges · 19 communities (14 shown, 5 thin omitted)
+- 317 nodes · 498 edges · 20 communities (14 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `af7e5b59`
+- Built from commit: `b47c1243`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -24,6 +24,7 @@
 - [[_COMMUNITY_Community 6|Community 6]]
 - [[_COMMUNITY_Community 7|Community 7]]
 - [[_COMMUNITY_Community 8|Community 8]]
+- [[_COMMUNITY_Community 9|Community 9]]
 - [[_COMMUNITY_Community 10|Community 10]]
 - [[_COMMUNITY_Community 11|Community 11]]
 - [[_COMMUNITY_Community 12|Community 12]]
@@ -38,63 +39,63 @@
 1. `useTheme()` - 37 edges
 2. `TuiText()` - 18 edges
 3. `expo` - 12 edges
-4. `scripts` - 12 edges
-5. `Transaction` - 11 edges
-6. `TuiContainer()` - 9 edges
-7. `Debt` - 9 edges
+4. `Transaction` - 12 edges
+5. `scripts` - 12 edges
+6. `Debt` - 10 edges
+7. `TuiContainer()` - 9 edges
 8. `scripts` - 8 edges
-9. `TuiButton()` - 7 edges
-10. `TuiLogger` - 7 edges
+9. `getCategoryIcon()` - 8 edges
+10. `TuiButton()` - 7 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `graphify pipeline` --conceptually_related_to--> `Graphify Memory & Ingestion Layer`  [INFERRED]
   .agents/workflows/graphify.md → CLAUDE.md
-- `MainApp()` --calls--> `getTodayDateString()`  [EXTRACTED]
-  App.tsx → src/screens/debts.tsx
 - `MainApp()` --calls--> `useTheme()`  [EXTRACTED]
   App.tsx → src/theme/theme-provider.tsx
-- `StatsProps` --references--> `Transaction`  [EXTRACTED]
-  src/screens/stats.tsx → src/types/index.ts
+- `MainApp()` --calls--> `getTodayDateString()`  [EXTRACTED]
+  App.tsx → src/screens/debts.tsx
 - `Graphify Memory & Ingestion Layer` --references--> `graphify-out/`  [EXTRACTED]
   CLAUDE.md → README.md
+- `graphify query` --references--> `graphify-out/`  [EXTRACTED]
+  .agents/rules/graphify.md → README.md
 
-## Communities (19 total, 5 thin omitted)
-
-### Community 0 - "Community 0"
-Cohesion: 0.12
-Nodes (14): BrandLogo(), BrandLogoProps, DashboardProps, DebtsProps, ExpensesProps, SettingsProps, styles, Debt (+6 more)
+## Communities (20 total, 6 thin omitted)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.50
-Nodes (3): apps, identifier, name
+Cohesion: 0.06
+Nodes (36): SplashIcon(), SplashIconProps, MONTHS, styles, TuiCalendar(), TuiCalendarProps, WEEKDAYS, SPRING_CONFIG_CLOSE (+28 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.13
-Nodes (15): dependencies, expo, expo-font, @expo-google-fonts/jetbrains-mono, expo-splash-screen, expo-status-bar, lucide-react-native, react (+7 more)
+Cohesion: 0.11
+Nodes (18): dependencies, expo, expo-document-picker, expo-file-system, expo-font, @expo-google-fonts/jetbrains-mono, expo-sharing, expo-splash-screen (+10 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.08
 Nodes (24): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, predictiveBackGestureEnabled, expo, android (+16 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.13
-Nodes (15): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, prettier-plugin-tailwindcss (+7 more)
+Cohesion: 0.20
+Nodes (10): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, @types/node (+2 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.07
-Nodes (53): styles, TuiButton(), TuiButtonProps, MONTHS, styles, TuiCalendar(), TuiCalendarProps, WEEKDAYS (+45 more)
+Cohesion: 0.50
+Nodes (3): apps, identifier, name
 
 ### Community 6 - "Community 6"
 Cohesion: 0.09
 Nodes (21): APP_TSX_PATH, __dirname, __filename, ROOT_DIR, TEMPLATE_DIR_PATH, APP_TSX_PATH, __dirname, __filename (+13 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.07
-Nodes (26): name, private, type, version, devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks (+18 more)
+Cohesion: 0.06
+Nodes (32): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, prettier-plugin-tailwindcss (+24 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.14
 Nodes (14): dependencies, class-variance-authority, clsx, @fontsource-variable/jetbrains-mono, radix-ui, react, react-dom, recharts (+6 more)
+
+### Community 9 - "Community 9"
+Cohesion: 0.08
+Nodes (41): BrandLogo(), BrandLogoProps, styles, TuiButton(), TuiButtonProps, ChartItem, MeterSegment, styles (+33 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.10
@@ -109,28 +110,28 @@ Cohesion: 0.20
 Nodes (9): compilerOptions, paths, files, @/*, references, compilerOptions, strict, exclude (+1 more)
 
 ### Community 24 - "Community 24"
-Cohesion: 0.11
-Nodes (23): ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps, TuiProgressMeter(), TuiProgressMeterProps, TuiSegmentedMeter() (+15 more)
+Cohesion: 0.14
+Nodes (18): DashboardProps, getCategoryIcon(), Expenses(), ExpensesProps, FilterType, styles, TransactionRow(), TransactionRowProps (+10 more)
 
 ## Knowledge Gaps
-- **188 isolated node(s):** `name`, `identifier`, `apps`, `name`, `slug` (+183 more)
+- **193 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+188 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `scripts` connect `Community 6` to `Community 7`?**
-  _High betweenness centrality (0.038) - this node is a cross-community bridge._
+  _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `Community 2` to `Community 7`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
-- **Why does `devDependencies` connect `Community 4` to `Community 7`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
-- **What connects `name`, `identifier`, `apps` to the rest of the system?**
-  _191 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Community 0` be split into smaller, more focused modules?**
-  _Cohesion score 0.12318840579710146 - nodes in this community are weakly interconnected._
+  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **Why does `useTheme()` connect `Community 9` to `Community 24`, `Community 1`?**
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
+- **What connects `name`, `slug`, `version` to the rest of the system?**
+  _196 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `Community 1` be split into smaller, more focused modules?**
+  _Cohesion score 0.06462585034013606 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.13333333333333333 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._

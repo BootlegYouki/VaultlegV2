@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Pressable, ScrollView, useWindowDimensions, Platform, TextInput, Keyboard } from 'react-native';
+import { StyleSheet, View, Pressable, Platform, TextInput, Keyboard, Animated, Image, Alert } from 'react-native';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 
 // Keep the splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync().catch(() => {});
+SplashScreen.preventAutoHideAsync().catch(() => { });
 import {
   useFonts,
   JetBrainsMono_400Regular,
@@ -31,6 +31,7 @@ import { TuiInput } from './src/components/tui-input';
 import { Transaction, CATEGORIES, INCOME_CATEGORIES, Debt } from './src/types';
 import { storage } from './src/utils/storage';
 import { logger } from './src/utils/logger';
+import { SplashIcon } from './src/components/splash-icon';
 
 function MainApp() {
   const { colors, isDark, setThemeMode } = useTheme();
@@ -43,8 +44,33 @@ function MainApp() {
   const [autoOpenStatsDrawer, setAutoOpenStatsDrawer] = useState(false);
   const [addTransactionDrawerOpen, setAddTransactionDrawerOpen] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const selectionBarAnim = useRef(new Animated.Value(0)).current;
+  const [selectionBarVisible, setSelectionBarVisible] = useState(false);
+  const [highlightedTransactionId, setHighlightedTransactionId] = useState<string | undefined>(undefined);
 
-  const handleRefresh = async () => {
+  useEffect(() => {
+    if (isSelectionMode) {
+      setSelectionBarVisible(true);
+      Animated.spring(selectionBarAnim, {
+        toValue: 1,
+        friction: 8,
+        tension: 40,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(selectionBarAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => {
+        setSelectionBarVisible(false);
+      });
+    }
+  }, [isSelectionMode]);
+
+  const handleRefresh = async () =>  {
     setRefreshing(true);
     logger.log('OPERATION', 'PULL_TO_REFRESH_TRIGGERED');
     try {
@@ -147,21 +173,57 @@ function MainApp() {
     setShowEditDebtDatePicker(false);
   };
 
+  // Animated values for iOS-style deck transition
+  const screenScaleAnim = useRef(new Animated.Value(1)).current;
+  const screenTranslateYAnim = useRef(new Animated.Value(0)).current;
+  const screenBorderRadiusAnim = useRef(new Animated.Value(0)).current;
+
+  const isDrawerOpen = addTransactionDrawerOpen || addDebtDrawerOpen || editingTransaction !== null || editingDebt !== null;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.spring(screenScaleAnim, {
+        toValue: isDrawerOpen ? 0.93 : 1,
+        friction: 8,
+        tension: 50,
+        useNativeDriver: false,
+      }),
+      Animated.spring(screenTranslateYAnim, {
+        toValue: isDrawerOpen ? 12 : 0,
+        friction: 8,
+        tension: 50,
+        useNativeDriver: false,
+      }),
+      Animated.spring(screenBorderRadiusAnim, {
+        toValue: isDrawerOpen ? 16 : 0,
+        friction: 8,
+        tension: 50,
+        useNativeDriver: false,
+      }),
+    ]).start();
+  }, [isDrawerOpen]);
+
   const handleSaveEditTransaction = async () => {
     if (!editingTransaction) return;
     const parsedAmt = parseFloat(editTxAmount);
-    if (isNaN(parsedAmt) || parsedAmt <= 0 || !editTxDescription.trim()) return;
+    if (isNaN(parsedAmt) || parsedAmt <= 0) return;
+
+    const finalDescription = editTxDescription.trim() ||
+      (editTxType === 'expense'
+        ? CATEGORIES.find(c => c.id === editTxCategory)?.label
+        : INCOME_CATEGORIES.find(c => c.id === editTxCategory)?.label) ||
+      'Transaction';
 
     const updated = transactions.map((t) =>
       t.id === editingTransaction.id
         ? {
-            ...t,
-            amount: parsedAmt,
-            description: editTxDescription.trim(),
-            category: editTxCategory,
-            date: editTxDate,
-            type: editTxType,
-          }
+          ...t,
+          amount: parsedAmt,
+          description: finalDescription,
+          category: editTxCategory,
+          date: editTxDate,
+          type: editTxType,
+        }
         : t
     );
     setTransactions(updated);
@@ -179,17 +241,19 @@ function MainApp() {
   const handleSaveEditDebt = async () => {
     if (!editingDebt) return;
     const parsedAmt = parseFloat(editDebtAmount);
-    if (isNaN(parsedAmt) || parsedAmt <= 0 || !editDebtName.trim()) return;
+    if (isNaN(parsedAmt) || parsedAmt <= 0) return;
+
+    const finalName = editDebtName.trim() || (editDebtType === 'payable' ? 'Payable' : 'Receivable');
 
     const updated = debts.map((d) =>
       d.id === editingDebt.id
         ? {
-            ...d,
-            name: editDebtName.trim(),
-            amount: parsedAmt,
-            type: editDebtType,
-            dueDate: editDebtDueDate,
-          }
+          ...d,
+          name: finalName,
+          amount: parsedAmt,
+          type: editDebtType,
+          dueDate: editDebtDueDate,
+        }
         : d
     );
     setDebts(updated);
@@ -229,13 +293,6 @@ function MainApp() {
 
   const statsLimit = Object.values(categoryLimits).reduce((sum, val) => sum + val, 0);
 
-  const { width: screenWidth } = useWindowDimensions();
-  const scrollViewRef = useRef<ScrollView>(null);
-  const isScrollingRef = useRef(false);
-  const scrollTriggeredByRef = useRef<'swipe' | 'tab' | null>(null);
-
-  const swipeableScreens: ScreenType[] = ['dashboard', 'expenses', 'stats', 'debts', 'settings'];
-
   const [logMenuOpen, setLogMenuOpen] = useState(false);
   const [statsLegendWidth, setStatsLegendWidth] = useState(0);
   const [incomeLegendWidth, setIncomeLegendWidth] = useState(0);
@@ -247,46 +304,26 @@ function MainApp() {
       return;
     }
     setLogMenuOpen(false);
+    setSelectedIds([]);
+    setIsSelectionMode(false);
     setActiveScreen(screen);
   };
 
-  // Sync scroll offset when activeScreen changes (e.g. from bottom nav tab taps)
-  useEffect(() => {
-    if (activeScreen !== 'add-transaction') {
-      const idx = swipeableScreens.indexOf(activeScreen);
-      if (idx !== -1) {
-        if (scrollTriggeredByRef.current === 'swipe') {
-          // Swipe already positioned the scroll view natively; do not clash with scrollTo
-          scrollTriggeredByRef.current = null;
-          return;
-        }
+  const handleLongPressAdd = () => {
+    setLogType('expense');
+    setLogCategory(CATEGORIES[0].id);
+    setAddTransactionDrawerOpen(true);
+    setLogMenuOpen(false);
+    logger.log('NAVIGATOR', 'FAB_LONG_PRESS_OPEN_EXPENSE_DRAWER');
+  };
 
-        scrollTriggeredByRef.current = null;
-        isScrollingRef.current = true;
-        const animated = activeScreen !== 'settings';
-        scrollViewRef.current?.scrollTo({ x: idx * screenWidth, animated });
-        // Release scrolling block after animation completes
-        const timer = setTimeout(() => {
-          isScrollingRef.current = false;
-        }, animated ? 350 : 0);
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [activeScreen, screenWidth]);
-
-  // Sync activeScreen state on swipe gestures when crossing the 50% boundary midway
-  const handleScroll = (event: any) => {
-    if (isScrollingRef.current) return; // Ignore programmatic scrolls
-    const offsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / screenWidth);
-    if (index >= 0 && index < swipeableScreens.length) {
-      const targetScreen = swipeableScreens[index];
-      if (activeScreen !== targetScreen) {
-        scrollTriggeredByRef.current = 'swipe';
-        setActiveScreen(targetScreen);
-        logger.log('SWIPER', `SWIPED_TO_${targetScreen.toUpperCase()}_SCREEN`);
-      }
-    }
+  const handleRecentTransactionPress = (tx: Transaction) => {
+    setActiveScreen('expenses');
+    setHighlightedTransactionId(tx.id);
+    setTimeout(() => {
+      setHighlightedTransactionId(undefined);
+    }, 1500);
+    logger.log('NAVIGATOR', `RECENT_TX_PRESS_REDIRECT_AND_HIGHLIGHT_ID_${tx.id}`);
   };
 
   // Load custom fonts using expo-font / expo-google-fonts
@@ -315,12 +352,31 @@ function MainApp() {
     initAppData();
   }, []);
 
-  // Hide splash screen once fonts and data are loaded
+  const [splashVisible, setSplashVisible] = useState(true);
+  const [isAppReady, setIsAppReady] = useState(false);
+  const splashOpacity = useRef(new Animated.Value(1)).current;
+
+  // Hide splash screen once fonts and data are loaded, and set app ready
   useEffect(() => {
     if (fontsLoaded && dataLoaded) {
-      SplashScreen.hideAsync().catch(() => {});
+      SplashScreen.hideAsync().catch(() => { });
+      setIsAppReady(true);
     }
   }, [fontsLoaded, dataLoaded]);
+
+  // Fade out splash screen when app is ready (stay visible for 1.2 seconds first)
+  useEffect(() => {
+    if (isAppReady) {
+      Animated.timing(splashOpacity, {
+        toValue: 0,
+        duration: 200,
+        delay: 1000,
+        useNativeDriver: true,
+      }).start(() => {
+        setSplashVisible(false);
+      });
+    }
+  }, [isAppReady]);
 
   const handleUpdateCategoryLimit = async (category: string, limit: number) => {
     const updated = { ...categoryLimits };
@@ -351,6 +407,13 @@ function MainApp() {
     logger.log('OPERATION', `DELETED_TRANSACTION_ID_${id}`);
   };
 
+  const handleDeleteTransactions = async (ids: string[]) => {
+    const filtered = transactions.filter((t) => !ids.includes(t.id));
+    setTransactions(filtered);
+    await storage.saveTransactions(filtered);
+    logger.log('OPERATION', `DELETED_TRANSACTIONS_COUNT_${ids.length}`);
+  };
+
   const handleAddDebt = async (newDebt: Omit<Debt, 'id'>) => {
     const debt: Debt = {
       ...newDebt,
@@ -366,6 +429,56 @@ function MainApp() {
     setDebts(filtered);
     await storage.saveDebts(filtered);
     logger.log('OPERATION', `DELETED_DEBT_ID_${id}`);
+  };
+
+  const handleDeleteDebts = async (ids: string[]) => {
+    const filtered = debts.filter((d) => !ids.includes(d.id));
+    setDebts(filtered);
+    await storage.saveDebts(filtered);
+    logger.log('OPERATION', `DELETED_DEBTS_COUNT_${ids.length}`);
+  };
+
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
+  };
+
+  const handleLongPressSelect = (id: string) => {
+    if (!isSelectionMode) {
+      setIsSelectionMode(true);
+      setSelectedIds([id]);
+    }
+  };
+
+  const handleCancelSelection = () => {
+    setIsSelectionMode(false);
+    setSelectedIds([]);
+  };
+
+  const handleDeleteSelection = () => {
+    if (selectedIds.length === 0) return;
+    const isExpenses = activeScreen === 'expenses';
+    Alert.alert(
+      isExpenses ? 'Delete selected logs?' : 'Delete selected accounts?',
+      `Are you sure you want to delete ${selectedIds.length} entry(ies)? This action cannot be undone.`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            if (isExpenses) {
+              await handleDeleteTransactions(selectedIds);
+            } else {
+              await handleDeleteDebts(selectedIds);
+            }
+            setSelectedIds([]);
+            setIsSelectionMode(false);
+          },
+        },
+      ]
+    );
   };
 
   const handleRestoreData = async (restored: { transactions: Transaction[]; debts: Debt[]; categoryLimits: Record<string, number> }) => {
@@ -386,65 +499,74 @@ function MainApp() {
     await storage.saveCategoryLimits({});
   };
 
-  // Render retro skeleton loader while assets are initializing
-  if (!fontsLoaded || !dataLoaded) {
-    return <TuiSkeletonLoader />;
+  // Render initial dark/light splash screen until the app is ready
+  if (!isAppReady) {
+    const splashBg = isDark ? '#09090B' : '#FAFAFA';
+    return (
+      <View style={{ flex: 1, backgroundColor: splashBg, justifyContent: 'center', alignItems: 'center' }}>
+        <SplashIcon color={colors.primary} size={160} />
+      </View>
+    );
   }
+
   const borderAccent = colors.primary;
   const logBorderColor = isDark ? colors.primary + '40' : colors.primary + '30';
+  const splashBg = isDark ? '#09090B' : '#FAFAFA';
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.card }]}>
-      <StatusBar style={isDark ? 'light' : 'dark'} />
+    <View style={{ flex: 1, backgroundColor: '#000000' }}>
+      <Animated.View
+        style={{
+          flex: 1,
+          backgroundColor: colors.card,
+          transform: [
+            { scale: screenScaleAnim },
+            { translateY: screenTranslateYAnim },
+          ],
+          borderRadius: screenBorderRadiusAnim,
+          overflow: 'hidden',
+        }}
+      >
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}>
+          <StatusBar style={isDark ? 'light' : 'dark'} />
 
-      {/* Top Header Status Bar */}
-      <View style={[styles.statusBarHeader, { borderColor: borderAccent, backgroundColor: colors.card }]}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Wallet size={18} color={colors.primary} style={{ marginRight: 6 }} />
-          <TuiText size="md" weight="bold" style={{ color: colors.primary }}>
-            VaultLeg
-          </TuiText>
-          <TuiText size="md" weight="bold" style={{ color: colors.mutedForeground, marginLeft: 8 }}>
+        {/* Top Header Status Bar */}
+        <View style={[styles.statusBarHeader, { borderColor: borderAccent, backgroundColor: colors.card }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Wallet size={18} color={colors.primary} style={{ marginRight: 6 }} />
+            <TuiText size="md" weight="bold" style={{ color: colors.primary }}>
+              VaultLeg
+            </TuiText>
+            <TuiText size="md" weight="bold" style={{ color: colors.mutedForeground, marginLeft: 8 }}>
             // {activeScreen === 'dashboard' ? 'home' : activeScreen === 'expenses' ? 'logs' : activeScreen === 'add-transaction' ? 'log' : activeScreen === 'stats' ? 'stats' : activeScreen === 'debts' ? 'debts' : 'settings'}
-          </TuiText>
+            </TuiText>
+          </View>
+
+          {/* Settings button icon only */}
+          <Pressable
+            onPress={() => {
+              handleNavigate('settings');
+            }}
+            style={[
+              styles.headerThemeBtn,
+              {
+                borderColor: borderAccent,
+                backgroundColor: activeScreen === 'settings' ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                width: 38,
+                height: 38,
+                alignItems: 'center',
+                justifyContent: 'center',
+                paddingHorizontal: 0,
+              }
+            ]}
+          >
+            <SettingsIcon size={16} color={colors.foreground} />
+          </Pressable>
         </View>
 
-        {/* Settings button icon only */}
-        <Pressable
-          onPress={() => {
-            handleNavigate('settings');
-          }}
-          style={[
-            styles.headerThemeBtn,
-            {
-              borderColor: borderAccent,
-              backgroundColor: activeScreen === 'settings' ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-              width: 38,
-              height: 38,
-              alignItems: 'center',
-              justifyContent: 'center',
-              paddingHorizontal: 0,
-            }
-          ]}
-        >
-          <SettingsIcon size={16} color={colors.foreground} />
-        </Pressable>
-      </View>
-
-      {/* Screen Router */}
-      <View style={styles.appBody}>
-        <ScrollView
-          ref={scrollViewRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={handleScroll}
-          scrollEventThrottle={16}
-          style={{ flex: 1 }}
-          contentContainerStyle={{ width: screenWidth * swipeableScreens.length }}
-        >
-          {/* Page 0: Home */}
-          <View style={{ width: screenWidth, height: '100%' }}>
+        {/* Screen Router */}
+        <View style={styles.appBody}>
+          {activeScreen === 'dashboard' && (
             <Dashboard
               transactions={transactions}
               statsLimit={statsLimit}
@@ -458,14 +580,16 @@ function MainApp() {
               onNavigateToStats={() => handleNavigate('stats')}
               refreshing={refreshing}
               onRefresh={handleRefresh}
+              editingTransactionId={editingTransaction?.id}
+              onRecentTransactionPress={handleRecentTransactionPress}
             />
-          </View>
+          )}
 
-          {/* Page 1: Logs */}
-          <View style={{ width: screenWidth, height: '100%' }}>
+          {activeScreen === 'expenses' && (
             <Expenses
               transactions={transactions}
               onDeleteTransaction={handleDeleteTransaction}
+              onDeleteTransactions={handleDeleteTransactions}
               onEditTransaction={startEditTransaction}
               onLogTransaction={(initialType) => {
                 if (initialType) {
@@ -475,37 +599,47 @@ function MainApp() {
               }}
               refreshing={refreshing}
               onRefresh={handleRefresh}
+              selectedIds={selectedIds}
+              isSelectionMode={isSelectionMode}
+              onToggleSelect={handleToggleSelect}
+              onLongPressSelect={handleLongPressSelect}
+              editingTransactionId={editingTransaction?.id}
+              highlightedTransactionId={highlightedTransactionId}
             />
-          </View>
+          )}
 
-          {/* Page 2: Stats */}
-          <View style={{ width: screenWidth, height: '100%' }}>
+          {activeScreen === 'stats' && (
             <Stats
               transactions={transactions}
               categoryLimits={categoryLimits}
               onUpdateCategoryLimit={handleUpdateCategoryLimit}
               onEditTransaction={startEditTransaction}
+              onTransactionPress={handleRecentTransactionPress}
               autoOpenDrawer={autoOpenStatsDrawer}
               onResetAutoOpenDrawer={() => setAutoOpenStatsDrawer(false)}
               refreshing={refreshing}
               onRefresh={handleRefresh}
             />
-          </View>
+          )}
 
-          {/* Page 3: Debts */}
-          <View style={{ width: screenWidth, height: '100%' }}>
+          {activeScreen === 'debts' && (
             <Debts
               debts={debts}
               onAddDebtPress={() => setAddDebtDrawerOpen(true)}
               onDeleteDebt={handleDeleteDebt}
+              onDeleteDebts={handleDeleteDebts}
               onEditDebt={startEditDebt}
               refreshing={refreshing}
               onRefresh={handleRefresh}
+              selectedIds={selectedIds}
+              isSelectionMode={isSelectionMode}
+              onToggleSelect={handleToggleSelect}
+              onLongPressSelect={handleLongPressSelect}
+              editingDebtId={editingDebt?.id}
             />
-          </View>
+          )}
 
-          {/* Page 4: Settings */}
-          <View style={{ width: screenWidth, height: '100%' }}>
+          {activeScreen === 'settings' && (
             <Settings
               transactions={transactions}
               debts={debts}
@@ -513,1260 +647,1328 @@ function MainApp() {
               onRestoreData={handleRestoreData}
               onWipeAllData={handleWipeAllData}
             />
-          </View>
-        </ScrollView>
-      </View>
-
-      {/* Floating Bottom Tab Bar Navigation */}
-      <TuiTabBar currentScreen={activeScreen} onNavigate={handleNavigate} />
-
-      {/* Bottom safe-area fill — matches nav card color so home indicator strip is consistent */}
-      <View style={[styles.bottomFill, { backgroundColor: colors.card }]} />
-
-      {/* FAB Dropdown Backdrop covering the screen to cancel log menu */}
-      {logMenuOpen && (
-        <Pressable
-          style={StyleSheet.absoluteFill}
-          onPress={() => setLogMenuOpen(false)}
-        />
-      )}
-
-      {/* FAB Choices stacked directly on top of the LOG button */}
-      {logMenuOpen && (
-        <View style={[styles.fabMenuContainer, { bottom: 70 + insets.bottom }]}>
-
-          {/* DEBT KEY (Top) */}
-          <Pressable
-            onPress={() => {
-              setAddDebtDrawerOpen(true);
-              setTimeout(() => {
-                setLogMenuOpen(false);
-              }, 60);
-              logger.log('NAVIGATOR', 'FAB_OPEN_ADD_DEBT_DRAWER');
-            }}
-            style={({ pressed }) => [
-              styles.fabKey,
-              {
-                backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-              }
-            ]}
-          >
-            {/* Dynamic Segmented Borders */}
-            <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
-            <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
-            <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
-            <View
-              style={[
-                styles.fabBorderTopLeft,
-                {
-                  backgroundColor: borderAccent,
-                  width: Math.max(0, (52 - debtLegendWidth) / 2)
-                }
-              ]}
-            />
-            <View
-              style={[
-                styles.fabBorderTopRight,
-                {
-                  backgroundColor: borderAccent,
-                  width: Math.max(0, (52 - debtLegendWidth) / 2)
-                }
-              ]}
-            />
-
-            {/* Centered Legend resting on top border */}
-            <View
-              onLayout={(e) => setDebtLegendWidth(e.nativeEvent.layout.width)}
-              style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
-            >
-              <TuiText
-                weight="bold"
-                style={[
-                  styles.fabLegendText,
-                  { color: colors.primary },
-                ]}
-              >
-                Debt
-              </TuiText>
-            </View>
-
-            <View style={styles.fabContent} pointerEvents="none">
-              <Landmark size={18} color={colors.primary} />
-            </View>
-          </Pressable>
-
-          {/* INCOME KEY (Middle) */}
-          <Pressable
-            onPress={() => {
-              setLogType('income');
-              setLogCategory(INCOME_CATEGORIES[0].id);
-              setAddTransactionDrawerOpen(true);
-              setTimeout(() => {
-                setLogMenuOpen(false);
-              }, 60);
-              logger.log('NAVIGATOR', 'FAB_OPEN_ADD_INCOME_DRAWER');
-            }}
-            style={({ pressed }) => [
-              styles.fabKey,
-              {
-                backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-              }
-            ]}
-          >
-            {/* Dynamic Segmented Borders */}
-            <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
-            <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
-            <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
-            <View
-              style={[
-                styles.fabBorderTopLeft,
-                {
-                  backgroundColor: borderAccent,
-                  width: Math.max(0, (52 - incomeLegendWidth) / 2)
-                }
-              ]}
-            />
-            <View
-              style={[
-                styles.fabBorderTopRight,
-                {
-                  backgroundColor: borderAccent,
-                  width: Math.max(0, (52 - incomeLegendWidth) / 2)
-                }
-              ]}
-            />
-
-            {/* Centered Legend resting on top border */}
-            <View
-              onLayout={(e) => setIncomeLegendWidth(e.nativeEvent.layout.width)}
-              style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
-            >
-              <TuiText
-                weight="bold"
-                style={[
-                  styles.fabLegendText,
-                  { color: colors.primary },
-                ]}
-              >
-                Inc
-              </TuiText>
-            </View>
-
-            <View style={styles.fabContent} pointerEvents="none">
-              <TrendingUp size={18} color={colors.primary} />
-            </View>
-          </Pressable>
-
-          {/* EXPENSE KEY (Bottom) */}
-          <Pressable
-            onPress={() => {
-              setLogType('expense');
-              setLogCategory(CATEGORIES[0].id);
-              setAddTransactionDrawerOpen(true);
-              setTimeout(() => {
-                setLogMenuOpen(false);
-              }, 60);
-              logger.log('NAVIGATOR', 'FAB_OPEN_ADD_TRANSACTION_DRAWER');
-            }}
-            style={({ pressed }) => [
-              styles.fabKey,
-              {
-                backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                marginBottom: 0, // Sits closest to the bottom nav LOG button
-              }
-            ]}
-          >
-            {/* Dynamic Segmented Borders */}
-            <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
-            <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
-            <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
-            <View
-              style={[
-                styles.fabBorderTopLeft,
-                {
-                  backgroundColor: borderAccent,
-                  width: Math.max(0, (52 - expenseLegendWidth) / 2)
-                }
-              ]}
-            />
-            <View
-              style={[
-                styles.fabBorderTopRight,
-                {
-                  backgroundColor: borderAccent,
-                  width: Math.max(0, (52 - expenseLegendWidth) / 2)
-                }
-              ]}
-            />
-
-            {/* Centered Legend resting on top border */}
-            <View
-              onLayout={(e) => setExpenseLegendWidth(e.nativeEvent.layout.width)}
-              style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
-            >
-              <TuiText
-                weight="bold"
-                style={[
-                  styles.fabLegendText,
-                  { color: colors.primary },
-                ]}
-              >
-                Exp
-              </TuiText>
-            </View>
-
-            <View style={styles.fabContent} pointerEvents="none">
-              <FileText size={18} color={colors.primary} />
-            </View>
-          </Pressable>
-
+          )}
         </View>
-      )}
 
-      {/* Drawer for logging expense */}
-      <TuiDrawer
-        visible={addTransactionDrawerOpen}
-        onClose={() => {
-          setAddTransactionDrawerOpen(false);
-          setTimeout(() => {
-            setLogType('expense');
-            setLogAmount('');
-            setLogDescription('');
-            setLogCategory(CATEGORIES[0].id);
-            setLogDate(getTodayDateString());
-            setShowLogDatePicker(false);
-          }, 250);
-        }}
-        title="Log Transaction"
-      >
-        {/* 01: AMOUNT INPUT */}
-        <TuiInput
-          label="Amount (₱)"
-          value={logAmount}
-          onChangeText={setLogAmount}
-          keyboardType="default"
-          placeholder="0.00"
-          containerStyle={{ height: 68 }}
-          style={{ fontSize: 32, fontFamily: 'JetBrainsMono_700Bold', height: 48 }}
-        />
-
-        {/* 02: DESCRIPTION INPUT */}
-        <TuiInput
-          label="Description"
-          value={logDescription}
-          onChangeText={setLogDescription}
-          placeholder="Enter description (e.g. Rent, Salary)"
-        />
-
-        {/* 03: CATEGORY CONTAINER WITH 3x3 GRID */}
-        <View
-          style={[
-            styles.logCategoryContainer,
-            {
-              backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-            }
-          ]}
-        >
-          {/* Custom Segmented Borders */}
-          <View style={[styles.logBorderLeft, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
-          <View style={[styles.logBorderRight, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
-          <View style={[styles.logBorderBottom, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
-          <View style={[styles.logBorderTopLeft, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
-          <View
+        {selectionBarVisible && (
+          <Animated.View
             style={[
-              styles.logBorderTopRight,
+              styles.floatingSelectionWrapper,
               {
-                backgroundColor: isDark ? colors.primary + '40' : '#000000',
-                left: 12 + categoryLegendWidth,
-              }
+                bottom: insets.bottom - 10,
+                opacity: selectionBarAnim,
+                transform: [
+                  {
+                    translateY: selectionBarAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [120, 0],
+                    }),
+                  },
+                ],
+              },
             ]}
-          />
-
-          {/* Legend Label */}
-          <View
-            onLayout={(e) => setCategoryLegendWidth(e.nativeEvent.layout.width)}
-            style={styles.logLegendWrapper}
           >
-            <TuiText
-              weight="bold"
-              size="sm"
-              style={{
-                color: colors.mutedForeground,
-                letterSpacing: 0.5,
+            <TuiContainer label={`Selected: ${selectedIds.length}`} accentBorder style={{ marginTop: 0, marginBottom: 0 }} labelSize="sm">
+              <View style={styles.floatingSelectionBar}>
+                <TuiButton
+                  onPress={handleCancelSelection}
+                  variant="outline"
+                  style={styles.actionButtonCompact}
+                >
+                  Cancel
+                </TuiButton>
+                <TuiButton
+                  onPress={handleDeleteSelection}
+                  variant="destructive"
+                  style={styles.actionButtonCompact}
+                >
+                  Delete
+                </TuiButton>
+              </View>
+            </TuiContainer>
+          </Animated.View>
+        )}
+
+        {/* Floating Bottom Tab Bar Navigation */}
+        <TuiTabBar
+          currentScreen={activeScreen}
+          onNavigate={handleNavigate}
+          onLongPressAdd={handleLongPressAdd}
+        />
+
+        {/* Bottom safe-area fill — matches nav card color so home indicator strip is consistent */}
+        <View style={[styles.bottomFill, { backgroundColor: colors.card }]} />
+
+        {/* FAB Dropdown Backdrop covering the screen to cancel log menu */}
+        {logMenuOpen && (
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setLogMenuOpen(false)}
+          />
+        )}
+
+        {/* FAB Choices stacked directly on top of the LOG button */}
+        {logMenuOpen && (
+          <View style={[styles.fabMenuContainer, { bottom: 70 + insets.bottom }]}>
+
+            {/* DEBT KEY (Top) */}
+            <Pressable
+              onPress={() => {
+                setAddDebtDrawerOpen(true);
+                setTimeout(() => {
+                  setLogMenuOpen(false);
+                }, 60);
+                logger.log('NAVIGATOR', 'FAB_OPEN_ADD_DEBT_DRAWER');
               }}
+              style={({ pressed }) => [
+                styles.fabKey,
+                {
+                  backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                }
+              ]}
             >
-              Category
-            </TuiText>
-          </View>
+              {/* Dynamic Segmented Borders */}
+              <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
+              <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
+              <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
+              <View
+                style={[
+                  styles.fabBorderTopLeft,
+                  {
+                    backgroundColor: borderAccent,
+                    width: Math.max(0, (52 - debtLegendWidth) / 2)
+                  }
+                ]}
+              />
+              <View
+                style={[
+                  styles.fabBorderTopRight,
+                  {
+                    backgroundColor: borderAccent,
+                    width: Math.max(0, (52 - debtLegendWidth) / 2)
+                  }
+                ]}
+              />
 
-          {/* 3x3 Grid */}
-          <View style={styles.logCategoryGrid}>
-            {(logType === 'expense' ? CATEGORIES : INCOME_CATEGORIES).map((cat) => {
-              const isSelected = logCategory === cat.id;
-              const bWidth = catBtnWidths[cat.id] || 100;
-              const lWidth = catLabelWidths[cat.id] || 28;
-              const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
-              const catBorderColor = isSelected
-                ? colors.primary
-                : (isDark ? colors.primary + '40' : '#000000');
-
-              return (
-                <Pressable
-                  key={cat.id}
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    setLogCategory(cat.id);
-                  }}
-                  onLayout={(e) => {
-                    const width = e.nativeEvent.layout.width;
-                    setCatBtnWidths(prev => ({ ...prev, [cat.id]: width }));
-                  }}
+              {/* Centered Legend resting on top border */}
+              <View
+                onLayout={(e) => setDebtLegendWidth(e.nativeEvent.layout.width)}
+                style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
+              >
+                <TuiText
+                  weight="bold"
                   style={[
-                    styles.logCategoryGridBtn,
-                    {
-                      backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                      width: logType === 'income' ? '23%' : '30%',
-                    }
+                    styles.fabLegendText,
+                    { color: colors.primary },
                   ]}
                 >
-                  {/* Dynamic Segmented Borders */}
-                  <View style={[styles.catBtnBorderLeft, { backgroundColor: catBorderColor }]} />
-                  <View style={[styles.catBtnBorderRight, { backgroundColor: catBorderColor }]} />
-                  <View style={[styles.catBtnBorderBottom, { backgroundColor: catBorderColor }]} />
-                  <View style={[styles.catBtnBorderTopLeft, { backgroundColor: catBorderColor, width: topSegmentWidth }]} />
-                  <View style={[styles.catBtnBorderTopRight, { backgroundColor: catBorderColor, width: topSegmentWidth }]} />
+                  Debt
+                </TuiText>
+              </View>
 
-                  {/* Legend Label resting on top border */}
-                  <View
+              <View style={styles.fabContent} pointerEvents="none">
+                <Landmark size={18} color={colors.primary} />
+              </View>
+            </Pressable>
+
+            {/* INCOME KEY (Middle) */}
+            <Pressable
+              onPress={() => {
+                setLogType('income');
+                setLogCategory(INCOME_CATEGORIES[0].id);
+                setAddTransactionDrawerOpen(true);
+                setTimeout(() => {
+                  setLogMenuOpen(false);
+                }, 60);
+                logger.log('NAVIGATOR', 'FAB_OPEN_ADD_INCOME_DRAWER');
+              }}
+              style={({ pressed }) => [
+                styles.fabKey,
+                {
+                  backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                }
+              ]}
+            >
+              {/* Dynamic Segmented Borders */}
+              <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
+              <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
+              <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
+              <View
+                style={[
+                  styles.fabBorderTopLeft,
+                  {
+                    backgroundColor: borderAccent,
+                    width: Math.max(0, (52 - incomeLegendWidth) / 2)
+                  }
+                ]}
+              />
+              <View
+                style={[
+                  styles.fabBorderTopRight,
+                  {
+                    backgroundColor: borderAccent,
+                    width: Math.max(0, (52 - incomeLegendWidth) / 2)
+                  }
+                ]}
+              />
+
+              {/* Centered Legend resting on top border */}
+              <View
+                onLayout={(e) => setIncomeLegendWidth(e.nativeEvent.layout.width)}
+                style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
+              >
+                <TuiText
+                  weight="bold"
+                  style={[
+                    styles.fabLegendText,
+                    { color: colors.primary },
+                  ]}
+                >
+                  Inc
+                </TuiText>
+              </View>
+
+              <View style={styles.fabContent} pointerEvents="none">
+                <TrendingUp size={18} color={colors.primary} />
+              </View>
+            </Pressable>
+
+            {/* EXPENSE KEY (Bottom) */}
+            <Pressable
+              onPress={() => {
+                setLogType('expense');
+                setLogCategory(CATEGORIES[0].id);
+                setAddTransactionDrawerOpen(true);
+                setTimeout(() => {
+                  setLogMenuOpen(false);
+                }, 60);
+                logger.log('NAVIGATOR', 'FAB_OPEN_ADD_TRANSACTION_DRAWER');
+              }}
+              style={({ pressed }) => [
+                styles.fabKey,
+                {
+                  backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                  marginBottom: 0, // Sits closest to the bottom nav LOG button
+                }
+              ]}
+            >
+              {/* Dynamic Segmented Borders */}
+              <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
+              <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
+              <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
+              <View
+                style={[
+                  styles.fabBorderTopLeft,
+                  {
+                    backgroundColor: borderAccent,
+                    width: Math.max(0, (52 - expenseLegendWidth) / 2)
+                  }
+                ]}
+              />
+              <View
+                style={[
+                  styles.fabBorderTopRight,
+                  {
+                    backgroundColor: borderAccent,
+                    width: Math.max(0, (52 - expenseLegendWidth) / 2)
+                  }
+                ]}
+              />
+
+              {/* Centered Legend resting on top border */}
+              <View
+                onLayout={(e) => setExpenseLegendWidth(e.nativeEvent.layout.width)}
+                style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
+              >
+                <TuiText
+                  weight="bold"
+                  style={[
+                    styles.fabLegendText,
+                    { color: colors.primary },
+                  ]}
+                >
+                  Exp
+                </TuiText>
+              </View>
+
+              <View style={styles.fabContent} pointerEvents="none">
+                <FileText size={18} color={colors.primary} />
+              </View>
+            </Pressable>
+
+          </View>
+        )}
+
+        {/* Drawer for logging expense */}
+        <TuiDrawer
+          visible={addTransactionDrawerOpen}
+          onClose={() => {
+            setAddTransactionDrawerOpen(false);
+            setTimeout(() => {
+              setLogType('expense');
+              setLogAmount('');
+              setLogDescription('');
+              setLogCategory(CATEGORIES[0].id);
+              setLogDate(getTodayDateString());
+              setShowLogDatePicker(false);
+            }, 250);
+          }}
+          title="Log Transaction"
+        >
+          {/* 01: AMOUNT INPUT */}
+          <TuiInput
+            label="Amount (₱)"
+            value={logAmount}
+            onChangeText={setLogAmount}
+            keyboardType="default"
+            placeholder="0.00"
+            containerStyle={{ height: 68 }}
+            style={{ fontSize: 32, fontFamily: 'JetBrainsMono_700Bold', height: 48 }}
+          />
+
+          {/* 02: DESCRIPTION INPUT */}
+          <TuiInput
+            label="Description"
+            value={logDescription}
+            onChangeText={setLogDescription}
+            placeholder="Enter description (e.g. Rent, Salary)"
+          />
+
+          {/* 03: CATEGORY CONTAINER WITH 3x3 GRID */}
+          <View
+            style={[
+              styles.logCategoryContainer,
+              {
+                backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+              }
+            ]}
+          >
+            {/* Custom Segmented Borders */}
+            <View style={[styles.logBorderLeft, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
+            <View style={[styles.logBorderRight, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
+            <View style={[styles.logBorderBottom, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
+            <View style={[styles.logBorderTopLeft, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
+            <View
+              style={[
+                styles.logBorderTopRight,
+                {
+                  backgroundColor: isDark ? colors.primary + '40' : '#000000',
+                  left: 12 + categoryLegendWidth,
+                }
+              ]}
+            />
+
+            {/* Legend Label */}
+            <View
+              onLayout={(e) => setCategoryLegendWidth(e.nativeEvent.layout.width)}
+              style={styles.logLegendWrapper}
+            >
+              <TuiText
+                weight="bold"
+                size="sm"
+                style={{
+                  color: colors.mutedForeground,
+                  letterSpacing: 0.5,
+                }}
+              >
+                Category
+              </TuiText>
+            </View>
+
+            {/* 3x3 Grid */}
+            <View style={styles.logCategoryGrid}>
+              {(logType === 'expense' ? CATEGORIES : INCOME_CATEGORIES).map((cat) => {
+                const isSelected = logCategory === cat.id;
+                const bWidth = catBtnWidths[cat.id] || 100;
+                const lWidth = catLabelWidths[cat.id] || 28;
+                const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
+                const catBorderColor = isSelected
+                  ? colors.primary
+                  : (isDark ? colors.primary + '40' : '#000000');
+
+                return (
+                  <Pressable
+                    key={cat.id}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setLogCategory(cat.id);
+                    }}
                     onLayout={(e) => {
                       const width = e.nativeEvent.layout.width;
-                      setCatLabelWidths(prev => ({ ...prev, [cat.id]: width }));
+                      setCatBtnWidths(prev => ({ ...prev, [cat.id]: width }));
                     }}
-                    style={styles.catBtnLegendWrapper}
+                    style={[
+                      styles.logCategoryGridBtn,
+                      {
+                        backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                        width: logType === 'income' ? '23%' : '30%',
+                      }
+                    ]}
                   >
-                    <TuiText
-                      weight="bold"
-                      style={{
-                        color: isSelected ? colors.primary : colors.mutedForeground,
-                        fontSize: 13.5,
-                        letterSpacing: 0.1,
+                    {/* Dynamic Segmented Borders */}
+                    <View style={[styles.catBtnBorderLeft, { backgroundColor: catBorderColor }]} />
+                    <View style={[styles.catBtnBorderRight, { backgroundColor: catBorderColor }]} />
+                    <View style={[styles.catBtnBorderBottom, { backgroundColor: catBorderColor }]} />
+                    <View style={[styles.catBtnBorderTopLeft, { backgroundColor: catBorderColor, width: topSegmentWidth }]} />
+                    <View style={[styles.catBtnBorderTopRight, { backgroundColor: catBorderColor, width: topSegmentWidth }]} />
+
+                    {/* Legend Label resting on top border */}
+                    <View
+                      onLayout={(e) => {
+                        const width = e.nativeEvent.layout.width;
+                        setCatLabelWidths(prev => ({ ...prev, [cat.id]: width }));
                       }}
+                      style={styles.catBtnLegendWrapper}
                     >
-                      {cat.label}
-                    </TuiText>
-                  </View>
+                      <TuiText
+                        weight="bold"
+                        style={{
+                          color: isSelected ? colors.primary : colors.mutedForeground,
+                          fontSize: 13.5,
+                          letterSpacing: 0.1,
+                        }}
+                      >
+                        {cat.label}
+                      </TuiText>
+                    </View>
 
-                  <View style={styles.catBtnContent} pointerEvents="none">
-                    {getCategoryIcon(cat.id, 20, isSelected ? colors.primary : colors.mutedForeground)}
-                  </View>
-                </Pressable>
-              );
-            })}
+                    <View style={styles.catBtnContent} pointerEvents="none">
+                      {getCategoryIcon(cat.id, 20, isSelected ? colors.primary : colors.mutedForeground)}
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
           </View>
-        </View>
 
-        {/* 04: RETRO BRUTALIST CALENDAR DATE PICKER (LEGEND CONTAINER STYLE) */}
-        <View style={{ marginVertical: 10, width: '100%', position: 'relative', zIndex: 100 }}>
-          <Pressable
-            onPress={() => {
-              Keyboard.dismiss();
-              setShowLogDatePicker(prev => !prev);
-            }}
-            style={({ pressed }) => [
-              styles.logDateSelectorRow,
+          {/* 04: RETRO BRUTALIST CALENDAR DATE PICKER (LEGEND CONTAINER STYLE) */}
+          <View style={{ marginVertical: 10, width: '100%', position: 'relative', zIndex: 100 }}>
+            <Pressable
+              onPress={() => {
+                Keyboard.dismiss();
+                setShowLogDatePicker(prev => !prev);
+              }}
+              style={({ pressed }) => [
+                styles.logDateSelectorRow,
+                {
+                  backgroundColor: pressed ? colors.primary + '15' : (isDark ? '#18181B' : '#FFFFFF'),
+                  marginBottom: 0, // Reset bottom margin since parent View handles layout
+                }
+              ]}
+            >
+              {/* Custom Segmented Borders */}
+              <View style={[styles.logBorderLeft, { backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+              <View style={[styles.logBorderRight, { backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+              <View style={[styles.logBorderBottom, { backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+              <View style={[styles.logBorderTopLeft, { backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+              <View
+                style={[
+                  styles.logBorderTopRight,
+                  {
+                    backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000'),
+                    left: 12 + dateLegendWidth,
+                  }
+                ]}
+              />
+
+              {/* Legend Label */}
+              <View
+                onLayout={(e) => setDateLegendWidth(e.nativeEvent.layout.width)}
+                style={styles.logLegendWrapper}
+              >
+                <TuiText
+                  weight="bold"
+                  size="sm"
+                  style={{
+                    color: showLogDatePicker ? colors.primary : colors.mutedForeground,
+                    letterSpacing: 0.5,
+                  }}
+                >
+                  Date
+                </TuiText>
+              </View>
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <TuiText size="sm" style={{ color: colors.foreground }}>
+                  {logDate || 'Select Date'}
+                </TuiText>
+                <Calendar size={16} color={colors.primary} />
+              </View>
+            </Pressable>
+
+            {showLogDatePicker && (
+              <>
+                {/* Absolute backdrop to capture click-outside dismissal */}
+                <Pressable
+                  style={{
+                    position: 'absolute',
+                    top: -600,
+                    bottom: -600,
+                    left: -600,
+                    right: -600,
+                    zIndex: 99,
+                  }}
+                  onPress={() => setShowLogDatePicker(false)}
+                />
+                <View
+                  style={[
+                    styles.floatingCalendarContainer,
+                    {
+                      backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                      zIndex: 100,
+                    }
+                  ]}
+                >
+                  <TuiCalendar
+                    value={logDate}
+                    onChange={(selectedDate) => {
+                      setLogDate(selectedDate);
+                      setShowLogDatePicker(false);
+                    }}
+                  />
+                </View>
+              </>
+            )}
+          </View>
+
+          {/* 05: DRAWER ACTIONS */}
+          <View style={styles.logDrawerActions}>
+            <TuiButton
+              onPress={() => {
+                setAddTransactionDrawerOpen(false);
+                // Reset states
+                setTimeout(() => {
+                  setLogType('expense');
+                  setLogAmount('');
+                  setLogDescription('');
+                  setLogCategory(CATEGORIES[0].id);
+                  setLogDate(getTodayDateString());
+                  setShowLogDatePicker(false);
+                }, 250);
+              }}
+              variant="outline"
+              style={{ flex: 1, marginRight: 8, height: 44, justifyContent: 'center', paddingVertical: 0 }}
+            >
+              Cancel
+            </TuiButton>
+            <TuiButton
+              disabled={isNaN(parseFloat(logAmount)) || parseFloat(logAmount) <= 0}
+              onPress={() => {
+                const parsedAmt = parseFloat(logAmount);
+                const finalDescription = logDescription.trim() ||
+                  (logType === 'expense'
+                    ? CATEGORIES.find(c => c.id === logCategory)?.label
+                    : INCOME_CATEGORIES.find(c => c.id === logCategory)?.label) ||
+                  'Transaction';
+                handleAddTransaction({
+                  amount: parsedAmt,
+                  type: logType,
+                  category: logCategory,
+                  description: finalDescription,
+                  date: logDate,
+                });
+
+                logger.log(
+                  'Operation',
+                  `LOGGED_EXPENSE: ₱${parsedAmt.toFixed(2)} [${logCategory.toUpperCase()}] "${finalDescription}"`
+                );
+
+                setAddTransactionDrawerOpen(false);
+                // Reset states
+                setTimeout(() => {
+                  setLogType('expense');
+                  setLogAmount('');
+                  setLogDescription('');
+                  setLogCategory(CATEGORIES[0].id);
+                  setLogDate(getTodayDateString());
+                  setShowLogDatePicker(false);
+                }, 250);
+              }}
+              variant="accent"
+              style={{ flex: 1, height: 44, justifyContent: 'center', paddingVertical: 0 }}
+            >
+              Save Log
+            </TuiButton>
+          </View>
+
+          {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
+        </TuiDrawer>
+
+        {/* Drawer for logging debt */}
+        <TuiDrawer
+          visible={addDebtDrawerOpen}
+          onClose={() => {
+            setAddDebtDrawerOpen(false);
+            setTimeout(() => {
+              resetDebtForm();
+            }, 250);
+          }}
+          title="Add Debt"
+        >
+          {/* Name Input */}
+          <TuiInput
+            label="Debt Name / Person"
+            value={debtName}
+            onChangeText={setDebtName}
+            placeholder="e.g. Bank Loan, Friend Alex"
+          />
+
+          {/* Amount Input */}
+          <TuiInput
+            label="Amount (₱)"
+            value={debtAmount}
+            onChangeText={setDebtAmount}
+            keyboardType="default"
+            placeholder="0.00"
+            containerStyle={{ height: 68 }}
+            style={{ fontSize: 32, fontFamily: 'JetBrainsMono_700Bold', height: 48 }}
+          />
+
+          {/* Debt Type Selector */}
+          <View
+            style={[
+              styles.logCategoryContainer,
               {
-                backgroundColor: pressed ? colors.primary + '15' : (isDark ? '#18181B' : '#FFFFFF'),
-                marginBottom: 0, // Reset bottom margin since parent View handles layout
+                backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                borderColor: logBorderColor,
               }
             ]}
           >
             {/* Custom Segmented Borders */}
-            <View style={[styles.logBorderLeft, { backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
-            <View style={[styles.logBorderRight, { backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
-            <View style={[styles.logBorderBottom, { backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
-            <View style={[styles.logBorderTopLeft, { backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+            <View style={[styles.logBorderLeft, { backgroundColor: logBorderColor }]} />
+            <View style={[styles.logBorderRight, { backgroundColor: logBorderColor }]} />
+            <View style={[styles.logBorderBottom, { backgroundColor: logBorderColor }]} />
+            <View style={[styles.logBorderTopLeft, { backgroundColor: logBorderColor }]} />
             <View
               style={[
                 styles.logBorderTopRight,
                 {
-                  backgroundColor: showLogDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000'),
-                  left: 12 + dateLegendWidth,
+                  backgroundColor: logBorderColor,
+                  left: 12 + debtTypeLegendWidth,
                 }
               ]}
             />
 
             {/* Legend Label */}
             <View
-              onLayout={(e) => setDateLegendWidth(e.nativeEvent.layout.width)}
+              onLayout={(e) => setDebtTypeLegendWidth(e.nativeEvent.layout.width)}
               style={styles.logLegendWrapper}
             >
               <TuiText
                 weight="bold"
                 size="sm"
                 style={{
-                  color: showLogDatePicker ? colors.primary : colors.mutedForeground,
+                  color: colors.mutedForeground,
                   letterSpacing: 0.5,
                 }}
               >
-                Date
+                Debt Type
               </TuiText>
             </View>
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-              <TuiText size="sm" style={{ color: colors.foreground }}>
-                {logDate || 'Select Date'}
-              </TuiText>
-              <Calendar size={16} color={colors.primary} />
-            </View>
-          </Pressable>
+            {/* Options Grid */}
+            <View style={styles.logCategoryGrid}>
+              {[
+                { id: 'payable', label: 'I Owe' },
+                { id: 'receivable', label: 'Owes Me' },
+              ].map((option) => {
+                const isSelected = debtType === option.id;
+                const bWidth = debtTypeBtnWidths[option.id] || 100;
+                const lWidth = debtTypeLabelWidths[option.id] || 28;
+                const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
+                const btnBorderColor = isSelected ? colors.primary : logBorderColor;
 
-          {showLogDatePicker && (
-            <>
-              {/* Absolute backdrop to capture click-outside dismissal */}
-              <Pressable
-                style={{
-                  position: 'absolute',
-                  top: -600,
-                  bottom: -600,
-                  left: -600,
-                  right: -600,
-                  zIndex: 99,
-                }}
-                onPress={() => setShowLogDatePicker(false)}
-              />
-              <View
-                style={[
-                  styles.floatingCalendarContainer,
-                  {
-                    backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-                    zIndex: 100,
-                  }
-                ]}
-              >
-                <TuiCalendar
-                  value={logDate}
-                  onChange={(selectedDate) => {
-                    setLogDate(selectedDate);
-                    setShowLogDatePicker(false);
-                  }}
-                />
-              </View>
-            </>
-          )}
-        </View>
-
-        {/* 05: DRAWER ACTIONS */}
-        <View style={styles.logDrawerActions}>
-          <TuiButton
-            onPress={() => {
-              setAddTransactionDrawerOpen(false);
-              // Reset states
-              setTimeout(() => {
-                setLogType('expense');
-                setLogAmount('');
-                setLogDescription('');
-                setLogCategory(CATEGORIES[0].id);
-                setLogDate(getTodayDateString());
-                setShowLogDatePicker(false);
-              }, 250);
-            }}
-            variant="outline"
-            style={{ flex: 1, marginRight: 8, height: 44, justifyContent: 'center', paddingVertical: 0 }}
-          >
-            Cancel
-          </TuiButton>
-          <TuiButton
-            disabled={!logDescription.trim() || isNaN(parseFloat(logAmount)) || parseFloat(logAmount) <= 0}
-            onPress={() => {
-              const parsedAmt = parseFloat(logAmount);
-              handleAddTransaction({
-                amount: parsedAmt,
-                type: logType,
-                category: logCategory,
-                description: logDescription.trim(),
-                date: logDate,
-              });
-
-              logger.log(
-                'Operation',
-                `LOGGED_EXPENSE: ₱${parsedAmt.toFixed(2)} [${logCategory.toUpperCase()}] "${logDescription.trim()}"`
-              );
-
-              setAddTransactionDrawerOpen(false);
-              // Reset states
-              setTimeout(() => {
-                setLogType('expense');
-                setLogAmount('');
-                setLogDescription('');
-                setLogCategory(CATEGORIES[0].id);
-                setLogDate(getTodayDateString());
-                setShowLogDatePicker(false);
-              }, 250);
-            }}
-            variant="accent"
-            style={{ flex: 1, height: 44, justifyContent: 'center', paddingVertical: 0 }}
-          >
-            Save Log
-          </TuiButton>
-        </View>
-
-        {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
-      </TuiDrawer>
-
-      {/* Drawer for logging debt */}
-      <TuiDrawer
-        visible={addDebtDrawerOpen}
-        onClose={() => {
-          setAddDebtDrawerOpen(false);
-          setTimeout(() => {
-            resetDebtForm();
-          }, 250);
-        }}
-        title="Add Debt"
-      >
-        {/* Name Input */}
-        <TuiInput
-          label="Debt Name / Person"
-          value={debtName}
-          onChangeText={setDebtName}
-          placeholder="e.g. Bank Loan, Friend Alex"
-        />
-
-        {/* Amount Input */}
-        <TuiInput
-          label="Amount (₱)"
-          value={debtAmount}
-          onChangeText={setDebtAmount}
-          keyboardType="default"
-          placeholder="0.00"
-          containerStyle={{ height: 68 }}
-          style={{ fontSize: 32, fontFamily: 'JetBrainsMono_700Bold', height: 48 }}
-        />
-
-        {/* Debt Type Selector */}
-        <View
-          style={[
-            styles.logCategoryContainer,
-            {
-              backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-              borderColor: logBorderColor,
-            }
-          ]}
-        >
-          {/* Custom Segmented Borders */}
-          <View style={[styles.logBorderLeft, { backgroundColor: logBorderColor }]} />
-          <View style={[styles.logBorderRight, { backgroundColor: logBorderColor }]} />
-          <View style={[styles.logBorderBottom, { backgroundColor: logBorderColor }]} />
-          <View style={[styles.logBorderTopLeft, { backgroundColor: logBorderColor }]} />
-          <View
-            style={[
-              styles.logBorderTopRight,
-              {
-                backgroundColor: logBorderColor,
-                left: 12 + debtTypeLegendWidth,
-              }
-            ]}
-          />
-
-          {/* Legend Label */}
-          <View
-            onLayout={(e) => setDebtTypeLegendWidth(e.nativeEvent.layout.width)}
-            style={styles.logLegendWrapper}
-          >
-            <TuiText
-              weight="bold"
-              size="sm"
-              style={{
-                color: colors.mutedForeground,
-                letterSpacing: 0.5,
-              }}
-            >
-              Debt Type
-            </TuiText>
-          </View>
-
-          {/* Options Grid */}
-          <View style={styles.logCategoryGrid}>
-            {[
-              { id: 'payable', label: 'I Owe' },
-              { id: 'receivable', label: 'Owes Me' },
-            ].map((option) => {
-              const isSelected = debtType === option.id;
-              const bWidth = debtTypeBtnWidths[option.id] || 100;
-              const lWidth = debtTypeLabelWidths[option.id] || 28;
-              const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
-              const btnBorderColor = isSelected ? colors.primary : logBorderColor;
-
-              return (
-                <Pressable
-                  key={option.id}
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    setDebtType(option.id as 'payable' | 'receivable');
-                  }}
-                  onLayout={(e) => {
-                    const w = e.nativeEvent.layout.width;
-                    setDebtTypeBtnWidths(prev => ({ ...prev, [option.id]: w }));
-                  }}
-                  style={[
-                    styles.logCategoryGridBtn,
-                    {
-                      backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                      width: '48%',
-                    }
-                  ]}
-                >
-                  {/* Dynamic Segmented Borders */}
-                  <View style={[styles.catBtnBorderLeft, { backgroundColor: btnBorderColor }]} />
-                  <View style={[styles.catBtnBorderRight, { backgroundColor: btnBorderColor }]} />
-                  <View style={[styles.catBtnBorderBottom, { backgroundColor: btnBorderColor }]} />
-                  <View style={[styles.catBtnBorderTopLeft, { backgroundColor: btnBorderColor, width: topSegmentWidth }]} />
-                  <View style={[styles.catBtnBorderTopRight, { backgroundColor: btnBorderColor, width: topSegmentWidth }]} />
-
-                  {/* Legend Label resting on top border */}
-                  <View
+                return (
+                  <Pressable
+                    key={option.id}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setDebtType(option.id as 'payable' | 'receivable');
+                    }}
                     onLayout={(e) => {
                       const w = e.nativeEvent.layout.width;
-                      setDebtTypeLabelWidths(prev => ({ ...prev, [option.id]: w }));
+                      setDebtTypeBtnWidths(prev => ({ ...prev, [option.id]: w }));
                     }}
-                    style={styles.catBtnLegendWrapper}
+                    style={[
+                      styles.logCategoryGridBtn,
+                      {
+                        backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                        width: '48%',
+                      }
+                    ]}
                   >
-                    <TuiText
-                      weight="bold"
-                      style={{
-                        color: isSelected ? colors.primary : colors.mutedForeground,
-                        fontSize: 13.5,
-                        letterSpacing: 0.1,
+                    {/* Dynamic Segmented Borders */}
+                    <View style={[styles.catBtnBorderLeft, { backgroundColor: btnBorderColor }]} />
+                    <View style={[styles.catBtnBorderRight, { backgroundColor: btnBorderColor }]} />
+                    <View style={[styles.catBtnBorderBottom, { backgroundColor: btnBorderColor }]} />
+                    <View style={[styles.catBtnBorderTopLeft, { backgroundColor: btnBorderColor, width: topSegmentWidth }]} />
+                    <View style={[styles.catBtnBorderTopRight, { backgroundColor: btnBorderColor, width: topSegmentWidth }]} />
+
+                    {/* Legend Label resting on top border */}
+                    <View
+                      onLayout={(e) => {
+                        const w = e.nativeEvent.layout.width;
+                        setDebtTypeLabelWidths(prev => ({ ...prev, [option.id]: w }));
                       }}
+                      style={styles.catBtnLegendWrapper}
                     >
-                      {option.label}
-                    </TuiText>
-                  </View>
+                      <TuiText
+                        weight="bold"
+                        style={{
+                          color: isSelected ? colors.primary : colors.mutedForeground,
+                          fontSize: 13.5,
+                          letterSpacing: 0.1,
+                        }}
+                      >
+                        {option.label}
+                      </TuiText>
+                    </View>
 
-                  <View style={styles.catBtnContent} pointerEvents="none">
-                    {option.id === 'payable' ? (
-                      <ArrowDownCircle size={20} color={isSelected ? colors.destructive : colors.mutedForeground} />
-                    ) : (
-                      <ArrowUpCircle size={20} color={isSelected ? colors.primary : colors.mutedForeground} />
-                    )}
-                  </View>
-                </Pressable>
-              );
-            })}
+                    <View style={styles.catBtnContent} pointerEvents="none">
+                      {option.id === 'payable' ? (
+                        <ArrowDownCircle size={20} color={isSelected ? colors.destructive : colors.mutedForeground} />
+                      ) : (
+                        <ArrowUpCircle size={20} color={isSelected ? colors.primary : colors.mutedForeground} />
+                      )}
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
           </View>
-        </View>
 
-        {/* Due Date Selector */}
-        <View style={{ marginVertical: 10, width: '100%', position: 'relative', zIndex: 100 }}>
-          <Pressable
-            onPress={() => {
-              Keyboard.dismiss();
-              setShowDebtDatePicker(prev => !prev);
-            }}
-            style={({ pressed }) => [
-              styles.logDateSelectorRow,
-              {
-                backgroundColor: pressed ? colors.primary + '15' : (isDark ? '#18181B' : '#FFFFFF'),
-                height: 56,
-              }
-            ]}
-          >
-            {/* Custom Segmented Borders */}
-            <View style={[styles.logBorderLeft, { backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor }]} />
-            <View style={[styles.logBorderRight, { backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor }]} />
-            <View style={[styles.logBorderBottom, { backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor }]} />
-            <View style={[styles.logBorderTopLeft, { backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor }]} />
-            <View
-              style={[
-                styles.logBorderTopRight,
+          {/* Due Date Selector */}
+          <View style={{ marginVertical: 10, width: '100%', position: 'relative', zIndex: 100 }}>
+            <Pressable
+              onPress={() => {
+                Keyboard.dismiss();
+                setShowDebtDatePicker(prev => !prev);
+              }}
+              style={({ pressed }) => [
+                styles.logDateSelectorRow,
                 {
-                  backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor,
-                  left: 12 + debtDateLegendWidth,
+                  backgroundColor: pressed ? colors.primary + '15' : (isDark ? '#18181B' : '#FFFFFF'),
+                  height: 56,
                 }
               ]}
-            />
-
-            {/* Legend Label */}
-            <View
-              onLayout={(e) => setDebtDateLegendWidth(e.nativeEvent.layout.width)}
-              style={styles.logLegendWrapper}
             >
-              <TuiText
-                weight="bold"
-                size="sm"
-                style={{
-                  color: showDebtDatePicker ? colors.primary : colors.mutedForeground,
-                  letterSpacing: 0.5,
-                }}
-              >
-                Due Date
-              </TuiText>
-            </View>
-
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-              <TuiText size="sm" style={{ color: colors.foreground }}>
-                {debtDueDate || 'Select Due Date'}
-              </TuiText>
-              <Calendar size={16} color={colors.primary} />
-            </View>
-          </Pressable>
-
-          {showDebtDatePicker && (
-            <>
-              {/* Absolute backdrop to capture click-outside dismissal */}
-              <Pressable
-                style={{
-                  position: 'absolute',
-                  top: -600,
-                  bottom: -600,
-                  left: -600,
-                  right: -600,
-                  zIndex: 99,
-                }}
-                onPress={() => setShowDebtDatePicker(false)}
-              />
+              {/* Custom Segmented Borders */}
+              <View style={[styles.logBorderLeft, { backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor }]} />
+              <View style={[styles.logBorderRight, { backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor }]} />
+              <View style={[styles.logBorderBottom, { backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor }]} />
+              <View style={[styles.logBorderTopLeft, { backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor }]} />
               <View
                 style={[
-                  styles.floatingCalendarContainer,
+                  styles.logBorderTopRight,
                   {
-                    backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-                    zIndex: 100,
-                    borderColor: logBorderColor,
-                    bottom: 90,
+                    backgroundColor: showDebtDatePicker ? colors.primary : logBorderColor,
+                    left: 12 + debtDateLegendWidth,
                   }
                 ]}
+              />
+
+              {/* Legend Label */}
+              <View
+                onLayout={(e) => setDebtDateLegendWidth(e.nativeEvent.layout.width)}
+                style={styles.logLegendWrapper}
               >
-                <TuiCalendar
-                  value={debtDueDate}
-                  onChange={(selectedDate) => {
-                    setDebtDueDate(selectedDate);
-                    setShowDebtDatePicker(false);
+                <TuiText
+                  weight="bold"
+                  size="sm"
+                  style={{
+                    color: showDebtDatePicker ? colors.primary : colors.mutedForeground,
+                    letterSpacing: 0.5,
                   }}
-                />
+                >
+                  Due Date
+                </TuiText>
               </View>
-            </>
-          )}
-        </View>
 
-        {/* Drawer Actions */}
-        <View style={styles.logDrawerActions}>
-          <TuiButton
-            onPress={() => {
-              setAddDebtDrawerOpen(false);
-              setTimeout(() => {
-                resetDebtForm();
-              }, 250);
-            }}
-            variant="outline"
-            style={{ flex: 1, marginRight: 8, height: 44, justifyContent: 'center', paddingVertical: 0 }}
-          >
-            Cancel
-          </TuiButton>
-          <TuiButton
-            disabled={!debtName.trim() || isNaN(parseFloat(debtAmount)) || parseFloat(debtAmount) <= 0}
-            onPress={() => {
-              const parsedAmt = parseFloat(debtAmount);
-              handleAddDebt({
-                name: debtName.trim(),
-                amount: parsedAmt,
-                type: debtType,
-                dueDate: debtDueDate,
-              });
-              setAddDebtDrawerOpen(false);
-              setTimeout(() => {
-                resetDebtForm();
-              }, 250);
-            }}
-            variant="accent"
-            style={{ flex: 1, height: 44, justifyContent: 'center', paddingVertical: 0 }}
-          >
-            Save Debt
-          </TuiButton>
-        </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <TuiText size="sm" style={{ color: colors.foreground }}>
+                  {debtDueDate || 'Select Due Date'}
+                </TuiText>
+                <Calendar size={16} color={colors.primary} />
+              </View>
+            </Pressable>
 
-        {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
-      </TuiDrawer>
-
-      {/* Drawer for editing transaction */}
-      <TuiDrawer
-        visible={editingTransaction !== null}
-        onClose={() => {
-          setEditingTransaction(null);
-          setShowEditTxDatePicker(false);
-        }}
-        title="Edit Transaction"
-      >
-        {/* 01: AMOUNT INPUT */}
-        <TuiInput
-          label="Amount (₱)"
-          value={editTxAmount}
-          onChangeText={setEditTxAmount}
-          keyboardType="default"
-          placeholder="0.00"
-          containerStyle={{ height: 68 }}
-          style={{ fontSize: 32, fontFamily: 'JetBrainsMono_700Bold', height: 48 }}
-        />
-
-        {/* 02: DESCRIPTION INPUT */}
-        <TuiInput
-          label="Description"
-          value={editTxDescription}
-          onChangeText={setEditTxDescription}
-          placeholder="Enter description"
-        />
-
-        {/* 03: CATEGORY CONTAINER WITH 3x3 GRID */}
-        <View
-          style={[
-            styles.logCategoryContainer,
-            {
-              backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-            }
-          ]}
-        >
-          {/* Custom Segmented Borders */}
-          <View style={[styles.logBorderLeft, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
-          <View style={[styles.logBorderRight, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
-          <View style={[styles.logBorderBottom, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
-          <View style={[styles.logBorderTopLeft, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
-          <View
-            style={[
-              styles.logBorderTopRight,
-              {
-                backgroundColor: isDark ? colors.primary + '40' : '#000000',
-                left: 12 + editTxCategoryLegendWidth,
-              }
-            ]}
-          />
-
-          {/* Legend Label */}
-          <View
-            onLayout={(e) => setEditTxCategoryLegendWidth(e.nativeEvent.layout.width)}
-            style={styles.logLegendWrapper}
-          >
-            <TuiText
-              weight="bold"
-              size="sm"
-              style={{
-                color: colors.mutedForeground,
-                letterSpacing: 0.5,
-              }}
-            >
-              Category
-            </TuiText>
-          </View>
-
-          {/* 3x3 Grid */}
-          <View style={styles.logCategoryGrid}>
-            {(editTxType === 'expense' ? CATEGORIES : INCOME_CATEGORIES).map((cat) => {
-              const isSelected = editTxCategory === cat.id;
-              const bWidth = catBtnWidths[cat.id] || 100;
-              const lWidth = catLabelWidths[cat.id] || 28;
-              const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
-              const catBorderColor = isSelected
-                ? colors.primary
-                : (isDark ? colors.primary + '40' : '#000000');
-
-              return (
+            {showDebtDatePicker && (
+              <>
+                {/* Absolute backdrop to capture click-outside dismissal */}
                 <Pressable
-                  key={cat.id}
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    setEditTxCategory(cat.id);
+                  style={{
+                    position: 'absolute',
+                    top: -600,
+                    bottom: -600,
+                    left: -600,
+                    right: -600,
+                    zIndex: 99,
                   }}
+                  onPress={() => setShowDebtDatePicker(false)}
+                />
+                <View
                   style={[
-                    styles.logCategoryGridBtn,
+                    styles.floatingCalendarContainer,
                     {
-                      backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                      width: editTxType === 'income' ? '23%' : '30%',
+                      backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                      zIndex: 100,
+                      borderColor: logBorderColor,
+                      bottom: 90,
                     }
                   ]}
                 >
-                  {/* Dynamic Segmented Borders */}
-                  <View style={[styles.catBtnBorderLeft, { backgroundColor: catBorderColor }]} />
-                  <View style={[styles.catBtnBorderRight, { backgroundColor: catBorderColor }]} />
-                  <View style={[styles.catBtnBorderBottom, { backgroundColor: catBorderColor }]} />
-                  <View style={[styles.catBtnBorderTopLeft, { backgroundColor: catBorderColor, width: topSegmentWidth }]} />
-                  <View style={[styles.catBtnBorderTopRight, { backgroundColor: catBorderColor, width: topSegmentWidth }]} />
-
-                  {/* Legend Label */}
-                  <View style={styles.catBtnLegendWrapper}>
-                    <TuiText
-                      weight="bold"
-                      style={{
-                        color: isSelected ? colors.primary : colors.mutedForeground,
-                        fontSize: 13.5,
-                        letterSpacing: 0.1,
-                      }}
-                    >
-                      {cat.label}
-                    </TuiText>
-                  </View>
-
-                  <View style={styles.catBtnContent} pointerEvents="none">
-                    {getCategoryIcon(cat.id, 20, isSelected ? colors.primary : colors.mutedForeground)}
-                  </View>
-                </Pressable>
-              );
-            })}
+                  <TuiCalendar
+                    value={debtDueDate}
+                    onChange={(selectedDate) => {
+                      setDebtDueDate(selectedDate);
+                      setShowDebtDatePicker(false);
+                    }}
+                  />
+                </View>
+              </>
+            )}
           </View>
-        </View>
 
-        {/* 04: DATE SELECTOR */}
-        <View style={{ marginVertical: 10, width: '100%', position: 'relative', zIndex: 100 }}>
-          <Pressable
-            onPress={() => {
-              Keyboard.dismiss();
-              setShowEditTxDatePicker(prev => !prev);
-            }}
-            style={({ pressed }) => [
-              styles.logDateSelectorRow,
+          {/* Drawer Actions */}
+          <View style={styles.logDrawerActions}>
+            <TuiButton
+              onPress={() => {
+                setAddDebtDrawerOpen(false);
+                setTimeout(() => {
+                  resetDebtForm();
+                }, 250);
+              }}
+              variant="outline"
+              style={{ flex: 1, marginRight: 8, height: 44, justifyContent: 'center', paddingVertical: 0 }}
+            >
+              Cancel
+            </TuiButton>
+            <TuiButton
+              disabled={isNaN(parseFloat(debtAmount)) || parseFloat(debtAmount) <= 0}
+              onPress={() => {
+                const parsedAmt = parseFloat(debtAmount);
+                const finalName = debtName.trim() || (debtType === 'payable' ? 'Payable' : 'Receivable');
+                handleAddDebt({
+                  name: finalName,
+                  amount: parsedAmt,
+                  type: debtType,
+                  dueDate: debtDueDate,
+                });
+                setAddDebtDrawerOpen(false);
+                setTimeout(() => {
+                  resetDebtForm();
+                }, 250);
+              }}
+              variant="accent"
+              style={{ flex: 1, height: 44, justifyContent: 'center', paddingVertical: 0 }}
+            >
+              Save Debt
+            </TuiButton>
+          </View>
+
+          {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
+        </TuiDrawer>
+
+        {/* Drawer for editing transaction */}
+        <TuiDrawer
+          visible={editingTransaction !== null}
+          onClose={() => {
+            setEditingTransaction(null);
+            setShowEditTxDatePicker(false);
+          }}
+          title="Edit Transaction"
+        >
+          {/* 01: AMOUNT INPUT */}
+          <TuiInput
+            label="Amount (₱)"
+            value={editTxAmount}
+            onChangeText={setEditTxAmount}
+            keyboardType="default"
+            placeholder="0.00"
+            containerStyle={{ height: 68 }}
+            style={{ fontSize: 32, fontFamily: 'JetBrainsMono_700Bold', height: 48 }}
+          />
+
+          {/* 02: DESCRIPTION INPUT */}
+          <TuiInput
+            label="Description"
+            value={editTxDescription}
+            onChangeText={setEditTxDescription}
+            placeholder="Enter description"
+          />
+
+          {/* 03: CATEGORY CONTAINER WITH 3x3 GRID */}
+          <View
+            style={[
+              styles.logCategoryContainer,
               {
-                backgroundColor: pressed ? colors.primary + '15' : (isDark ? '#18181B' : '#FFFFFF'),
-                marginBottom: 0,
+                backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
               }
             ]}
           >
             {/* Custom Segmented Borders */}
-            <View style={[styles.logBorderLeft, { backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
-            <View style={[styles.logBorderRight, { backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
-            <View style={[styles.logBorderBottom, { backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
-            <View style={[styles.logBorderTopLeft, { backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+            <View style={[styles.logBorderLeft, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
+            <View style={[styles.logBorderRight, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
+            <View style={[styles.logBorderBottom, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
+            <View style={[styles.logBorderTopLeft, { backgroundColor: isDark ? colors.primary + '40' : '#000000' }]} />
             <View
               style={[
                 styles.logBorderTopRight,
                 {
-                  backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000'),
-                  left: 12 + editTxDateLegendWidth,
+                  backgroundColor: isDark ? colors.primary + '40' : '#000000',
+                  left: 12 + editTxCategoryLegendWidth,
                 }
               ]}
             />
 
             {/* Legend Label */}
             <View
-              onLayout={(e) => setEditTxDateLegendWidth(e.nativeEvent.layout.width)}
+              onLayout={(e) => setEditTxCategoryLegendWidth(e.nativeEvent.layout.width)}
               style={styles.logLegendWrapper}
             >
               <TuiText
                 weight="bold"
                 size="sm"
                 style={{
-                  color: showEditTxDatePicker ? colors.primary : colors.mutedForeground,
+                  color: colors.mutedForeground,
                   letterSpacing: 0.5,
                 }}
               >
-                Date
+                Category
               </TuiText>
             </View>
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-              <TuiText size="sm" style={{ color: colors.foreground }}>
-                {editTxDate || 'Select Date'}
-              </TuiText>
-              <Calendar size={16} color={colors.primary} />
+            {/* 3x3 Grid */}
+            <View style={styles.logCategoryGrid}>
+              {(editTxType === 'expense' ? CATEGORIES : INCOME_CATEGORIES).map((cat) => {
+                const isSelected = editTxCategory === cat.id;
+                const bWidth = catBtnWidths[cat.id] || 100;
+                const lWidth = catLabelWidths[cat.id] || 28;
+                const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
+                const catBorderColor = isSelected
+                  ? colors.primary
+                  : (isDark ? colors.primary + '40' : '#000000');
+
+                return (
+                  <Pressable
+                    key={cat.id}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setEditTxCategory(cat.id);
+                    }}
+                    style={[
+                      styles.logCategoryGridBtn,
+                      {
+                        backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                        width: editTxType === 'income' ? '23%' : '30%',
+                      }
+                    ]}
+                  >
+                    {/* Dynamic Segmented Borders */}
+                    <View style={[styles.catBtnBorderLeft, { backgroundColor: catBorderColor }]} />
+                    <View style={[styles.catBtnBorderRight, { backgroundColor: catBorderColor }]} />
+                    <View style={[styles.catBtnBorderBottom, { backgroundColor: catBorderColor }]} />
+                    <View style={[styles.catBtnBorderTopLeft, { backgroundColor: catBorderColor, width: topSegmentWidth }]} />
+                    <View style={[styles.catBtnBorderTopRight, { backgroundColor: catBorderColor, width: topSegmentWidth }]} />
+
+                    {/* Legend Label */}
+                    <View style={styles.catBtnLegendWrapper}>
+                      <TuiText
+                        weight="bold"
+                        style={{
+                          color: isSelected ? colors.primary : colors.mutedForeground,
+                          fontSize: 13.5,
+                          letterSpacing: 0.1,
+                        }}
+                      >
+                        {cat.label}
+                      </TuiText>
+                    </View>
+
+                    <View style={styles.catBtnContent} pointerEvents="none">
+                      {getCategoryIcon(cat.id, 20, isSelected ? colors.primary : colors.mutedForeground)}
+                    </View>
+                  </Pressable>
+                );
+              })}
             </View>
-          </Pressable>
-
-          {showEditTxDatePicker && (
-            <>
-              <Pressable
-                style={{
-                  position: 'absolute',
-                  top: -600,
-                  bottom: -600,
-                  left: -600,
-                  right: -600,
-                  zIndex: 99,
-                }}
-                onPress={() => setShowEditTxDatePicker(false)}
-              />
-              <View
-                style={[
-                  styles.floatingCalendarContainer,
-                  {
-                    backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-                    zIndex: 100,
-                  }
-                ]}
-              >
-                <TuiCalendar
-                  value={editTxDate}
-                  onChange={(selectedDate) => {
-                    setEditTxDate(selectedDate);
-                    setShowEditTxDatePicker(false);
-                  }}
-                />
-              </View>
-            </>
-          )}
-        </View>
-
-        {/* 05: DRAWER ACTIONS */}
-        <View style={styles.logDrawerActions}>
-          <TuiButton
-            onPress={handleEditDeleteTransaction}
-            variant="destructive"
-            style={{ flex: 1, marginRight: 8, height: 44, justifyContent: 'center', paddingVertical: 0 }}
-          >
-            Delete
-          </TuiButton>
-          <TuiButton
-            disabled={!editTxDescription.trim() || isNaN(parseFloat(editTxAmount)) || parseFloat(editTxAmount) <= 0}
-            onPress={handleSaveEditTransaction}
-            variant="accent"
-            style={{ flex: 1, height: 44, justifyContent: 'center', paddingVertical: 0 }}
-          >
-            Save Changes
-          </TuiButton>
-        </View>
-        
-        {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
-      </TuiDrawer>
-
-      {/* Drawer for editing debt */}
-      <TuiDrawer
-        visible={editingDebt !== null}
-        onClose={() => {
-          setEditingDebt(null);
-          setShowEditDebtDatePicker(false);
-        }}
-        title="Edit Debt"
-      >
-        {/* Name Input */}
-        <TuiInput
-          label="Debt Name / Person"
-          value={editDebtName}
-          onChangeText={setEditDebtName}
-          placeholder="e.g. Bank Loan, Friend Alex"
-        />
-
-        {/* Amount Input */}
-        <TuiInput
-          label="Amount (₱)"
-          value={editDebtAmount}
-          onChangeText={setEditDebtAmount}
-          keyboardType="default"
-          placeholder="0.00"
-          containerStyle={{ height: 68 }}
-          style={{ fontSize: 32, fontFamily: 'JetBrainsMono_700Bold', height: 48 }}
-        />
-
-        {/* Debt Type Selector */}
-        <View
-          style={[
-            styles.logCategoryContainer,
-            {
-              backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-              borderColor: logBorderColor,
-            }
-          ]}
-        >
-          {/* Custom Segmented Borders */}
-          <View style={[styles.logBorderLeft, { backgroundColor: logBorderColor }]} />
-          <View style={[styles.logBorderRight, { backgroundColor: logBorderColor }]} />
-          <View style={[styles.logBorderBottom, { backgroundColor: logBorderColor }]} />
-          <View style={[styles.logBorderTopLeft, { backgroundColor: logBorderColor }]} />
-          <View
-            style={[
-              styles.logBorderTopRight,
-              {
-                backgroundColor: logBorderColor,
-                left: 12 + editDebtTypeLegendWidth,
-              }
-            ]}
-          />
-
-          {/* Legend Label */}
-          <View
-            onLayout={(e) => setEditDebtTypeLegendWidth(e.nativeEvent.layout.width)}
-            style={styles.logLegendWrapper}
-          >
-            <TuiText
-              weight="bold"
-              size="sm"
-              style={{
-                color: colors.mutedForeground,
-                letterSpacing: 0.5,
-              }}
-            >
-              Debt Type
-            </TuiText>
           </View>
 
-          {/* Options Grid */}
-          <View style={styles.logCategoryGrid}>
-            {[
-              { id: 'payable', label: 'I Owe' },
-              { id: 'receivable', label: 'Owes Me' },
-            ].map((option) => {
-              const isSelected = editDebtType === option.id;
-              const bWidth = debtTypeBtnWidths[option.id] || 100;
-              const lWidth = debtTypeLabelWidths[option.id] || 28;
-              const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
-              const btnBorderColor = isSelected ? colors.primary : logBorderColor;
+          {/* 04: DATE SELECTOR */}
+          <View style={{ marginVertical: 10, width: '100%', position: 'relative', zIndex: 100 }}>
+            <Pressable
+              onPress={() => {
+                Keyboard.dismiss();
+                setShowEditTxDatePicker(prev => !prev);
+              }}
+              style={({ pressed }) => [
+                styles.logDateSelectorRow,
+                {
+                  backgroundColor: pressed ? colors.primary + '15' : (isDark ? '#18181B' : '#FFFFFF'),
+                  marginBottom: 0,
+                }
+              ]}
+            >
+              {/* Custom Segmented Borders */}
+              <View style={[styles.logBorderLeft, { backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+              <View style={[styles.logBorderRight, { backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+              <View style={[styles.logBorderBottom, { backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+              <View style={[styles.logBorderTopLeft, { backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000') }]} />
+              <View
+                style={[
+                  styles.logBorderTopRight,
+                  {
+                    backgroundColor: showEditTxDatePicker ? colors.primary : (isDark ? colors.primary + '40' : '#000000'),
+                    left: 12 + editTxDateLegendWidth,
+                  }
+                ]}
+              />
 
-              return (
-                <Pressable
-                  key={option.id}
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    setEditDebtType(option.id as 'payable' | 'receivable');
+              {/* Legend Label */}
+              <View
+                onLayout={(e) => setEditTxDateLegendWidth(e.nativeEvent.layout.width)}
+                style={styles.logLegendWrapper}
+              >
+                <TuiText
+                  weight="bold"
+                  size="sm"
+                  style={{
+                    color: showEditTxDatePicker ? colors.primary : colors.mutedForeground,
+                    letterSpacing: 0.5,
                   }}
+                >
+                  Date
+                </TuiText>
+              </View>
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <TuiText size="sm" style={{ color: colors.foreground }}>
+                  {editTxDate || 'Select Date'}
+                </TuiText>
+                <Calendar size={16} color={colors.primary} />
+              </View>
+            </Pressable>
+
+            {showEditTxDatePicker && (
+              <>
+                <Pressable
+                  style={{
+                    position: 'absolute',
+                    top: -600,
+                    bottom: -600,
+                    left: -600,
+                    right: -600,
+                    zIndex: 99,
+                  }}
+                  onPress={() => setShowEditTxDatePicker(false)}
+                />
+                <View
                   style={[
-                    styles.logCategoryGridBtn,
+                    styles.floatingCalendarContainer,
                     {
-                      backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                      width: '48%',
+                      backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                      zIndex: 100,
                     }
                   ]}
                 >
-                  {/* Dynamic Segmented Borders */}
-                  <View style={[styles.catBtnBorderLeft, { backgroundColor: btnBorderColor }]} />
-                  <View style={[styles.catBtnBorderRight, { backgroundColor: btnBorderColor }]} />
-                  <View style={[styles.catBtnBorderBottom, { backgroundColor: btnBorderColor }]} />
-                  <View style={[styles.catBtnBorderTopLeft, { backgroundColor: btnBorderColor, width: topSegmentWidth }]} />
-                  <View style={[styles.catBtnBorderTopRight, { backgroundColor: btnBorderColor, width: topSegmentWidth }]} />
-
-                  {/* Legend Label resting on top border */}
-                  <View style={styles.catBtnLegendWrapper}>
-                    <TuiText
-                      weight="bold"
-                      style={{
-                        color: isSelected ? colors.primary : colors.mutedForeground,
-                        fontSize: 13.5,
-                        letterSpacing: 0.1,
-                      }}
-                    >
-                      {option.label}
-                    </TuiText>
-                  </View>
-
-                  <View style={styles.catBtnContent} pointerEvents="none">
-                    {option.id === 'payable' ? (
-                      <ArrowDownCircle size={20} color={isSelected ? colors.destructive : colors.mutedForeground} />
-                    ) : (
-                      <ArrowUpCircle size={20} color={isSelected ? colors.primary : colors.mutedForeground} />
-                    )}
-                  </View>
-                </Pressable>
-              );
-            })}
+                  <TuiCalendar
+                    value={editTxDate}
+                    onChange={(selectedDate) => {
+                      setEditTxDate(selectedDate);
+                      setShowEditTxDatePicker(false);
+                    }}
+                  />
+                </View>
+              </>
+            )}
           </View>
-        </View>
 
-        {/* Due Date Selector */}
-        <View style={{ marginVertical: 10, width: '100%', position: 'relative', zIndex: 100 }}>
-          <Pressable
-            onPress={() => {
-              Keyboard.dismiss();
-              setShowEditDebtDatePicker(prev => !prev);
-            }}
-            style={({ pressed }) => [
-              styles.logDateSelectorRow,
+          {/* 05: DRAWER ACTIONS */}
+          <View style={styles.logDrawerActions}>
+            <TuiButton
+              onPress={handleEditDeleteTransaction}
+              variant="destructive"
+              style={{ flex: 1, marginRight: 8, height: 44, justifyContent: 'center', paddingVertical: 0 }}
+            >
+              Delete
+            </TuiButton>
+            <TuiButton
+              disabled={isNaN(parseFloat(editTxAmount)) || parseFloat(editTxAmount) <= 0}
+              onPress={handleSaveEditTransaction}
+              variant="accent"
+              style={{ flex: 1, height: 44, justifyContent: 'center', paddingVertical: 0 }}
+            >
+              Save Changes
+            </TuiButton>
+          </View>
+
+          {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
+        </TuiDrawer>
+
+        {/* Drawer for editing debt */}
+        <TuiDrawer
+          visible={editingDebt !== null}
+          onClose={() => {
+            setEditingDebt(null);
+            setShowEditDebtDatePicker(false);
+          }}
+          title="Edit Debt"
+        >
+          {/* Name Input */}
+          <TuiInput
+            label="Debt Name / Person"
+            value={editDebtName}
+            onChangeText={setEditDebtName}
+            placeholder="e.g. Bank Loan, Friend Alex"
+          />
+
+          {/* Amount Input */}
+          <TuiInput
+            label="Amount (₱)"
+            value={editDebtAmount}
+            onChangeText={setEditDebtAmount}
+            keyboardType="default"
+            placeholder="0.00"
+            containerStyle={{ height: 68 }}
+            style={{ fontSize: 32, fontFamily: 'JetBrainsMono_700Bold', height: 48 }}
+          />
+
+          {/* Debt Type Selector */}
+          <View
+            style={[
+              styles.logCategoryContainer,
               {
-                backgroundColor: pressed ? colors.primary + '15' : (isDark ? '#18181B' : '#FFFFFF'),
-                height: 56,
+                backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                borderColor: logBorderColor,
               }
             ]}
           >
             {/* Custom Segmented Borders */}
-            <View style={[styles.logBorderLeft, { backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor }]} />
-            <View style={[styles.logBorderRight, { backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor }]} />
-            <View style={[styles.logBorderBottom, { backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor }]} />
-            <View style={[styles.logBorderTopLeft, { backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor }]} />
+            <View style={[styles.logBorderLeft, { backgroundColor: logBorderColor }]} />
+            <View style={[styles.logBorderRight, { backgroundColor: logBorderColor }]} />
+            <View style={[styles.logBorderBottom, { backgroundColor: logBorderColor }]} />
+            <View style={[styles.logBorderTopLeft, { backgroundColor: logBorderColor }]} />
             <View
               style={[
                 styles.logBorderTopRight,
                 {
-                  backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor,
-                  left: 12 + editDebtDateLegendWidth,
+                  backgroundColor: logBorderColor,
+                  left: 12 + editDebtTypeLegendWidth,
                 }
               ]}
             />
 
             {/* Legend Label */}
             <View
-              onLayout={(e) => setEditDebtDateLegendWidth(e.nativeEvent.layout.width)}
+              onLayout={(e) => setEditDebtTypeLegendWidth(e.nativeEvent.layout.width)}
               style={styles.logLegendWrapper}
             >
               <TuiText
                 weight="bold"
                 size="sm"
                 style={{
-                  color: showEditDebtDatePicker ? colors.primary : colors.mutedForeground,
+                  color: colors.mutedForeground,
                   letterSpacing: 0.5,
                 }}
               >
-                Due Date
+                Debt Type
               </TuiText>
             </View>
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-              <TuiText size="sm" style={{ color: colors.foreground }}>
-                {editDebtDueDate || 'Select Due Date'}
-              </TuiText>
-              <Calendar size={16} color={colors.primary} />
-            </View>
-          </Pressable>
+            {/* Options Grid */}
+            <View style={styles.logCategoryGrid}>
+              {[
+                { id: 'payable', label: 'I Owe' },
+                { id: 'receivable', label: 'Owes Me' },
+              ].map((option) => {
+                const isSelected = editDebtType === option.id;
+                const bWidth = debtTypeBtnWidths[option.id] || 100;
+                const lWidth = debtTypeLabelWidths[option.id] || 28;
+                const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
+                const btnBorderColor = isSelected ? colors.primary : logBorderColor;
 
-          {showEditDebtDatePicker && (
-            <>
-              <Pressable
-                style={{
-                  position: 'absolute',
-                  top: -600,
-                  bottom: -600,
-                  left: -600,
-                  right: -600,
-                  zIndex: 99,
-                }}
-                onPress={() => setShowEditDebtDatePicker(false)}
-              />
+                return (
+                  <Pressable
+                    key={option.id}
+                    onPress={() => {
+                      Keyboard.dismiss();
+                      setEditDebtType(option.id as 'payable' | 'receivable');
+                    }}
+                    style={[
+                      styles.logCategoryGridBtn,
+                      {
+                        backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                        width: '48%',
+                      }
+                    ]}
+                  >
+                    {/* Dynamic Segmented Borders */}
+                    <View style={[styles.catBtnBorderLeft, { backgroundColor: btnBorderColor }]} />
+                    <View style={[styles.catBtnBorderRight, { backgroundColor: btnBorderColor }]} />
+                    <View style={[styles.catBtnBorderBottom, { backgroundColor: btnBorderColor }]} />
+                    <View style={[styles.catBtnBorderTopLeft, { backgroundColor: btnBorderColor, width: topSegmentWidth }]} />
+                    <View style={[styles.catBtnBorderTopRight, { backgroundColor: btnBorderColor, width: topSegmentWidth }]} />
+
+                    {/* Legend Label resting on top border */}
+                    <View style={styles.catBtnLegendWrapper}>
+                      <TuiText
+                        weight="bold"
+                        style={{
+                          color: isSelected ? colors.primary : colors.mutedForeground,
+                          fontSize: 13.5,
+                          letterSpacing: 0.1,
+                        }}
+                      >
+                        {option.label}
+                      </TuiText>
+                    </View>
+
+                    <View style={styles.catBtnContent} pointerEvents="none">
+                      {option.id === 'payable' ? (
+                        <ArrowDownCircle size={20} color={isSelected ? colors.destructive : colors.mutedForeground} />
+                      ) : (
+                        <ArrowUpCircle size={20} color={isSelected ? colors.primary : colors.mutedForeground} />
+                      )}
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+
+          {/* Due Date Selector */}
+          <View style={{ marginVertical: 10, width: '100%', position: 'relative', zIndex: 100 }}>
+            <Pressable
+              onPress={() => {
+                Keyboard.dismiss();
+                setShowEditDebtDatePicker(prev => !prev);
+              }}
+              style={({ pressed }) => [
+                styles.logDateSelectorRow,
+                {
+                  backgroundColor: pressed ? colors.primary + '15' : (isDark ? '#18181B' : '#FFFFFF'),
+                  height: 56,
+                }
+              ]}
+            >
+              {/* Custom Segmented Borders */}
+              <View style={[styles.logBorderLeft, { backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor }]} />
+              <View style={[styles.logBorderRight, { backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor }]} />
+              <View style={[styles.logBorderBottom, { backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor }]} />
+              <View style={[styles.logBorderTopLeft, { backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor }]} />
               <View
                 style={[
-                  styles.floatingCalendarContainer,
+                  styles.logBorderTopRight,
                   {
-                    backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-                    zIndex: 100,
-                    borderColor: logBorderColor,
-                    bottom: 90,
+                    backgroundColor: showEditDebtDatePicker ? colors.primary : logBorderColor,
+                    left: 12 + editDebtDateLegendWidth,
                   }
                 ]}
+              />
+
+              {/* Legend Label */}
+              <View
+                onLayout={(e) => setEditDebtDateLegendWidth(e.nativeEvent.layout.width)}
+                style={styles.logLegendWrapper}
               >
-                <TuiCalendar
-                  value={editDebtDueDate}
-                  onChange={(selectedDate) => {
-                    setEditDebtDueDate(selectedDate);
-                    setShowEditDebtDatePicker(false);
+                <TuiText
+                  weight="bold"
+                  size="sm"
+                  style={{
+                    color: showEditDebtDatePicker ? colors.primary : colors.mutedForeground,
+                    letterSpacing: 0.5,
                   }}
-                />
+                >
+                  Due Date
+                </TuiText>
               </View>
-            </>
-          )}
-        </View>
 
-        {/* Drawer Actions */}
-        <View style={styles.logDrawerActions}>
-          <TuiButton
-            onPress={handleEditDeleteDebt}
-            variant="destructive"
-            style={{ flex: 1, marginRight: 8, height: 44, justifyContent: 'center', paddingVertical: 0 }}
-          >
-            Delete
-          </TuiButton>
-          <TuiButton
-            disabled={!editDebtName.trim() || isNaN(parseFloat(editDebtAmount)) || parseFloat(editDebtAmount) <= 0}
-            onPress={handleSaveEditDebt}
-            variant="accent"
-            style={{ flex: 1, height: 44, justifyContent: 'center', paddingVertical: 0 }}
-          >
-            Save Changes
-          </TuiButton>
-        </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <TuiText size="sm" style={{ color: colors.foreground }}>
+                  {editDebtDueDate || 'Select Due Date'}
+                </TuiText>
+                <Calendar size={16} color={colors.primary} />
+              </View>
+            </Pressable>
 
-        {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
-      </TuiDrawer>
-    </SafeAreaView>
+            {showEditDebtDatePicker && (
+              <>
+                <Pressable
+                  style={{
+                    position: 'absolute',
+                    top: -600,
+                    bottom: -600,
+                    left: -600,
+                    right: -600,
+                    zIndex: 99,
+                  }}
+                  onPress={() => setShowEditDebtDatePicker(false)}
+                />
+                <View
+                  style={[
+                    styles.floatingCalendarContainer,
+                    {
+                      backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                      zIndex: 100,
+                      borderColor: logBorderColor,
+                      bottom: 90,
+                    }
+                  ]}
+                >
+                  <TuiCalendar
+                    value={editDebtDueDate}
+                    onChange={(selectedDate) => {
+                      setEditDebtDueDate(selectedDate);
+                      setShowEditDebtDatePicker(false);
+                    }}
+                  />
+                </View>
+              </>
+            )}
+          </View>
+
+          {/* Drawer Actions */}
+          <View style={styles.logDrawerActions}>
+            <TuiButton
+              onPress={handleEditDeleteDebt}
+              variant="destructive"
+              style={{ flex: 1, marginRight: 8, height: 44, justifyContent: 'center', paddingVertical: 0 }}
+            >
+              Delete
+            </TuiButton>
+            <TuiButton
+              disabled={isNaN(parseFloat(editDebtAmount)) || parseFloat(editDebtAmount) <= 0}
+              onPress={handleSaveEditDebt}
+              variant="accent"
+              style={{ flex: 1, height: 44, justifyContent: 'center', paddingVertical: 0 }}
+            >
+              Save Changes
+            </TuiButton>
+          </View>
+
+          {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
+        </TuiDrawer>
+      </SafeAreaView>
+      </Animated.View>
+
+      {splashVisible && (
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              backgroundColor: splashBg,
+              justifyContent: 'center',
+              alignItems: 'center',
+              opacity: splashOpacity,
+              zIndex: 99999,
+            },
+          ]}
+          pointerEvents="none"
+        >
+          <SplashIcon color={colors.primary} size={160} />
+        </Animated.View>
+      )}
+    </View>
   );
 }
 
@@ -2072,5 +2274,26 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     zIndex: 1000,
     elevation: 5,
+  },
+  floatingSelectionWrapper: {
+    position: 'absolute',
+    left: 20,
+    right: 20,
+    zIndex: 101,
+  },
+  floatingSelectionBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 4,
+    gap: 12,
+  },
+  actionButtonCompact: {
+    flex: 1,
+    marginVertical: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 12,
+    height: 38,
+    justifyContent: 'center',
   },
 });

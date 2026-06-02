@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable, RefreshControl } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, ScrollView, Pressable, RefreshControl, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Landmark, ArrowUpCircle, ArrowDownCircle, Trash2 } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
@@ -8,16 +8,135 @@ import { TuiText } from '../components/tui-text';
 import { TuiButton } from '../components/tui-button';
 import { Debt } from '../types';
 
+interface DebtRowProps {
+  debt: Debt;
+  isSelected: boolean;
+  isEditing?: boolean;
+  isSelectionMode: boolean;
+  onPress: () => void;
+  onLongPress: () => void;
+  colors: any;
+  isDark: boolean;
+  type: 'payable' | 'receivable';
+}
+
+const DebtRow: React.FC<DebtRowProps> = ({
+  debt,
+  isSelected,
+  isEditing = false,
+  isSelectionMode,
+  onPress,
+  onLongPress,
+  colors,
+  isDark,
+  type,
+}) => {
+  return (
+    <Pressable
+      onPress={onPress}
+      onLongPress={onLongPress}
+      delayLongPress={350}
+      style={({ pressed }) => [
+        styles.debtRow,
+        {
+          borderColor: isEditing ? colors.primary : (isSelected ? colors.primary : (isDark ? colors.primary + '40' : colors.primary + '30')),
+          opacity: pressed ? 0.7 : 1,
+          backgroundColor: isEditing ? colors.primary + '15' : (isSelected ? colors.primary + '10' : (isDark ? '#1C1C1E' : '#FFFFFF')),
+        },
+      ]}
+    >
+      {isSelectionMode && (
+        <View
+          style={{
+            width: 18,
+            height: 18,
+            borderWidth: 1.5,
+            borderColor: isSelected ? colors.primary : (isDark ? '#3F3F46' : '#A1A1AA'),
+            backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginRight: 10,
+          }}
+        >
+          {isSelected && (
+            <View
+              style={{
+                width: 8,
+                height: 8,
+                backgroundColor: colors.primary,
+              }}
+            />
+          )}
+        </View>
+      )}
+
+      <View
+        style={[
+          styles.iconBox,
+          {
+            borderColor: isDark ? '#3F3F46' : '#000000',
+            backgroundColor: isDark ? '#27272A' : '#FFFFFF',
+          },
+        ]}
+      >
+        {type === 'payable' ? (
+          <ArrowDownCircle size={14} color={colors.destructive} />
+        ) : (
+          <ArrowUpCircle size={14} color={colors.primary} />
+        )}
+      </View>
+
+      <View style={styles.rowLeft}>
+        <TuiText weight="bold" size="md">
+          {debt.name}
+        </TuiText>
+        <TuiText size="sm" variant="muted">
+          Due: {debt.dueDate}
+        </TuiText>
+      </View>
+      <View style={styles.rowRight}>
+        <TuiText
+          weight="bold"
+          style={{
+            color: type === 'payable' ? colors.destructive : colors.primary,
+          }}
+        >
+          {type === 'payable' ? '-' : '+'}₱{debt.amount.toFixed(2)}
+        </TuiText>
+      </View>
+    </Pressable>
+  );
+};
+
 interface DebtsProps {
   debts: Debt[];
   onAddDebtPress: () => void;
   onDeleteDebt: (id: string) => void;
+  onDeleteDebts?: (ids: string[]) => void;
   onEditDebt?: (debt: Debt) => void;
   refreshing: boolean;
   onRefresh: () => void;
+  selectedIds?: string[];
+  isSelectionMode?: boolean;
+  onToggleSelect?: (id: string) => void;
+  onLongPressSelect?: (id: string) => void;
+  editingDebtId?: string;
 }
 
-export const Debts: React.FC<DebtsProps> = ({ debts, onAddDebtPress, onDeleteDebt, onEditDebt, refreshing, onRefresh }) => {
+export const Debts: React.FC<DebtsProps> = ({
+  debts,
+  onAddDebtPress,
+  onDeleteDebt,
+  onDeleteDebts,
+  onEditDebt,
+  refreshing,
+  onRefresh,
+  selectedIds = [],
+  isSelectionMode = false,
+  onToggleSelect,
+  onLongPressSelect,
+  editingDebtId,
+}) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
 
@@ -26,6 +145,14 @@ export const Debts: React.FC<DebtsProps> = ({ debts, onAddDebtPress, onDeleteDeb
 
   const totalOwe = payables.reduce((sum, d) => sum + d.amount, 0);
   const totalReceivable = receivables.reduce((sum, d) => sum + d.amount, 0);
+
+  const handlePressRow = (debt: Debt) => {
+    if (isSelectionMode) {
+      onToggleSelect?.(debt.id);
+    } else {
+      onEditDebt?.(debt);
+    }
+  };
 
   return (
     <View style={[styles.mainWrapper, { backgroundColor: colors.background }]}>
@@ -88,46 +215,24 @@ export const Debts: React.FC<DebtsProps> = ({ debts, onAddDebtPress, onDeleteDeb
                 No entries recorded yet.
               </TuiText>
             ) : (
-              payables.map((debt) => (
-                <Pressable
-                  key={debt.id}
-                  onPress={() => onEditDebt?.(debt)}
-                  style={({ pressed }) => [
-                    styles.debtRow,
-                    {
-                      borderColor: isDark ? '#27272A' : '#E4E4E7',
-                      opacity: pressed ? 0.7 : 1,
-                    },
-                  ]}
-                >
-                  {/* Category icon box with ArrowDownCircle icon */}
-                  <View
-                    style={[
-                      styles.iconBox,
-                      {
-                        borderColor: isDark ? '#3F3F46' : '#000000',
-                        backgroundColor: isDark ? '#27272A' : '#FFFFFF',
-                      },
-                    ]}
-                  >
-                    <ArrowDownCircle size={14} color={colors.destructive} />
-                  </View>
-
-                  <View style={styles.rowLeft}>
-                    <TuiText weight="bold" size="md">
-                      {debt.name}
-                    </TuiText>
-                    <TuiText size="sm" variant="muted">
-                      Due: {debt.dueDate}
-                    </TuiText>
-                  </View>
-                  <View style={styles.rowRight}>
-                    <TuiText weight="bold" style={{ color: colors.destructive }}>
-                      -₱{debt.amount.toFixed(2)}
-                    </TuiText>
-                  </View>
-                </Pressable>
-              ))
+              payables.map((debt) => {
+                const isSelected = selectedIds.includes(debt.id);
+                const isEditing = editingDebtId === debt.id;
+                return (
+                  <DebtRow
+                    key={debt.id}
+                    debt={debt}
+                    isSelected={isSelected}
+                    isEditing={isEditing}
+                    isSelectionMode={isSelectionMode}
+                    onPress={() => handlePressRow(debt)}
+                    onLongPress={() => onLongPressSelect?.(debt.id)}
+                    colors={colors}
+                    isDark={isDark}
+                    type="payable"
+                  />
+                );
+              })
             )}
           </View>
         </TuiContainer>
@@ -140,46 +245,24 @@ export const Debts: React.FC<DebtsProps> = ({ debts, onAddDebtPress, onDeleteDeb
                 No entries recorded yet.
               </TuiText>
             ) : (
-              receivables.map((debt) => (
-                <Pressable
-                  key={debt.id}
-                  onPress={() => onEditDebt?.(debt)}
-                  style={({ pressed }) => [
-                    styles.debtRow,
-                    {
-                      borderColor: isDark ? '#27272A' : '#E4E4E7',
-                      opacity: pressed ? 0.7 : 1,
-                    },
-                  ]}
-                >
-                  {/* Category icon box with ArrowUpCircle icon */}
-                  <View
-                    style={[
-                      styles.iconBox,
-                      {
-                        borderColor: isDark ? '#3F3F46' : '#000000',
-                        backgroundColor: isDark ? '#27272A' : '#FFFFFF',
-                      },
-                    ]}
-                  >
-                    <ArrowUpCircle size={14} color={colors.primary} />
-                  </View>
-
-                  <View style={styles.rowLeft}>
-                    <TuiText weight="bold" size="md">
-                      {debt.name}
-                    </TuiText>
-                    <TuiText size="sm" variant="muted">
-                      Due: {debt.dueDate}
-                    </TuiText>
-                  </View>
-                  <View style={styles.rowRight}>
-                    <TuiText weight="bold" style={{ color: colors.primary }}>
-                      +₱{debt.amount.toFixed(2)}
-                    </TuiText>
-                  </View>
-                </Pressable>
-              ))
+              receivables.map((debt) => {
+                const isSelected = selectedIds.includes(debt.id);
+                const isEditing = editingDebtId === debt.id;
+                return (
+                  <DebtRow
+                    key={debt.id}
+                    debt={debt}
+                    isSelected={isSelected}
+                    isEditing={isEditing}
+                    isSelectionMode={isSelectionMode}
+                    onPress={() => handlePressRow(debt)}
+                    onLongPress={() => onLongPressSelect?.(debt.id)}
+                    colors={colors}
+                    isDark={isDark}
+                    type="receivable"
+                  />
+                );
+              })
             )}
           </View>
         </TuiContainer>
@@ -257,5 +340,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 20,
     letterSpacing: 0.5,
+  },
+  selectionBarHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  actionButtonCompact: {
+    marginVertical: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 12,
+    height: 38,
+    justifyContent: 'center',
+    width: 'auto',
   },
 });

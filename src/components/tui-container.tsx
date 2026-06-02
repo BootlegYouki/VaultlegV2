@@ -11,6 +11,7 @@ interface TuiContainerProps {
   contentStyle?: ViewStyle;
   accentBorder?: boolean;
   onBadgePress?: () => void;
+  labelSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 }
 
 export const TuiContainer: React.FC<TuiContainerProps> = ({
@@ -21,6 +22,7 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
   contentStyle,
   accentBorder = false,
   onBadgePress,
+  labelSize = 'md',
 }) => {
   const { colors, isDark } = useTheme();
   const [legendWidth, setLegendWidth] = React.useState(0);
@@ -64,7 +66,7 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
           },
         ]}
       >
-        <TuiText weight="bold" size="md" style={{ color: colors.primary }}>
+        <TuiText weight="bold" size={labelSize} style={{ color: colors.primary }}>
           {label}
         </TuiText>
         {badge && (

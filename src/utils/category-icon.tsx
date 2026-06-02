@@ -27,7 +27,7 @@ export const getCategoryIcon = (categoryId: string, size = 16, color = '#FFFFFF'
     case 'travel':      return <Plane size={size} color={color} />;
     case 'salary':      return <Briefcase size={size} color={color} />;
     case 'freelance':   return <Code size={size} color={color} />;
-    case 'investments': return <Wallet size={size} color={color} />;
+    case 'allowance':   return <Wallet size={size} color={color} />;
     case 'other_income': return <PlusCircle size={size} color={color} />;
     default:            return <HelpCircle size={size} color={color} />;
   }

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Pressable, TextInput, RefreshControl } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Pressable, TextInput } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   TrendingUp,
@@ -36,6 +37,8 @@ interface DashboardProps {
   onNavigateToStats?: () => void;
   refreshing: boolean;
   onRefresh: () => void;
+  editingTransactionId?: string;
+  onRecentTransactionPress?: (tx: Transaction) => void;
 }
 
 
@@ -51,9 +54,48 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onNavigateToStats,
   refreshing,
   onRefresh,
+  editingTransactionId,
+  onRecentTransactionPress,
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
+  const [hideBalances, setHideBalances] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem('tui_hide_balances')
+      .then((val) => {
+        if (val !== null) {
+          setHideBalances(val === 'true');
+        }
+      })
+      .catch((e) => {
+        logger.log('SYSTEM_ERROR', `LOAD_HIDE_BALANCES_FAILED: ${e.message}`);
+      });
+  }, []);
+
+  const handleToggleHide = () => {
+    const newVal = !hideBalances;
+    setHideBalances(newVal);
+    AsyncStorage.setItem('tui_hide_balances', newVal ? 'true' : 'false').catch((e) => {
+      logger.log('SYSTEM_ERROR', `SAVE_HIDE_BALANCES_FAILED: ${e.message}`);
+    });
+  };
+
+  const formatAmount = (val: number) => {
+    return val.toFixed(2);
+  };
+
+  const formatCurrency = (val: number) => {
+    return `${val < 0 ? '-' : ''}₱${Math.abs(val).toFixed(2)}`;
+  };
+
+  const formatLocalized = (val: number) => {
+    return `₱${val.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+  };
+
+  const maskDigits = (formatted: string): string => {
+    return formatted.replace(/[0-9]/g, '▒');
+  };
 
   // Aggregate Calculations
   const totalIncome = transactions
@@ -95,31 +137,80 @@ export const Dashboard: React.FC<DashboardProps> = ({
     <View style={[styles.mainWrapper, { backgroundColor: colors.background }]}>
       
       {/* 01: FIXED TOP SECTION (HEADER & BALANCES CARD) */}
-      <View style={[styles.fixedTopSection, { backgroundColor: colors.background, borderColor: colors.border }]}>
-        {/* Net Balance Card */}
+      <View style={[styles.fixedTopSection, { backgroundColor: colors.background }]}>
         <TuiContainer label="Balances">
-          <TuiText size="3xl" weight="bold" style={{ color: balance >= 0 ? colors.primary : colors.destructive, marginVertical: 4 }}>
-            ₱{balance.toFixed(2)}
-          </TuiText>
-          <TuiText size="sm" variant="muted" style={{ marginTop: 2 }}>
-            Income: +₱{totalIncome.toFixed(2)} | Expenses: -₱{totalExpense.toFixed(2)}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <TuiText
+              size="3xl"
+              weight="bold"
+              style={{
+                color: balance >= 0 ? colors.primary : colors.destructive,
+                marginVertical: 4,
+              }}
+            >
+              {hideBalances ? (
+                <>
+                  {balance < 0 ? '-' : ''}₱
+                  <TuiText style={{ fontSize: 22 }}>{maskDigits(Math.abs(balance).toFixed(2))}</TuiText>
+                </>
+              ) : (
+                formatCurrency(balance)
+              )}
+            </TuiText>
+            
+            <Pressable
+              onPress={handleToggleHide}
+              style={{ padding: 6 }}
+            >
+              <View
+                style={{
+                  width: 26,
+                  height: 26,
+                  borderWidth: 1.5,
+                  borderColor: hideBalances ? colors.primary : (isDark ? '#3F3F46' : '#A1A1AA'),
+                  backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                {hideBalances && (
+                  <View
+                    style={{
+                      width: 12,
+                      height: 12,
+                      backgroundColor: colors.primary,
+                    }}
+                  />
+                )}
+              </View>
+            </Pressable>
+          </View>
+          <TuiText
+            size="sm"
+            variant="muted"
+            style={{
+              marginTop: 2,
+            }}
+          >
+            Income: +₱
+            {hideBalances ? (
+              <TuiText style={{ fontSize: 11 }}>{maskDigits(formatAmount(totalIncome))}</TuiText>
+            ) : (
+              formatAmount(totalIncome)
+            )}
+            {" | Expenses: -₱"}
+            {hideBalances ? (
+              <TuiText style={{ fontSize: 11 }}>{maskDigits(formatAmount(totalExpense))}</TuiText>
+            ) : (
+              formatAmount(totalExpense)
+            )}
           </TuiText>
         </TuiContainer>
       </View>
 
-      {/* 02: SCROLLABLE BODY SECTION */}
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContentContainer, { paddingBottom: 80 + insets.bottom }]}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.primary}
-            colors={[colors.primary]}
-            progressBackgroundColor={isDark ? '#1C1C1E' : '#FFFFFF'}
-          />
-        }
+      {/* 02: STATIC BODY SECTION */}
+      <View
+        style={[styles.scrollContentContainer, { flex: 1, paddingBottom: 72 + insets.bottom }]}
       >
         
         {/* Overall Budget Card */}
@@ -131,10 +222,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
               segments={segments}
               totalLimit={totalLimit}
               totalSpent={totalExpense}
-              label={totalLimit > 0
-                ? `₱${(totalLimit - totalExpense).toFixed(2)} left of ₱${totalLimit.toFixed(2)}`
-                : `₱${(totalLimit - totalExpense).toFixed(2)} left`
-              }
+              label={hideBalances ? (
+                totalLimit > 0 ? (
+                  <>
+                    ₱<TuiText style={{ fontSize: 11 }}>{maskDigits((totalLimit - totalExpense).toFixed(2))}</TuiText> left of ₱<TuiText style={{ fontSize: 11 }}>{maskDigits(totalLimit.toFixed(2))}</TuiText>
+                  </>
+                ) : (
+                  <>
+                    ₱<TuiText style={{ fontSize: 11 }}>{maskDigits((totalLimit - totalExpense).toFixed(2))}</TuiText> left
+                  </>
+                )
+              ) : (
+                totalLimit > 0
+                  ? `₱${(totalLimit - totalExpense).toFixed(2)} left of ₱${totalLimit.toFixed(2)}`
+                  : `₱${(totalLimit - totalExpense).toFixed(2)} left`
+              )}
             />
           </TuiContainer>
         </Pressable>
@@ -147,8 +249,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <ArrowDownCircle size={12} color={colors.destructive} style={styles.titleIcon} />
                 <TuiText size="xs" variant="muted" weight="bold">I OWE</TuiText>
               </View>
-              <TuiText size="lg" weight="bold" style={{ color: colors.destructive, marginTop: 4 }}>
-                ₱{totalOwe.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              <TuiText
+                size="lg"
+                weight="bold"
+                style={{
+                  color: colors.destructive,
+                  marginTop: 4,
+                }}
+              >
+                {formatLocalized(totalOwe)}
               </TuiText>
             </View>
 
@@ -157,8 +266,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 <ArrowUpCircle size={12} color={colors.primary} style={styles.titleIcon} />
                 <TuiText size="xs" variant="muted" weight="bold">OWES ME</TuiText>
               </View>
-              <TuiText size="lg" weight="bold" style={{ color: colors.primary, marginTop: 4 }}>
-                ₱{totalReceivable.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              <TuiText
+                size="lg"
+                weight="bold"
+                style={{
+                  color: colors.primary,
+                  marginTop: 4,
+                }}
+              >
+                {formatLocalized(totalReceivable)}
               </TuiText>
             </View>
           </View>
@@ -166,63 +282,86 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         {/* Recent Transactions Container */}
         <TuiContainer label="Recent Transactions">
-          {transactions.length === 0 ? (
-            <TuiText size="xs" variant="muted" style={styles.emptyState}>
-              No transactions recorded yet.
-            </TuiText>
-          ) : (
-            <View style={styles.logsList}>
-              {transactions.slice(0, 4).map((t) => (
-                <Pressable
-                  key={t.id}
-                  onPress={() => onEditTransaction?.(t)}
-                  style={({ pressed }) => [
-                    styles.logRow,
-                    {
-                      borderColor: isDark ? '#27272A' : '#E4E4E7',
-                      opacity: pressed ? 0.7 : 1,
-                    },
-                  ]}
-                >
-                  {/* Visual Category Icon */}
-                  <View
-                    style={[
-                      styles.rowIconContainer,
-                      {
-                        borderColor: isDark ? '#3F3F46' : '#000000',
-                        backgroundColor: isDark ? '#27272A' : '#FFFFFF',
-                      },
-                    ]}
-                  >
-                    {getCategoryIcon(t.category, 14, isDark ? '#FAFAFA' : '#000000')}
-                  </View>
-
-                  <View style={styles.logLeft}>
-                    <TuiText weight="bold" size="md">
-                      {t.description}
-                    </TuiText>
-                    <TuiText size="sm" variant="muted">
-                      {t.date} | {t.category.toUpperCase()}
-                    </TuiText>
-                  </View>
-
-                  <View style={styles.logRight}>
-                    <TuiText
-                      weight="bold"
-                      style={{
-                        color: t.type === 'income' ? colors.primary : colors.destructive,
-                      }}
+          {(() => {
+            const recentTxs = transactions.slice(0, 5);
+            const emptySlotsCount = Math.max(0, 5 - transactions.length);
+            return (
+              <View style={styles.logsList}>
+                {recentTxs.map((t) => {
+                  const isEditing = editingTransactionId === t.id;
+                  return (
+                    <Pressable
+                      key={t.id}
+                      onPress={() => onRecentTransactionPress?.(t)}
+                      style={({ pressed }) => [
+                        styles.logRow,
+                        {
+                          borderColor: isEditing ? colors.primary : (isDark ? colors.primary + '40' : colors.primary + '30'),
+                          opacity: pressed ? 0.7 : 1,
+                          backgroundColor: isEditing ? colors.primary + '15' : 'transparent',
+                        },
+                      ]}
                     >
-                      {t.type === 'income' ? '+' : '-'}₱{t.amount.toFixed(2)}
-                    </TuiText>
-                  </View>
-                </Pressable>
-              ))}
-            </View>
-          )}
+                      {/* Visual Category Icon */}
+                      <View
+                        style={[
+                          styles.rowIconContainer,
+                          {
+                            borderColor: isDark ? '#3F3F46' : '#000000',
+                            backgroundColor: isDark ? '#27272A' : '#FFFFFF',
+                          },
+                        ]}
+                      >
+                        {getCategoryIcon(t.category, 14, isDark ? '#FAFAFA' : '#000000')}
+                      </View>
+
+                      <View style={styles.logLeft}>
+                        <TuiText weight="bold" size="md">
+                          {t.description}
+                        </TuiText>
+                        <TuiText size="sm" variant="muted">
+                          {t.date} | {t.category.toUpperCase()}
+                        </TuiText>
+                      </View>
+
+                      <View style={styles.logRight}>
+                        <TuiText
+                          weight="bold"
+                          style={{
+                            color: t.type === 'income' ? colors.primary : colors.destructive,
+                            fontSize: 16,
+                          }}
+                        >
+                          {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
+                        </TuiText>
+                      </View>
+                    </Pressable>
+                  );
+                })}
+
+                {Array.from({ length: emptySlotsCount }).map((_, index) => {
+                  return (
+                    <View
+                      key={`empty-${index}`}
+                      style={[
+                        styles.logRow,
+                        {
+                          borderColor: isDark ? colors.primary + '40' : colors.primary + '30',
+                          borderStyle: 'dashed',
+                          opacity: 0.25,
+                          backgroundColor: 'transparent',
+                          height: 52,
+                        },
+                      ]}
+                    />
+                  );
+                })}
+              </View>
+            );
+          })()}
         </TuiContainer>
 
-      </ScrollView>
+      </View>
     </View>
   );
 };
@@ -234,8 +373,7 @@ const styles = StyleSheet.create({
   fixedTopSection: {
     paddingHorizontal: 8,
     paddingTop: 12,
-    paddingBottom: 6,
-    borderBottomWidth: 1.5,
+    paddingBottom: 0,
   },
   titleRow: {
     flexDirection: 'row',
@@ -249,7 +387,7 @@ const styles = StyleSheet.create({
   },
   scrollContentContainer: {
     paddingHorizontal: 8,
-    paddingTop: 4,
+    paddingTop: 0,
     paddingBottom: 60, // Clear floating bottom nav safely
   },
   statsHeader: {

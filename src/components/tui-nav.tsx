@@ -10,11 +10,13 @@ export type ScreenType = 'dashboard' | 'expenses' | 'add-transaction' | 'stats' 
 interface TuiTabBarProps {
   currentScreen: ScreenType;
   onNavigate: (screen: ScreenType) => void;
+  onLongPressAdd?: () => void;
 }
 
 export const TuiTabBar: React.FC<TuiTabBarProps> = ({
   currentScreen,
   onNavigate,
+  onLongPressAdd,
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -104,6 +106,8 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
         {/* STANDALONE PLUS LOG BUTTON */}
         <Pressable
           onPress={() => onNavigate('add-transaction')}
+          onLongPress={onLongPressAdd}
+          delayLongPress={350}
           onLayout={(e) => {
             const width = e.nativeEvent.layout.width;
             setButtonWidths(prev => ({ ...prev, ['add-transaction']: width }));
