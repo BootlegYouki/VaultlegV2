@@ -6,11 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "splash": {
-      "image": "./assets/splashscreen.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#09090B"
-    },
+
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.bootlegyouki.vaultleg"
@@ -28,15 +24,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/splashscreen.png",
-          "resizeMode": "contain",
-          "backgroundColor": "#09090B"
-        }
-      ]
+      "expo-font"
     ]
   }
 }

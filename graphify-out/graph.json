@@ -76,46 +76,10 @@
       "norm_label": "userinterfacestyle"
     },
     {
-      "label": "splash",
-      "file_type": "code",
-      "source_file": "app.json",
-      "source_location": "L9",
-      "id": "vaultlegv2_app_expo_splash",
-      "community": 3,
-      "norm_label": "splash"
-    },
-    {
-      "label": "image",
-      "file_type": "code",
-      "source_file": "app.json",
-      "source_location": "L10",
-      "id": "vaultlegv2_app_splash_image",
-      "community": 3,
-      "norm_label": "image"
-    },
-    {
-      "label": "resizeMode",
-      "file_type": "code",
-      "source_file": "app.json",
-      "source_location": "L11",
-      "id": "vaultlegv2_app_splash_resizemode",
-      "community": 3,
-      "norm_label": "resizemode"
-    },
-    {
-      "label": "backgroundColor",
-      "file_type": "code",
-      "source_file": "app.json",
-      "source_location": "L12",
-      "id": "vaultlegv2_app_splash_backgroundcolor",
-      "community": 3,
-      "norm_label": "backgroundcolor"
-    },
-    {
       "label": "ios",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L14",
+      "source_location": "L10",
       "id": "vaultlegv2_app_expo_ios",
       "community": 3,
       "norm_label": "ios"
@@ -124,7 +88,7 @@
       "label": "supportsTablet",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L15",
+      "source_location": "L11",
       "id": "vaultlegv2_app_ios_supportstablet",
       "community": 3,
       "norm_label": "supportstablet"
@@ -133,7 +97,7 @@
       "label": "bundleIdentifier",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L16",
+      "source_location": "L12",
       "id": "vaultlegv2_app_ios_bundleidentifier",
       "community": 3,
       "norm_label": "bundleidentifier"
@@ -142,7 +106,7 @@
       "label": "android",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L18",
+      "source_location": "L14",
       "id": "vaultlegv2_app_expo_android",
       "community": 3,
       "norm_label": "android"
@@ -151,7 +115,7 @@
       "label": "adaptiveIcon",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L19",
+      "source_location": "L15",
       "id": "vaultlegv2_app_android_adaptiveicon",
       "community": 3,
       "norm_label": "adaptiveicon"
@@ -160,7 +124,7 @@
       "label": "backgroundColor",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L20",
+      "source_location": "L16",
       "id": "vaultlegv2_app_adaptiveicon_backgroundcolor",
       "community": 3,
       "norm_label": "backgroundcolor"
@@ -169,7 +133,7 @@
       "label": "foregroundImage",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L21",
+      "source_location": "L17",
       "id": "vaultlegv2_app_adaptiveicon_foregroundimage",
       "community": 3,
       "norm_label": "foregroundimage"
@@ -178,7 +142,7 @@
       "label": "backgroundImage",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L22",
+      "source_location": "L18",
       "id": "vaultlegv2_app_adaptiveicon_backgroundimage",
       "community": 3,
       "norm_label": "backgroundimage"
@@ -187,7 +151,7 @@
       "label": "monochromeImage",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L23",
+      "source_location": "L19",
       "id": "vaultlegv2_app_adaptiveicon_monochromeimage",
       "community": 3,
       "norm_label": "monochromeimage"
@@ -196,7 +160,7 @@
       "label": "predictiveBackGestureEnabled",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L25",
+      "source_location": "L21",
       "id": "vaultlegv2_app_android_predictivebackgestureenabled",
       "community": 3,
       "norm_label": "predictivebackgestureenabled"
@@ -205,7 +169,7 @@
       "label": "web",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L27",
+      "source_location": "L23",
       "id": "vaultlegv2_app_expo_web",
       "community": 3,
       "norm_label": "web"
@@ -214,7 +178,7 @@
       "label": "favicon",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L28",
+      "source_location": "L24",
       "id": "vaultlegv2_app_web_favicon",
       "community": 3,
       "norm_label": "favicon"
@@ -223,7 +187,7 @@
       "label": "plugins",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L30",
+      "source_location": "L26",
       "id": "vaultlegv2_app_expo_plugins",
       "community": 3,
       "norm_label": "plugins"
@@ -2101,6 +2065,42 @@
       "norm_label": "readme.md"
     },
     {
+      "label": "splash",
+      "file_type": "code",
+      "source_file": "app.json",
+      "source_location": "L9",
+      "community": 3,
+      "norm_label": "splash",
+      "id": "vaultlegv2_app_expo_splash"
+    },
+    {
+      "label": "image",
+      "file_type": "code",
+      "source_file": "app.json",
+      "source_location": "L10",
+      "community": 3,
+      "norm_label": "image",
+      "id": "vaultlegv2_app_splash_image"
+    },
+    {
+      "label": "resizeMode",
+      "file_type": "code",
+      "source_file": "app.json",
+      "source_location": "L11",
+      "community": 3,
+      "norm_label": "resizemode",
+      "id": "vaultlegv2_app_splash_resizemode"
+    },
+    {
+      "label": "backgroundColor",
+      "file_type": "code",
+      "source_file": "app.json",
+      "source_location": "L12",
+      "community": 3,
+      "norm_label": "backgroundcolor",
+      "id": "vaultlegv2_app_splash_backgroundcolor"
+    },
+    {
       "label": "getCategoryIcon()",
       "file_type": "code",
       "source_file": "src/screens/dashboard.tsx",
@@ -3024,36 +3024,6 @@
       "confidence_score": 1.0,
       "source": "vaultlegv2_app_expo",
       "target": "vaultlegv2_app_expo_web"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app.json",
-      "source_location": "L12",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "vaultlegv2_app_expo_splash",
-      "target": "vaultlegv2_app_splash_backgroundcolor"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app.json",
-      "source_location": "L10",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "vaultlegv2_app_expo_splash",
-      "target": "vaultlegv2_app_splash_image"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "app.json",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "vaultlegv2_app_expo_splash",
-      "target": "vaultlegv2_app_splash_resizemode"
     },
     {
       "relation": "contains",
@@ -7474,6 +7444,36 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "app.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "vaultlegv2_app_expo_splash",
+      "target": "vaultlegv2_app_splash_backgroundcolor"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "vaultlegv2_app_expo_splash",
+      "target": "vaultlegv2_app_splash_image"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "vaultlegv2_app_expo_splash",
+      "target": "vaultlegv2_app_splash_resizemode"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "package.json",
       "source_location": "L8",
       "weight": 1.0,
@@ -8103,5 +8103,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b47c1243a142f87d68366b7c540d724e5a6853f2"
+  "built_at_commit": "d3750601ab885904d2569e1f20457964521298d5"
 }

@@ -200,13 +200,13 @@
     "semantic_hash": "880185617cd0224059c2623eae121873"
   },
   "E:\\Github\\VaultlegV2\\app.json": {
-    "mtime": 1780406843.4407952,
-    "ast_hash": "56cc8fd1e3d5350ad5221ae5cef64f44",
+    "mtime": 1780407984.0119991,
+    "ast_hash": "9b23476128077ae68bdba3c138a45589",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\App.tsx": {
-    "mtime": 1780406804.419657,
-    "ast_hash": "7f4a0c788322362f2b79647051175443",
+    "mtime": 1780407373.3773909,
+    "ast_hash": "f4d5f60fbf8105d4f262f8d3037fbc00",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\index.ts": {
@@ -390,8 +390,8 @@
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\sidestore.json": {
-    "mtime": 1780407007.7289178,
-    "ast_hash": "c1cfa125e77261796887b3b58a37bd98",
+    "mtime": 1780408013.6351378,
+    "ast_hash": "384948181e69575a7bc4feede0c60260",
     "semantic_hash": ""
   }
 }

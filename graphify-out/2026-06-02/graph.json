@@ -250,7 +250,7 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L1934",
+      "source_location": "L1977",
       "id": "vaultlegv2_app_app",
       "community": 1,
       "norm_label": "app()"
@@ -259,7 +259,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L1944",
+      "source_location": "L1987",
       "id": "vaultlegv2_app_styles",
       "community": 1,
       "norm_label": "styles"
@@ -4178,9 +4178,9 @@
       "source_file": "sidestore.json",
       "source_location": "L4",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sidestore_json",
-      "target": "vaultlegv2_sidestore_apps",
-      "confidence_score": 1.0
+      "target": "vaultlegv2_sidestore_apps"
     },
     {
       "relation": "contains",
@@ -4188,9 +4188,9 @@
       "source_file": "sidestore.json",
       "source_location": "L3",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sidestore_json",
-      "target": "vaultlegv2_sidestore_identifier",
-      "confidence_score": 1.0
+      "target": "vaultlegv2_sidestore_identifier"
     },
     {
       "relation": "contains",
@@ -4198,9 +4198,9 @@
       "source_file": "sidestore.json",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "sidestore_json",
-      "target": "vaultlegv2_sidestore_name",
-      "confidence_score": 1.0
+      "target": "vaultlegv2_sidestore_name"
     },
     {
       "relation": "contains",
