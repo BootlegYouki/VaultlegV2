@@ -6,7 +6,7 @@ import { TuiContainer } from '../components/tui-container';
 import { TuiText } from '../components/tui-text';
 import { TuiSegmentedMeter } from '../components/tui-chart';
 import { Transaction, CATEGORIES } from '../types';
-import { getCategoryIcon } from './dashboard';
+import { getCategoryIcon } from '../utils/category-icon';
 
 interface StatsProps {
   transactions: Transaction[];

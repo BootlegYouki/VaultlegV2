@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, SafeAreaView, Pressable, ScrollView, useWindowDimensions, Platform, TextInput, Keyboard } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { StyleSheet, View, Pressable, ScrollView, useWindowDimensions, Platform, TextInput, Keyboard } from 'react-native';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import * as SplashScreen from 'expo-splash-screen';
 
@@ -14,7 +14,8 @@ import {
 
 import { ThemeProvider, useTheme } from './src/theme/theme-provider';
 import { Wallet, PiggyBank, FileText, TrendingUp, TrendingDown, Calendar, Landmark, Settings as SettingsIcon, ArrowUpCircle, ArrowDownCircle } from 'lucide-react-native';
-import { Dashboard, getCategoryIcon } from './src/screens/dashboard';
+import { Dashboard } from './src/screens/dashboard';
+import { getCategoryIcon } from './src/utils/category-icon';
 import { Expenses } from './src/screens/expenses';
 import { Stats } from './src/screens/stats';
 import { Debts } from './src/screens/debts';
@@ -441,7 +442,8 @@ function MainApp() {
           scrollEventThrottle={16}
           style={{ flex: 1 }}
           contentContainerStyle={{ width: screenWidth * swipeableScreens.length }}
-        >           {/* Page 0: Home */}
+        >
+          {/* Page 0: Home */}
           <View style={{ width: screenWidth, height: '100%' }}>
             <Dashboard
               transactions={transactions}
@@ -823,7 +825,7 @@ function MainApp() {
                     styles.logCategoryGridBtn,
                     {
                       backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                      width: logType === 'income' ? '48%' : '30%',
+                      width: logType === 'income' ? '23%' : '30%',
                     }
                   ]}
                 >
@@ -1007,6 +1009,8 @@ function MainApp() {
             Save Log
           </TuiButton>
         </View>
+
+        {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
       </TuiDrawer>
 
       {/* Drawer for logging debt */}
@@ -1374,7 +1378,7 @@ function MainApp() {
                     styles.logCategoryGridBtn,
                     {
                       backgroundColor: isSelected ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                      width: editTxType === 'income' ? '48%' : '30%',
+                      width: editTxType === 'income' ? '23%' : '30%',
                     }
                   ]}
                 >

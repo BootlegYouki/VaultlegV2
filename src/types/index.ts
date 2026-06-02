@@ -22,10 +22,10 @@ export const CATEGORIES = [
 ];
 
 export const INCOME_CATEGORIES = [
+  { id: 'investments', label: 'Allowance', icon: 'wallet' },
   { id: 'salary', label: 'Salary', icon: 'briefcase' },
   { id: 'freelance', label: 'Freelance', icon: 'code' },
-  { id: 'investments', label: 'Investments', icon: 'trending-up' },
-  { id: 'other_income', label: 'Other Income', icon: 'plus-circle' },
+  { id: 'other_income', label: 'Other', icon: 'plus-circle' },
 ];
 
 export interface Debt {

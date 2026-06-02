@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Clipboard, Alert, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme, ACCENT_COLORS } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
@@ -8,6 +8,9 @@ import { TuiText } from '../components/tui-text';
 import { TuiButton } from '../components/tui-button';
 import { logger } from '../utils/logger';
 import { Transaction, Debt } from '../types';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
+import * as DocumentPicker from 'expo-document-picker';
 
 interface SettingsProps {
   transactions: Transaction[];
@@ -32,7 +35,7 @@ export const Settings: React.FC<SettingsProps> = ({
   // Wipes all application data
   const handleWipe = () => {
     Alert.alert(
-      'WIPE DATABASE',
+      'Wipe Database',
       'This will permanently delete all transactions, budgets, and debts from storage. Are you sure you want to proceed?',
       [
         { text: 'Cancel', style: 'cancel' },
@@ -49,8 +52,8 @@ export const Settings: React.FC<SettingsProps> = ({
     );
   };
 
-  // Backs up the raw state string into device clipboard
-  const handleBackup = () => {
+  // Backs up the raw state string into a .vaultleg file and shares it
+  const handleBackup = async () => {
     try {
       const backupData = JSON.stringify({
         transactions,
@@ -58,36 +61,69 @@ export const Settings: React.FC<SettingsProps> = ({
         categoryLimits,
         timestamp: Date.now(),
       });
-      Clipboard.setString(backupData);
-      setShowBackupSuccess(true);
-      logger.log('SYSTEM', 'BACKUP_COPIED_TO_CLIPBOARD');
-      setTimeout(() => setShowBackupSuccess(false), 2500);
+      
+      const filename = `vaultleg_backup_${new Date().toISOString().split('T')[0]}.vaultleg`;
+      const fileUri = `${FileSystem.cacheDirectory}${filename}`;
+
+      await FileSystem.writeAsStringAsync(fileUri, backupData);
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri, {
+          mimeType: 'application/json',
+          dialogTitle: 'Export Vaultleg Backup',
+          UTI: 'public.json',
+        });
+        setShowBackupSuccess(true);
+        logger.log('SYSTEM', 'BACKUP_FILE_SHARED');
+        setTimeout(() => setShowBackupSuccess(false), 2500);
+      } else {
+        Alert.alert('Sharing Unavailable', 'Sharing is not supported on this device.');
+      }
     } catch (e: any) {
-      Alert.alert('Backup Failed', `Error stringifying backup payload: ${e.message}`);
+      Alert.alert('Backup Failed', `Error creating backup file: ${e.message}`);
     }
   };
 
-  // Restores data from the device clipboard string
+  // Restores data from a selected .vaultleg file
   const handleRestore = async () => {
     try {
-      const clipboardContent = await Clipboard.getString();
-      if (!clipboardContent) {
-        Alert.alert('Empty Clipboard', 'Copy a valid Vaultleg backup string to your clipboard first!');
+      const result = await DocumentPicker.getDocumentAsync({
+        type: '*/*',
+        copyToCacheDirectory: true,
+      });
+
+      const isCanceled = result.canceled === true || (result as any).type === 'cancel';
+      const assets = result.assets || [];
+      const uri = assets[0]?.uri || (result as any).uri;
+      const name = assets[0]?.name || (result as any).name;
+
+      if (isCanceled || !uri) {
         return;
       }
 
-      const parsed = JSON.parse(clipboardContent);
+      if (!name || !name.toLowerCase().endsWith('.vaultleg')) {
+        Alert.alert('Invalid File', 'Please select a valid backup file ending with .vaultleg');
+        return;
+      }
+
+      const fileContent = await FileSystem.readAsStringAsync(uri);
+      if (!fileContent) {
+        Alert.alert('Empty File', 'The selected backup file is empty.');
+        return;
+      }
+
+      const parsed = JSON.parse(fileContent);
       if (
         !parsed ||
         (!Array.isArray(parsed.transactions) && !Array.isArray(parsed.debts) && !parsed.categoryLimits)
       ) {
-        Alert.alert('Invalid Backup Format', 'Clipboard content does not match a valid backup pattern.');
+        Alert.alert('Invalid Backup Format', 'The file content does not match a valid backup pattern.');
         return;
       }
 
       Alert.alert(
-        'RESTORE BACKUP',
-        'Are you sure you want to overwrite your active database with the backup in your clipboard?',
+        'Restore Backup',
+        `Are you sure you want to overwrite your active database with the backup from "${name}"?`,
         [
           { text: 'Cancel', style: 'cancel' },
           {
@@ -101,13 +137,13 @@ export const Settings: React.FC<SettingsProps> = ({
               setShowRestoreSuccess(true);
               logger.log('SYSTEM', 'RESTORED_BACKUP_SUCCESS');
               setTimeout(() => setShowRestoreSuccess(false), 2500);
-              Alert.alert('Restore Complete', 'Successfully restored all records from your clipboard!');
+              Alert.alert('Restore Complete', 'Successfully restored all records from the backup file!');
             },
           },
         ]
       );
     } catch (e: any) {
-      Alert.alert('Restore Failed', 'Failed to parse clipboard data. Make sure you copied a valid backup string!');
+      Alert.alert('Restore Failed', `Failed to parse or restore file: ${e.message}`);
     }
   };
 
@@ -127,7 +163,7 @@ export const Settings: React.FC<SettingsProps> = ({
         {/* 01: SYSTEM PREFERENCES CARD */}
         <TuiContainer label="System Preferences" badge="Theme">
           <TuiText size="sm" variant="muted" style={styles.preferenceLabel}>
-            CHOOSE ACTIVE INTERFACE ASPECT:
+            Choose active interface aspect:
           </TuiText>
           <View style={styles.segmentsRow}>
             <View style={styles.segmentCol}>
@@ -152,9 +188,9 @@ export const Settings: React.FC<SettingsProps> = ({
         </TuiContainer>
 
         {/* 01.5: ACCENT COLOR CUSTOMIZER */}
-        <TuiContainer label="Accent Customizer" badge={accentTheme.toUpperCase()}>
+        <TuiContainer label="Accent Customizer" badge={accentTheme.charAt(0).toUpperCase() + accentTheme.slice(1)}>
           <TuiText size="sm" variant="muted" style={styles.preferenceLabel}>
-            CHOOSE ACTIVE BRAND COLOR HIGHLIGHT:
+            Choose active brand color highlight:
           </TuiText>
           <View style={styles.colorSelectorRow}>
             {(['classic', 'gray', 'amber', 'green', 'rose', 'cobalt'] as const).map((theme) => {
@@ -223,24 +259,24 @@ export const Settings: React.FC<SettingsProps> = ({
         {/* 02: DATABASE UTILITIES CARD */}
         <TuiContainer label="Database Operations" badge="Utilities">
           <TuiText size="sm" variant="muted" style={styles.preferenceLabel}>
-            PERSISTENT CLOUDLESS ACTIONS:
+            Persistent cloudless actions:
           </TuiText>
 
           <View style={styles.actionGridRow}>
             <View style={styles.actionCol}>
               <TuiButton onPress={handleBackup} variant="accent" style={styles.databaseBtn}>
-                {showBackupSuccess ? 'COPIED OK!' : 'BACKUP DATA'}
+                {showBackupSuccess ? 'Saved OK!' : 'Backup Data'}
               </TuiButton>
             </View>
             <View style={styles.actionCol}>
               <TuiButton onPress={handleRestore} variant="outline" style={styles.databaseBtn}>
-                {showRestoreSuccess ? 'RESTORED!' : 'RESTORE DATA'}
+                {showRestoreSuccess ? 'Restored!' : 'Restore Data'}
               </TuiButton>
             </View>
           </View>
 
           <TuiButton onPress={handleWipe} variant="destructive" style={styles.wipeBtn}>
-            WIPE ALL LOCAL DATA
+            Wipe All Local Data
           </TuiButton>
         </TuiContainer>
       </ScrollView>

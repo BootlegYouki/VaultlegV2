@@ -7,7 +7,7 @@ import { TuiContainer } from '../components/tui-container';
 import { TuiText } from '../components/tui-text';
 import { TuiButton } from '../components/tui-button';
 import { Transaction } from '../types';
-import { getCategoryIcon } from './dashboard';
+import { getCategoryIcon } from '../utils/category-icon';
 
 interface ExpensesProps {
   transactions: Transaction[];

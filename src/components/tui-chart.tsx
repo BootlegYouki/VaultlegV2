@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
-import { getCategoryIcon } from '../screens/dashboard';
+import { getCategoryIcon } from '../utils/category-icon';
 
 // ----------------------------------------------------
 // TELEMETRY METER: [██████░░░░] style progress bar

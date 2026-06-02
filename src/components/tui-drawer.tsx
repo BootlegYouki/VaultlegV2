@@ -17,6 +17,7 @@ interface TuiDrawerProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  keyboardOffset?: number;
 }
 
 export const TuiDrawer: React.FC<TuiDrawerProps> = ({
@@ -24,6 +25,7 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
   onClose,
   title,
   children,
+  keyboardOffset = 0,
 }) => {
   const { colors, isDark } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
@@ -32,6 +34,7 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
   const [legendWidth, setLegendWidth] = useState(0);
 
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
+  const nudgeAnim = useRef(new Animated.Value(0)).current;
 
   const borderTopLeftWidth = Math.max(0, (cardWidth - legendWidth) / 2);
   const borderTopRightLeft = Math.max(0, (cardWidth + legendWidth) / 2);
@@ -44,6 +47,16 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
   });
 
 
+
+  // Sync nudge animation when keyboardOffset changes
+  useEffect(() => {
+    Animated.timing(nudgeAnim, {
+      toValue: keyboardOffset,
+      duration: 150,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    }).start();
+  }, [keyboardOffset]);
 
   // Sync animations with visible state changes
   useEffect(() => {
@@ -96,7 +109,7 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
               styles.drawerContent,
               {
                 backgroundColor: colors.card,
-                transform: [{ translateY: slideAnim }],
+                transform: [{ translateY: Animated.add(slideAnim, nudgeAnim) }],
               }
             ]}
           >

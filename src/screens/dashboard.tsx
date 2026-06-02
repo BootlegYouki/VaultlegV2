@@ -2,24 +2,8 @@ import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Pressable, TextInput, RefreshControl } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
-  Wallet,
   TrendingUp,
-  TrendingDown,
-  Trash2,
-  Utensils,
-  Zap,
-  Film,
-  Car,
-  Laptop,
-  Heart,
-  HelpCircle,
-  Briefcase,
-  Code,
-  Landmark,
-  Check,
-  ShoppingBag,
-  Plane,
-  PlusCircle,
+  Wallet,
   ArrowUpCircle,
   ArrowDownCircle,
 } from 'lucide-react-native';
@@ -30,6 +14,10 @@ import { TuiButton } from '../components/tui-button';
 import { TuiSegmentedMeter } from '../components/tui-chart';
 import { Transaction, CATEGORIES, Debt } from '../types';
 import { logger } from '../utils/logger';
+import { getCategoryIcon } from '../utils/category-icon';
+
+// Re-export for backwards compatibility
+export { getCategoryIcon };
 
 // Shared palette — must match stats.tsx order
 const STATS_COLORS = [
@@ -50,24 +38,7 @@ interface DashboardProps {
   onRefresh: () => void;
 }
 
-// Icon Helper for Categories
-export const getCategoryIcon = (categoryId: string, size = 16, color = '#FFFFFF') => {
-  switch (categoryId) {
-    case 'food': return <Utensils size={size} color={color} />;
-    case 'utilities': return <Zap size={size} color={color} />;
-    case 'entertainment': return <Film size={size} color={color} />;
-    case 'transport': return <Car size={size} color={color} />;
-    case 'tech': return <Laptop size={size} color={color} />;
-    case 'health': return <Heart size={size} color={color} />;
-    case 'shopping': return <ShoppingBag size={size} color={color} />;
-    case 'travel': return <Plane size={size} color={color} />;
-    case 'salary': return <Briefcase size={size} color={color} />;
-    case 'freelance': return <Code size={size} color={color} />;
-    case 'investments': return <TrendingUp size={size} color={color} />;
-    case 'other_income': return <PlusCircle size={size} color={color} />;
-    default: return <HelpCircle size={size} color={color} />;
-  }
-};
+
 
 export const Dashboard: React.FC<DashboardProps> = ({
   transactions,
