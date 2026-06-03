@@ -8,6 +8,7 @@ interface TuiInputProps extends TextInputProps {
   label?: string;
   error?: string;
   containerStyle?: ViewStyle;
+  showSecureToggle?: boolean;
 }
 
 export const TuiInput: React.FC<TuiInputProps> = ({
@@ -17,11 +18,13 @@ export const TuiInput: React.FC<TuiInputProps> = ({
   containerStyle,
   onFocus,
   onBlur,
+  showSecureToggle,
   ...props
 }) => {
   const { colors, isDark } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const [legendWidth, setLegendWidth] = useState(0);
+  const [isSecure, setIsSecure] = useState(props.secureTextEntry);
   const inputRef = useRef<TextInput>(null);
 
   const handleFocus = (e: any) => {
@@ -121,18 +124,38 @@ export const TuiInput: React.FC<TuiInputProps> = ({
               style,
             ]}
             {...props}
+            secureTextEntry={isSecure}
           />
-          {(isFocused || !!props.value) ? (
-            <Pressable
-              onPress={handleClear}
-              style={{
-                padding: 6,
-                marginLeft: 4,
-              }}
-            >
-              <X size={16} color={colors.primary} />
-            </Pressable>
-          ) : null}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {showSecureToggle && (
+              <Pressable
+                onPress={() => setIsSecure(!isSecure)}
+                style={{
+                  padding: 6,
+                  marginLeft: 4,
+                }}
+              >
+                <TuiText
+                  weight="bold"
+                  size="xs"
+                  style={{ color: colors.primary, fontFamily: 'JetBrainsMono_700Bold' }}
+                >
+                  {isSecure ? '[SHOW]' : '[HIDE]'}
+                </TuiText>
+              </Pressable>
+            )}
+            {(isFocused && !!props.value) ? (
+              <Pressable
+                onPress={handleClear}
+                style={{
+                  padding: 6,
+                  marginLeft: 4,
+                }}
+              >
+                <X size={16} color={colors.primary} />
+              </Pressable>
+            ) : null}
+          </View>
         </View>
       </View>
 

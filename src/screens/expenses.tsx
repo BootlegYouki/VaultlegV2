@@ -219,7 +219,7 @@ export const Expenses: React.FC<ExpensesProps> = ({
       {/* 02: SCROLLABLE LOGS */}
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 80 + insets.bottom }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 36 + insets.bottom }]}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

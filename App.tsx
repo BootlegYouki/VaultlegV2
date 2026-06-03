@@ -32,6 +32,8 @@ import { Transaction, CATEGORIES, INCOME_CATEGORIES, Debt } from './src/types';
 import { storage } from './src/utils/storage';
 import { logger } from './src/utils/logger';
 import { SplashIcon } from './src/components/splash-icon';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { gistBackupService, GistBackupPayload } from './src/utils/gist-backup';
 
 function MainApp() {
   const { colors, isDark, setThemeMode } = useTheme();
@@ -49,6 +51,11 @@ function MainApp() {
   const selectionBarAnim = useRef(new Animated.Value(0)).current;
   const [selectionBarVisible, setSelectionBarVisible] = useState(false);
   const [highlightedTransactionId, setHighlightedTransactionId] = useState<string | undefined>(undefined);
+
+  // Gist Auto-Sync states
+  const [gistPat, setGistPat] = useState('');
+  const [gistId, setGistId] = useState('');
+  const [syncingStatus, setSyncingStatus] = useState<'idle' | 'syncing' | 'success' | 'failed'>('idle');
 
   useEffect(() => {
     if (isSelectionMode) {
@@ -203,6 +210,62 @@ function MainApp() {
     ]).start();
   }, [isDrawerOpen]);
 
+  const backupTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerGistBackup = (
+    currentTxs = transactions,
+    currentDebts = debts,
+    currentLimits = categoryLimits
+  ) => {
+    if (!gistPat || gistPat.trim() === '') {
+      return;
+    }
+
+    if (backupTimeoutRef.current) {
+      clearTimeout(backupTimeoutRef.current);
+    }
+
+    backupTimeoutRef.current = setTimeout(async () => {
+      logger.log('SYSTEM', 'AUTO_GIST_SYNC_TRIGGERED');
+      try {
+        const payload: GistBackupPayload = {
+          transactions: currentTxs,
+          debts: currentDebts,
+          categoryLimits: currentLimits,
+          timestamp: Date.now(),
+        };
+
+        if (gistId && gistId.trim() !== '') {
+          await gistBackupService.updateGist(gistPat, gistId, payload);
+          logger.log('SYSTEM', 'AUTO_GIST_SYNC_SUCCESS');
+        } else {
+          const newId = await gistBackupService.createGist(gistPat, payload);
+          setGistId(newId);
+          await AsyncStorage.setItem('tui_gist_id', newId);
+          logger.log('SYSTEM', `AUTO_GIST_SYNC_SUCCESS_GIST_CREATED_ID_${newId}`);
+        }
+      } catch (err: any) {
+        logger.log('SYSTEM_ERROR', `AUTO_GIST_SYNC_FAILED: ${err.message}`);
+      }
+    }, 5000);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (backupTimeoutRef.current) {
+        clearTimeout(backupTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const updateLastLocalUpdate = async (timestamp = Date.now()) => {
+    try {
+      await AsyncStorage.setItem('tui_last_local_update', timestamp.toString());
+    } catch (e: any) {
+      logger.log('SYSTEM_ERROR', `TIMESTAMP_WRITE_FAILED: ${e.message}`);
+    }
+  };
+
   const handleSaveEditTransaction = async () => {
     if (!editingTransaction) return;
     const parsedAmt = parseFloat(editTxAmount);
@@ -228,7 +291,9 @@ function MainApp() {
     );
     setTransactions(updated);
     await storage.saveTransactions(updated);
+    await updateLastLocalUpdate();
     logger.log('OPERATION', `EDITED_TRANSACTION_ID_${editingTransaction.id}`);
+    triggerGistBackup(updated);
     setEditingTransaction(null);
   };
 
@@ -258,7 +323,9 @@ function MainApp() {
     );
     setDebts(updated);
     await storage.saveDebts(updated);
+    await updateLastLocalUpdate();
     logger.log('OPERATION', `EDITED_DEBT_ID_${editingDebt.id}`);
+    triggerGistBackup(undefined, updated);
     setEditingDebt(null);
   };
 
@@ -342,8 +409,70 @@ function MainApp() {
         setTransactions(txList);
         setCategoryLimits(catLimits);
         setDebts(debtList);
+
+        // Load Gist Auto-Sync preferences
+        const pat = await AsyncStorage.getItem('tui_gist_pat');
+        const id = await AsyncStorage.getItem('tui_gist_id');
+
+        if (pat) setGistPat(pat);
+        if (id) setGistId(id);
+
         setDataLoaded(true);
         logger.log('SYSTEM', 'ALL_SYSTEM_RESOURCES_LOADED_OK');
+
+        // Startup background check for newer Gist backups
+        if (pat && pat.trim() !== '') {
+          setTimeout(async () => {
+            try {
+              logger.log('SYSTEM', 'STARTUP_GIST_CHECK_TRIGGERED');
+              let resolvedId = id;
+              if (!resolvedId || resolvedId.trim() === '') {
+                resolvedId = await gistBackupService.findExistingGist(pat);
+                if (resolvedId) {
+                  setGistId(resolvedId);
+                  await AsyncStorage.setItem('tui_gist_id', resolvedId);
+                }
+              }
+
+              if (resolvedId && resolvedId.trim() !== '') {
+                const remoteBackup = await gistBackupService.fetchGist(pat, resolvedId);
+                if (remoteBackup && remoteBackup.timestamp) {
+                  const localUpdateStr = await AsyncStorage.getItem('tui_last_local_update');
+                  const localUpdate = localUpdateStr ? parseInt(localUpdateStr, 10) : 0;
+
+                  if (remoteBackup.timestamp > localUpdate) {
+                    logger.log('SYSTEM', 'STARTUP_GIST_CHECK_NEWER_BACKUP_FOUND');
+                    const remoteDate = new Date(remoteBackup.timestamp).toLocaleString();
+                    Alert.alert(
+                      'Cloud Backup Found',
+                      `A newer cloud backup from ${remoteDate} was found on GitHub.\n\nWould you like to restore it and overwrite your local data?`,
+                      [
+                        {
+                          text: 'Cancel',
+                          style: 'cancel',
+                          onPress: async () => {
+                            // Skip prompting for this remote version again
+                            await AsyncStorage.setItem('tui_last_local_update', remoteBackup.timestamp.toString());
+                          }
+                        },
+                        {
+                          text: 'Restore',
+                          style: 'default',
+                          onPress: async () => {
+                            await handleRestoreData(remoteBackup, remoteBackup.timestamp);
+                            Alert.alert('Restore Success', 'Cloud backup has been restored successfully.');
+                          }
+                        }
+                      ]
+                    );
+                  }
+                }
+              }
+            } catch (err: any) {
+              logger.log('SYSTEM_ERROR', `STARTUP_GIST_CHECK_FAILED: ${err.message}`);
+            }
+          }, 1500);
+        }
       } catch (err: any) {
         logger.log('SYSTEM_ERROR', `RESOURCE_INIT_FAILED: ${err.message}`);
         setDataLoaded(true);
@@ -387,7 +516,9 @@ function MainApp() {
     }
     setCategoryLimits(updated);
     await storage.saveCategoryLimits(updated);
+    await updateLastLocalUpdate();
     logger.log('SYSTEM', `UPDATED_CATEGORY_${category.toUpperCase()}_LIMIT_TO_₱${limit.toFixed(2)}`);
+    triggerGistBackup(undefined, undefined, updated);
   };
 
   const handleAddTransaction = async (newTx: Omit<Transaction, 'id'>) => {
@@ -398,20 +529,26 @@ function MainApp() {
     const updated = [tx, ...transactions];
     setTransactions(updated);
     await storage.saveTransactions(updated);
+    await updateLastLocalUpdate();
+    triggerGistBackup(updated);
   };
 
   const handleDeleteTransaction = async (id: string) => {
     const filtered = transactions.filter((t) => t.id !== id);
     setTransactions(filtered);
     await storage.saveTransactions(filtered);
+    await updateLastLocalUpdate();
     logger.log('OPERATION', `DELETED_TRANSACTION_ID_${id}`);
+    triggerGistBackup(filtered);
   };
 
   const handleDeleteTransactions = async (ids: string[]) => {
     const filtered = transactions.filter((t) => !ids.includes(t.id));
     setTransactions(filtered);
     await storage.saveTransactions(filtered);
+    await updateLastLocalUpdate();
     logger.log('OPERATION', `DELETED_TRANSACTIONS_COUNT_${ids.length}`);
+    triggerGistBackup(filtered);
   };
 
   const handleAddDebt = async (newDebt: Omit<Debt, 'id'>) => {
@@ -422,20 +559,26 @@ function MainApp() {
     const updated = [debt, ...debts];
     setDebts(updated);
     await storage.saveDebts(updated);
+    await updateLastLocalUpdate();
+    triggerGistBackup(undefined, updated);
   };
 
   const handleDeleteDebt = async (id: string) => {
     const filtered = debts.filter((d) => d.id !== id);
     setDebts(filtered);
     await storage.saveDebts(filtered);
+    await updateLastLocalUpdate();
     logger.log('OPERATION', `DELETED_DEBT_ID_${id}`);
+    triggerGistBackup(undefined, filtered);
   };
 
   const handleDeleteDebts = async (ids: string[]) => {
     const filtered = debts.filter((d) => !ids.includes(d.id));
     setDebts(filtered);
     await storage.saveDebts(filtered);
+    await updateLastLocalUpdate();
     logger.log('OPERATION', `DELETED_DEBTS_COUNT_${ids.length}`);
+    triggerGistBackup(undefined, filtered);
   };
 
   const handleToggleSelect = (id: string) => {
@@ -481,13 +624,17 @@ function MainApp() {
     );
   };
 
-  const handleRestoreData = async (restored: { transactions: Transaction[]; debts: Debt[]; categoryLimits: Record<string, number> }) => {
+  const handleRestoreData = async (
+    restored: { transactions: Transaction[]; debts: Debt[]; categoryLimits: Record<string, number> },
+    timestamp = Date.now()
+  ) => {
     setTransactions(restored.transactions);
     setDebts(restored.debts);
     setCategoryLimits(restored.categoryLimits);
     await storage.saveTransactions(restored.transactions);
     await storage.saveDebts(restored.debts);
     await storage.saveCategoryLimits(restored.categoryLimits);
+    await updateLastLocalUpdate(timestamp);
   };
 
   const handleWipeAllData = async () => {
@@ -497,6 +644,144 @@ function MainApp() {
     await storage.saveTransactions([]);
     await storage.saveDebts([]);
     await storage.saveCategoryLimits({});
+    await updateLastLocalUpdate();
+  };
+
+  const handleUpdateGistSettings = async (settings: { pat?: string; id?: string }) => {
+    try {
+      if (settings.pat !== undefined) {
+        setGistPat(settings.pat);
+        await AsyncStorage.setItem('tui_gist_pat', settings.pat);
+      }
+      if (settings.id !== undefined) {
+        setGistId(settings.id);
+        await AsyncStorage.setItem('tui_gist_id', settings.id);
+      }
+    } catch (e: any) {
+      logger.log('SYSTEM_ERROR', `SAVE_GIST_SETTINGS_FAILED: ${e.message}`);
+    }
+  };
+
+  const handleManualSync = async () => {
+    if (!gistPat || gistPat.trim() === '') {
+      Alert.alert('Missing Token', 'Please provide a valid GitHub Personal Access Token (PAT).');
+      return;
+    }
+
+    setSyncingStatus('syncing');
+    logger.log('SYSTEM', 'MANUAL_GIST_SYNC_TRIGGERED');
+
+    try {
+      const payload: GistBackupPayload = {
+        transactions,
+        debts,
+        categoryLimits,
+        timestamp: Date.now(),
+      };
+
+      let activeGistId = gistId;
+
+      const isConnected = await gistBackupService.testConnection(gistPat);
+      if (!isConnected) {
+        throw new Error('Connection failed. Please verify your Personal Access Token.');
+      }
+
+      // Automatically search for existing Gist if ID is empty
+      if (!activeGistId || activeGistId.trim() === '') {
+        const foundId = await gistBackupService.findExistingGist(gistPat);
+        if (foundId) {
+          activeGistId = foundId;
+          setGistId(foundId);
+          await AsyncStorage.setItem('tui_gist_id', foundId);
+          logger.log('SYSTEM', `MANUAL_SYNC_FOUND_EXISTING_GIST_ID_${foundId}`);
+        }
+      }
+
+      if (!activeGistId || activeGistId.trim() === '') {
+        const newId = await gistBackupService.createGist(gistPat, payload);
+        activeGistId = newId;
+        setGistId(newId);
+        await AsyncStorage.setItem('tui_gist_id', newId);
+        logger.log('SYSTEM', `GIST_AUTO_CREATED_ID_${newId}`);
+        setSyncingStatus('success');
+        setTimeout(() => setSyncingStatus('idle'), 3000);
+        Alert.alert('Sync Successful', 'Your active database was successfully backed up to your private GitHub Gist!');
+      } else {
+        // Fetch the remote Gist to verify if we should upload or download
+        try {
+          const remoteBackup = await gistBackupService.fetchGist(gistPat, activeGistId);
+          if (remoteBackup && remoteBackup.timestamp) {
+            const localUpdateStr = await AsyncStorage.getItem('tui_last_local_update');
+            const localUpdate = localUpdateStr ? parseInt(localUpdateStr, 10) : 0;
+
+            const localIsEmpty = transactions.length === 0 && debts.length === 0;
+            const remoteHasData = (remoteBackup.transactions && remoteBackup.transactions.length > 0) || (remoteBackup.debts && remoteBackup.debts.length > 0);
+
+            if (remoteBackup.timestamp > localUpdate || (localIsEmpty && remoteHasData)) {
+              setSyncingStatus('idle');
+              const remoteDate = new Date(remoteBackup.timestamp).toLocaleString();
+              Alert.alert(
+                'Cloud Backup Found',
+                `A newer cloud backup from ${remoteDate} was found on GitHub.\n\nWould you like to RESTORE it to this device, or OVERWRITE it with your local data?`,
+                [
+                  {
+                    text: 'Cancel',
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Overwrite Cloud',
+                    style: 'destructive',
+                    onPress: async () => {
+                      setSyncingStatus('syncing');
+                      try {
+                        await gistBackupService.updateGist(gistPat, activeGistId, payload);
+                        setSyncingStatus('success');
+                        setTimeout(() => setSyncingStatus('idle'), 3000);
+                        Alert.alert('Sync Successful', 'Your local database successfully overwrote the cloud Gist.');
+                      } catch (err: any) {
+                        setSyncingStatus('failed');
+                        setTimeout(() => setSyncingStatus('idle'), 3000);
+                        Alert.alert('Sync Failed', err.message || 'An error occurred.');
+                      }
+                    }
+                  },
+                  {
+                    text: 'Restore to Device',
+                    style: 'default',
+                    onPress: async () => {
+                      setSyncingStatus('syncing');
+                      try {
+                        await handleRestoreData(remoteBackup, remoteBackup.timestamp);
+                        setSyncingStatus('success');
+                        setTimeout(() => setSyncingStatus('idle'), 3000);
+                        Alert.alert('Restore Successful', 'Your device was successfully updated with the cloud backup!');
+                      } catch (err: any) {
+                        setSyncingStatus('failed');
+                        setTimeout(() => setSyncingStatus('idle'), 3000);
+                        Alert.alert('Restore Failed', err.message || 'An error occurred.');
+                      }
+                    }
+                  }
+                ]
+              );
+              return;
+            }
+          }
+        } catch (fetchErr) {
+          logger.log('SYSTEM', `MANUAL_SYNC_FETCH_SKIPPED: ${fetchErr}`);
+        }
+
+        // Default path: local data is newer, so overwrite remote Gist
+        await gistBackupService.updateGist(gistPat, activeGistId, payload);
+        setSyncingStatus('success');
+        setTimeout(() => setSyncingStatus('idle'), 3000);
+        Alert.alert('Sync Successful', 'Your active database was successfully backed up to your private GitHub Gist!');
+      }
+    } catch (err: any) {
+      setSyncingStatus('failed');
+      setTimeout(() => setSyncingStatus('idle'), 3000);
+      Alert.alert('Sync Failed', err.message || 'An error occurred during synchronization.');
+    }
   };
 
   // Render initial dark/light splash screen until the app is ready
@@ -646,6 +931,11 @@ function MainApp() {
                 categoryLimits={categoryLimits}
                 onRestoreData={handleRestoreData}
                 onWipeAllData={handleWipeAllData}
+                gistPat={gistPat}
+                gistId={gistId}
+                syncingStatus={syncingStatus}
+                onUpdateGistSettings={handleUpdateGistSettings}
+                onManualSync={handleManualSync}
               />
             )}
           </View>
@@ -702,7 +992,7 @@ function MainApp() {
           {/* FAB Dropdown Backdrop covering the screen to cancel log menu */}
           {logMenuOpen && (
             <Pressable
-              style={StyleSheet.absoluteFill}
+              style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0, 0, 0, 0.5)', zIndex: 9990 }]}
               onPress={() => setLogMenuOpen(false)}
             />
           )}

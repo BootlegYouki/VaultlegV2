@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Pressable } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, Pressable, Linking } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTheme, ACCENT_COLORS } from '../theme/theme-provider';
+import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
 import { BrandLogo } from '../components/brand-logo';
 import { TuiText } from '../components/tui-text';
@@ -11,6 +11,7 @@ import { Transaction, Debt } from '../types';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
+import { TuiInput } from '../components/tui-input';
 
 interface SettingsProps {
   transactions: Transaction[];
@@ -18,6 +19,11 @@ interface SettingsProps {
   categoryLimits: Record<string, number>;
   onRestoreData: (restored: { transactions: Transaction[]; debts: Debt[]; categoryLimits: Record<string, number> }) => Promise<void>;
   onWipeAllData: () => Promise<void>;
+  gistPat: string;
+  gistId: string;
+  syncingStatus: 'idle' | 'syncing' | 'success' | 'failed';
+  onUpdateGistSettings: (settings: { pat?: string; id?: string }) => Promise<void>;
+  onManualSync: () => Promise<void>;
 }
 
 export const Settings: React.FC<SettingsProps> = ({
@@ -26,11 +32,29 @@ export const Settings: React.FC<SettingsProps> = ({
   categoryLimits,
   onRestoreData,
   onWipeAllData,
+  gistPat,
+  gistId,
+  syncingStatus,
+  onUpdateGistSettings,
+  onManualSync,
 }) => {
-  const { colors, isDark, setThemeMode, accentTheme, setAccentTheme } = useTheme();
+  const { colors, isDark, setThemeMode } = useTheme();
   const insets = useSafeAreaInsets();
   const [showBackupSuccess, setShowBackupSuccess] = useState(false);
   const [showRestoreSuccess, setShowRestoreSuccess] = useState(false);
+
+  // Local state for Gist credentials
+  const [patVal, setPatVal] = useState(gistPat);
+  const [idVal, setIdVal] = useState(gistId);
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+
+  React.useEffect(() => {
+    setPatVal(gistPat);
+  }, [gistPat]);
+
+  React.useEffect(() => {
+    setIdVal(gistId);
+  }, [gistId]);
 
   // Wipes all application data
   const handleWipe = () => {
@@ -61,7 +85,7 @@ export const Settings: React.FC<SettingsProps> = ({
         categoryLimits,
         timestamp: Date.now(),
       });
-      
+
       const filename = `vaultleg_backup_${new Date().toISOString().split('T')[0]}.vaultleg`;
       const fileUri = `${FileSystem.cacheDirectory}${filename}`;
 
@@ -151,7 +175,7 @@ export const Settings: React.FC<SettingsProps> = ({
     <View style={styles.mainWrapper}>
       <ScrollView
         style={[styles.container, { backgroundColor: colors.background }]}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 80 + insets.bottom }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 36 + insets.bottom }]}
       >
         {/* 00: BRAND LOGO CARD (BLANK CONTAINER) */}
         <TuiContainer label="Made by BootlegYouki">
@@ -161,9 +185,9 @@ export const Settings: React.FC<SettingsProps> = ({
         </TuiContainer>
 
         {/* 01: SYSTEM PREFERENCES CARD */}
-        <TuiContainer label="System Preferences" badge="Theme">
+        <TuiContainer label="System Preferences">
           <TuiText size="sm" variant="muted" style={styles.preferenceLabel}>
-            Choose active interface aspect:
+            Select app color theme:
           </TuiText>
           <View style={styles.segmentsRow}>
             <View style={styles.segmentCol}>
@@ -187,96 +211,69 @@ export const Settings: React.FC<SettingsProps> = ({
           </View>
         </TuiContainer>
 
-        {/* 01.5: ACCENT COLOR CUSTOMIZER */}
-        <TuiContainer label="Accent Customizer" badge={accentTheme.charAt(0).toUpperCase() + accentTheme.slice(1)}>
-          <TuiText size="sm" variant="muted" style={styles.preferenceLabel}>
-            Choose active brand color highlight:
-          </TuiText>
-          <View style={styles.colorSelectorRow}>
-            {(['classic', 'gray', 'amber', 'green', 'rose', 'cobalt'] as const).map((theme) => {
-              const isActive = accentTheme === theme;
-              
-              // Get background color of the swatch dynamically from our theme provider
-              const swatchBg = ACCENT_COLORS[theme][isDark ? 'dark' : 'light'];
-              
-              return (
-                <Pressable
-                  key={theme}
-                  onPress={() => setAccentTheme(theme)}
-                  style={styles.swatchWrapper}
-                >
-                  <TuiText
-                    weight="bold"
-                    style={[
-                      styles.swatchBracket,
-                      {
-                        color: isActive ? colors.primary : (isDark ? '#3F3F46' : '#D4D4D8'),
-                      }
-                    ]}
-                  >
-                    [
-                  </TuiText>
-                  
-                  <View
-                    style={[
-                      styles.colorSwatch,
-                      {
-                        backgroundColor: swatchBg,
-                        borderColor: isActive ? colors.primary : (isDark ? '#3F3F46' : '#D4D4D8'),
-                      }
-                    ]}
-                  >
-                    {isActive && (
-                      <TuiText
-                        weight="bold"
-                        style={{
-                          color: theme === 'classic' ? (isDark ? '#000000' : '#FFFFFF') : '#FFFFFF',
-                          fontSize: 13,
-                        }}
-                      >
-                        X
-                      </TuiText>
-                    )}
-                  </View>
 
-                  <TuiText
-                    weight="bold"
-                    style={[
-                      styles.swatchBracket,
-                      {
-                        color: isActive ? colors.primary : (isDark ? '#3F3F46' : '#D4D4D8'),
-                      }
-                    ]}
-                  >
-                    ]
-                  </TuiText>
-                </Pressable>
-              );
-            })}
-          </View>
+        {/* 01.7: GIST CLOUD AUTO-BACKUP CARD */}
+        <TuiContainer label="Cloud Backup">
+          <TuiText size="sm" variant="muted" style={styles.preferenceLabel}>
+            Silently sync your data to the cloud:
+          </TuiText>
+
+          <TuiInput
+            label="GitHub Token"
+            placeholder="Paste your GitHub token"
+            value={patVal}
+            onChangeText={(text) => {
+              setPatVal(text);
+              onUpdateGistSettings({ pat: text, id: idVal });
+            }}
+            secureTextEntry={true}
+            showSecureToggle={true}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <Pressable
+            onPress={() => Linking.openURL('https://github.com/settings/tokens/new?scopes=gist&description=Vaultleg%20Auto-Backup')}
+            style={{ alignSelf: 'flex-end', marginTop: -6, marginBottom: 12, paddingHorizontal: 4 }}
+          >
+            <TuiText size="xs" style={{ color: colors.primary, textDecorationLine: 'underline' }}>
+              [Generate pre-filled GitHub Token]
+            </TuiText>
+          </Pressable>
+
+          <TuiButton
+            disabled={syncingStatus === 'syncing'}
+            onPress={async () => {
+              await onUpdateGistSettings({ pat: patVal, id: idVal });
+              await onManualSync();
+            }}
+            variant="accent"
+            style={{ width: '100%', marginTop: 8 }}
+          >
+            {syncingStatus === 'syncing' ? 'Syncing...' : syncingStatus === 'success' ? 'Sync OK!' : 'Sync Now'}
+          </TuiButton>
         </TuiContainer>
 
         {/* 02: DATABASE UTILITIES CARD */}
-        <TuiContainer label="Database Operations" badge="Utilities">
+        <TuiContainer label="Database Operations">
           <TuiText size="sm" variant="muted" style={styles.preferenceLabel}>
-            Persistent cloudless actions:
+            Local database actions (saved directly on your phone):
           </TuiText>
 
           <View style={styles.actionGridRow}>
             <View style={styles.actionCol}>
               <TuiButton onPress={handleBackup} variant="accent" style={styles.databaseBtn}>
-                {showBackupSuccess ? 'Saved OK!' : 'Backup Data'}
+                {showBackupSuccess ? 'Saved!' : 'Export Backup'}
               </TuiButton>
             </View>
             <View style={styles.actionCol}>
               <TuiButton onPress={handleRestore} variant="outline" style={styles.databaseBtn}>
-                {showRestoreSuccess ? 'Restored!' : 'Restore Data'}
+                {showRestoreSuccess ? 'Restored!' : 'Import Backup'}
               </TuiButton>
             </View>
           </View>
 
           <TuiButton onPress={handleWipe} variant="destructive" style={styles.wipeBtn}>
-            Wipe All Local Data
+            Reset All Data
           </TuiButton>
         </TuiContainer>
       </ScrollView>
