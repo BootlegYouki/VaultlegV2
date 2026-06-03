@@ -8,6 +8,43 @@ import { TuiText } from '../components/tui-text';
 import { TuiButton } from '../components/tui-button';
 import { Debt } from '../types';
 
+const getDueLabel = (dueDateStr: string, colors: any) => {
+  if (!dueDateStr) return { text: '', color: colors.mutedForeground };
+  
+  // Parse MM-DD-YYYY
+  const parts = dueDateStr.split('-');
+  if (parts.length !== 3) return { text: '', color: colors.mutedForeground };
+  
+  const month = parseInt(parts[0], 10) - 1;
+  const day = parseInt(parts[1], 10);
+  const year = parseInt(parts[2], 10);
+  
+  const dueDate = new Date(year, month, day);
+  
+  // Normalize today and due date to midnight
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  dueDate.setHours(0, 0, 0, 0);
+  
+  const diffTime = dueDate.getTime() - today.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) {
+    return { text: 'due now', color: '#FFD93D' };
+  } else if (diffDays < 0) {
+    const overdueDays = Math.abs(diffDays);
+    return { 
+      text: `${overdueDays} ${overdueDays === 1 ? 'day' : 'days'} overdue`, 
+      color: colors.destructive 
+    };
+  } else {
+    return { 
+      text: `${diffDays} ${diffDays === 1 ? 'day' : 'days'} left`, 
+      color: colors.mutedForeground 
+    };
+  }
+};
+
 interface DebtRowProps {
   debt: Debt;
   isSelected: boolean;
@@ -31,78 +68,111 @@ const DebtRow: React.FC<DebtRowProps> = ({
   isDark,
   type,
 }) => {
+  const [legendWidth, setLegendWidth] = useState(0);
+  const dueInfo = getDueLabel(debt.dueDate, colors);
+  
+  const borderAccent = isEditing 
+    ? colors.primary 
+    : (isSelected ? colors.primary : (isDark ? colors.primary + '40' : colors.primary + '30'));
+  const rowBgColor = isEditing 
+    ? colors.primary + '15' 
+    : (isSelected ? colors.primary + '10' : (isDark ? '#1C1C1E' : '#FFFFFF'));
+
+  const borderTopRightLeft = 12 + legendWidth;
+
   return (
     <Pressable
       onPress={onPress}
       onLongPress={onLongPress}
       delayLongPress={350}
-      style={({ pressed }) => [
+      style={[
         styles.debtRow,
         {
-          borderColor: isEditing ? colors.primary : (isSelected ? colors.primary : (isDark ? colors.primary + '40' : colors.primary + '30')),
-          opacity: pressed ? 0.7 : 1,
-          backgroundColor: isEditing ? colors.primary + '15' : (isSelected ? colors.primary + '10' : (isDark ? '#1C1C1E' : '#FFFFFF')),
+          backgroundColor: rowBgColor,
         },
       ]}
     >
-      {isSelectionMode && (
+      {/* Segmented borders */}
+      <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
+      <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
+      <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
+      <View style={[styles.borderTopLeft, { backgroundColor: borderAccent }]} />
+      <View style={[styles.borderTopRight, { backgroundColor: borderAccent, left: borderTopRightLeft }]} />
+
+      {/* Legend label + badge on top border */}
+      <View
+        onLayout={(e) => setLegendWidth(e.nativeEvent.layout.width)}
+        style={styles.legendWrapper}
+      >
+        {dueInfo.text ? (
+          <TuiText size="sm" weight="bold" style={{ color: dueInfo.color }}>
+            {dueInfo.text.toUpperCase()}
+          </TuiText>
+        ) : null}
+      </View>
+
+      {/* Row Body Content */}
+      <View style={styles.debtRowBody}>
+        {isSelectionMode && (
+          <View
+            style={{
+              width: 18,
+              height: 18,
+              borderWidth: 1.5,
+              borderColor: isSelected ? colors.primary : (isDark ? '#3F3F46' : '#A1A1AA'),
+              backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: 10,
+            }}
+          >
+            {isSelected && (
+              <View
+                style={{
+                  width: 8,
+                  height: 8,
+                  backgroundColor: colors.primary,
+                }}
+              />
+            )}
+          </View>
+        )}
+
         <View
-          style={{
-            width: 18,
-            height: 18,
-            borderWidth: 1.5,
-            borderColor: isSelected ? colors.primary : (isDark ? '#3F3F46' : '#A1A1AA'),
-            backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: 10,
-          }}
+          style={[
+            styles.iconBox,
+            {
+              borderColor: isDark ? '#3F3F46' : '#000000',
+              backgroundColor: isDark ? '#27272A' : '#FFFFFF',
+            },
+          ]}
         >
-          {isSelected && (
-            <View
-              style={{
-                width: 8,
-                height: 8,
-                backgroundColor: colors.primary,
-              }}
-            />
+          {type === 'payable' ? (
+            <ArrowDownCircle size={14} color={colors.destructive} />
+          ) : (
+            <ArrowUpCircle size={14} color={colors.primary} />
           )}
         </View>
-      )}
 
-      <View
-        style={[
-          styles.iconBox,
-          {
-            borderColor: isDark ? '#3F3F46' : '#000000',
-            backgroundColor: isDark ? '#27272A' : '#FFFFFF',
-          },
-        ]}
-      >
-        {type === 'payable' ? (
-          <ArrowDownCircle size={14} color={colors.destructive} />
-        ) : (
-          <ArrowUpCircle size={14} color={colors.primary} />
-        )}
-      </View>
-
-      <View style={styles.rowLeft}>
-        <TuiText weight="bold" size="md">
-          {debt.name}
-        </TuiText>
-        <TuiText size="sm" variant="muted">
-          Due: {debt.dueDate}
-        </TuiText>
-      </View>
-      <View style={styles.rowRight}>
-        <TuiText
-          weight="bold"
-          style={{
-            color: type === 'payable' ? colors.destructive : colors.primary,
-          }}
-        >
-          {type === 'payable' ? '-' : '+'}₱{debt.amount.toFixed(2)}
-        </TuiText>
+        <View style={styles.rowLeft}>
+          <TuiText weight="bold" size="md">
+            {debt.name}
+          </TuiText>
+          <TuiText size="sm" variant="muted" style={{ marginTop: 2 }}>
+            Due: {debt.dueDate}
+          </TuiText>
+        </View>
+        
+        <View style={styles.rowRight}>
+          <TuiText
+            weight="bold"
+            style={{
+              color: type === 'payable' ? colors.destructive : colors.primary,
+            }}
+          >
+            {type === 'payable' ? '-' : '+'}₱{debt.amount.toFixed(2)}
+          </TuiText>
+        </View>
       </View>
     </Pressable>
   );
@@ -159,7 +229,7 @@ export const Debts: React.FC<DebtsProps> = ({
       
       {/* 01: FIXED TOP SECTION (DEBTS SUMMARY) */}
       <View style={[styles.fixedTopSection, { backgroundColor: colors.background, borderColor: colors.border }]}>
-        <TuiContainer label="Debts Summary" badge="Totals">
+        <TuiContainer label="Debts Summary">
           <View style={styles.debtsSummaryGrid}>
             <View style={[styles.summaryCol, { borderRightWidth: 1, borderColor: colors.border }]}>
               <View style={styles.titleRow}>
@@ -208,7 +278,7 @@ export const Debts: React.FC<DebtsProps> = ({
       >
 
         {/* 02: PAYABLES LIST FOLDER */}
-        <TuiContainer label="I Owe" badge={`${payables.length} accounts`}>
+        <TuiContainer label="I Owe" badge={`${payables.length} ${payables.length === 1 ? 'account' : 'accounts'}`}>
           <View style={styles.debtsList}>
             {payables.length === 0 ? (
               <TuiText size="xs" variant="muted" style={styles.emptyState}>
@@ -238,7 +308,7 @@ export const Debts: React.FC<DebtsProps> = ({
         </TuiContainer>
 
         {/* 03: RECEIVABLES LIST FOLDER */}
-        <TuiContainer label="Owes Me" badge={`${receivables.length} accounts`}>
+        <TuiContainer label="Owes Me" badge={`${receivables.length} ${receivables.length === 1 ? 'account' : 'accounts'}`}>
           <View style={styles.debtsList}>
             {receivables.length === 0 ? (
               <TuiText size="xs" variant="muted" style={styles.emptyState}>
@@ -308,14 +378,66 @@ const styles = StyleSheet.create({
   },
   debtsList: {
     marginTop: 2,
+    paddingTop: 12,
+    paddingBottom: 12,
+    gap: 16,
   },
   debtRow: {
+    position: 'relative',
+    paddingTop: 8,
+  },
+  borderLeft: {
+    position: 'absolute',
+    left: 0, top: 0, bottom: 0,
+    width: 1.5,
+    zIndex: 5,
+  },
+  borderRight: {
+    position: 'absolute',
+    right: 0, top: 0, bottom: 0,
+    width: 1.5,
+    zIndex: 5,
+  },
+  borderBottom: {
+    position: 'absolute',
+    left: 0, right: 0, bottom: 0,
+    height: 1.5,
+    zIndex: 5,
+  },
+  borderTopLeft: {
+    position: 'absolute',
+    left: 0, top: 0,
+    width: 12,
+    height: 1.5,
+    zIndex: 5,
+  },
+  borderTopRight: {
+    position: 'absolute',
+    top: 0, right: 0,
+    height: 1.5,
+    zIndex: 5,
+  },
+  legendWrapper: {
+    position: 'absolute',
+    top: -9,
+    left: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingHorizontal: 6,
+    zIndex: 10,
+  },
+  legendBadge: {
+    borderWidth: 1,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    marginLeft: 6,
+  },
+  debtRowBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 12,
-    borderWidth: 1.5,
-    marginBottom: 8,
+    paddingBottom: 10,
+    paddingTop: 4,
   },
   iconBox: {
     width: 28,
@@ -329,9 +451,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   rowRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
   },
   deletePressable: {
     padding: 6,

@@ -104,7 +104,7 @@ const TransactionRow: React.FC<TransactionRowProps> = ({
           {t.description}
         </TuiText>
         <TuiText size="sm" variant="muted">
-          {t.date} | {t.category.toUpperCase()}
+          {t.date} | {t.category.charAt(0).toUpperCase() + t.category.slice(1)}
         </TuiText>
       </View>
 

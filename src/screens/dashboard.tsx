@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Pressable, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,6 +26,8 @@ const STATS_COLORS = [
   '#FF9F1C', '#2EC4B6', '#FF4D6D', '#A8FF78', '#4D96FF',
 ];
 
+let hasAnimatedBalance = false;
+
 interface DashboardProps {
   transactions: Transaction[];
   statsLimit: number;
@@ -39,6 +41,7 @@ interface DashboardProps {
   onRefresh: () => void;
   editingTransactionId?: string;
   onRecentTransactionPress?: (tx: Transaction) => void;
+  startAnimation?: boolean;
 }
 
 
@@ -56,6 +59,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onRefresh,
   editingTransactionId,
   onRecentTransactionPress,
+  startAnimation = false,
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -93,9 +97,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     return `₱${val.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
   };
 
-  const maskDigits = (formatted: string): string => {
-    return formatted.replace(/[0-9]/g, '▒');
-  };
+
 
   // Aggregate Calculations
   const totalIncome = transactions
@@ -107,6 +109,47 @@ export const Dashboard: React.FC<DashboardProps> = ({
     .reduce((sum, t) => sum + t.amount, 0);
 
   const balance = totalIncome - totalExpense;
+
+  const [animatedBalance, setAnimatedBalance] = useState(hasAnimatedBalance ? balance : 0);
+  const isFirstRenderRef = useRef(true);
+
+  useEffect(() => {
+    if (!hasAnimatedBalance) {
+      if (!startAnimation) return;
+      hasAnimatedBalance = true;
+    } else {
+      if (isFirstRenderRef.current) {
+        isFirstRenderRef.current = false;
+        setAnimatedBalance(balance);
+        return;
+      }
+    }
+
+    let startTime: number | null = null;
+    const startValue = animatedBalance;
+    const duration = 800; // 800ms count-up duration
+
+    let animationFrameId: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+      const currentValue = startValue + (balance - startValue) * easedProgress;
+
+      setAnimatedBalance(currentValue);
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [balance, startAnimation]);
 
   const totalOwe = debts
     .filter((d) => d.type === 'payable')
@@ -129,7 +172,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   }
 
   segments.push({
-    color: isDark ? '#3F3F46' : '#D4D4D8',
+    color: isDark ? '#27272A' : '#E4E4E7',
     value: totalExpense,
   });
 
@@ -140,23 +183,40 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <View style={[styles.fixedTopSection, { backgroundColor: colors.background }]}>
         <TuiContainer label="Balances">
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <TuiText
-              size="3xl"
-              weight="bold"
-              style={{
-                color: balance >= 0 ? colors.primary : colors.destructive,
-                marginVertical: 4,
-              }}
-            >
-              {hideBalances ? (
-                <>
+            {hideBalances ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 4 }}>
+                <TuiText
+                  size="3xl"
+                  weight="bold"
+                  style={{
+                    color: balance >= 0 ? colors.primary : colors.destructive,
+                  }}
+                >
                   {balance < 0 ? '-' : ''}₱
-                  <TuiText style={{ fontSize: 22 }}>{maskDigits(Math.abs(balance).toFixed(2))}</TuiText>
-                </>
-              ) : (
-                formatCurrency(balance)
-              )}
-            </TuiText>
+                </TuiText>
+                <View
+                  style={{
+                    width: 90,
+                    height: 24,
+                    backgroundColor: balance >= 0 ? colors.primary : colors.destructive,
+                    opacity: 0.7,
+                    marginLeft: 6,
+                    borderRadius: 1,
+                  }}
+                />
+              </View>
+            ) : (
+              <TuiText
+                size="3xl"
+                weight="bold"
+                style={{
+                  color: balance >= 0 ? colors.primary : colors.destructive,
+                  marginVertical: 4,
+                }}
+              >
+                {formatCurrency(animatedBalance)}
+              </TuiText>
+            )}
             
             <Pressable
               onPress={handleToggleHide}
@@ -185,26 +245,39 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </View>
             </Pressable>
           </View>
-          <TuiText
-            size="sm"
-            variant="muted"
-            style={{
-              marginTop: 2,
-            }}
-          >
-            Income: +₱
+          
+          <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginTop: 2 }}>
+            <TuiText size="sm" variant="muted">Income: +₱</TuiText>
             {hideBalances ? (
-              <TuiText style={{ fontSize: 11 }}>{maskDigits(formatAmount(totalIncome))}</TuiText>
+              <View
+                style={{
+                  width: 40,
+                  height: 11,
+                  backgroundColor: colors.mutedForeground,
+                  opacity: 0.6,
+                  marginHorizontal: 4,
+                  borderRadius: 1,
+                }}
+              />
             ) : (
-              formatAmount(totalIncome)
+              <TuiText size="sm" variant="muted">{formatAmount(totalIncome)}</TuiText>
             )}
-            {" | Expenses: -₱"}
+            <TuiText size="sm" variant="muted">{" | Expenses: -₱"}</TuiText>
             {hideBalances ? (
-              <TuiText style={{ fontSize: 11 }}>{maskDigits(formatAmount(totalExpense))}</TuiText>
+              <View
+                style={{
+                  width: 40,
+                  height: 11,
+                  backgroundColor: colors.mutedForeground,
+                  opacity: 0.6,
+                  marginHorizontal: 4,
+                  borderRadius: 1,
+                }}
+              />
             ) : (
-              formatAmount(totalExpense)
+              <TuiText size="sm" variant="muted">{formatAmount(totalExpense)}</TuiText>
             )}
-          </TuiText>
+          </View>
         </TuiContainer>
       </View>
 
@@ -223,20 +296,26 @@ export const Dashboard: React.FC<DashboardProps> = ({
               totalLimit={totalLimit}
               totalSpent={totalExpense}
               label={hideBalances ? (
-                totalLimit > 0 ? (
-                  <>
-                    ₱<TuiText style={{ fontSize: 11 }}>{maskDigits((totalLimit - totalExpense).toFixed(2))}</TuiText> left of ₱<TuiText style={{ fontSize: 11 }}>{maskDigits(totalLimit.toFixed(2))}</TuiText>
-                  </>
-                ) : (
-                  <>
-                    ₱<TuiText style={{ fontSize: 11 }}>{maskDigits((totalLimit - totalExpense).toFixed(2))}</TuiText> left
-                  </>
-                )
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <TuiText size="sm" weight="bold">₱</TuiText>
+                  <View
+                    style={{
+                      width: 40,
+                      height: 12,
+                      backgroundColor: colors.foreground,
+                      opacity: 0.7,
+                      marginHorizontal: 4,
+                      borderRadius: 1,
+                    }}
+                  />
+                  <TuiText size="sm" weight="bold">left</TuiText>
+                </View>
               ) : (
-                totalLimit > 0
-                  ? `₱${(totalLimit - totalExpense).toFixed(2)} left of ₱${totalLimit.toFixed(2)}`
-                  : `₱${(totalLimit - totalExpense).toFixed(2)} left`
+                `₱${(totalLimit - totalExpense).toFixed(2)} left`
               )}
+              startAnimation={startAnimation}
+              animateMode="once"
+              animationDirection="grow"
             />
           </TuiContainer>
         </Pressable>
@@ -320,7 +399,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           {t.description}
                         </TuiText>
                         <TuiText size="sm" variant="muted">
-                          {t.date} | {t.category.toUpperCase()}
+                          {t.date} | {t.category.charAt(0).toUpperCase() + t.category.slice(1)}
                         </TuiText>
                       </View>
 
@@ -372,7 +451,7 @@ const styles = StyleSheet.create({
   },
   fixedTopSection: {
     paddingHorizontal: 8,
-    paddingTop: 12,
+    paddingTop: 4,
     paddingBottom: 0,
   },
   titleRow: {

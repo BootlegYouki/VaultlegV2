@@ -18,6 +18,7 @@ interface StatsProps {
   onResetAutoOpenDrawer?: () => void;
   refreshing: boolean;
   onRefresh: () => void;
+  animateMeter?: boolean;
 }
 
 // Vibrant TUI-style color palette for stats bars (dark mode)
@@ -84,7 +85,7 @@ const CategoryLimitCard: React.FC<CategoryLimitCardProps> = ({
           {cat.label.toUpperCase()}
         </TuiText>
         <View style={[styles.catLegendBadge, { borderColor: barColor }]}>
-          <TuiText size="xs" weight="bold" style={{ color: barColor }}>
+          <TuiText size="sm" weight="bold" style={{ color: barColor }}>
             {percentageStr}
           </TuiText>
         </View>
@@ -149,6 +150,7 @@ export const Stats: React.FC<StatsProps> = ({
   onResetAutoOpenDrawer,
   refreshing,
   onRefresh,
+  animateMeter = false,
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -231,15 +233,18 @@ export const Stats: React.FC<StatsProps> = ({
         <TuiContainer 
           label="Income Allocation" 
           badge={totalIncome > totalExpense ? `₱${(totalIncome - totalExpense).toFixed(0)} Left` : undefined}
+          accentBorder={animateMeter}
         >
           <TuiSegmentedMeter
             segments={segments}
             totalLimit={totalLimit}
             totalSpent={totalExpense}
             label={totalIncome > 0
-              ? `₱${totalExpense.toFixed(2)} spent of ₱${totalIncome.toFixed(2)} income`
+              ? `₱${totalExpense.toFixed(2)}`
               : `₱${totalExpense.toFixed(2)} spent (No income recorded)`
             }
+            animateMode={animateMeter ? 'always' : 'none'}
+            animationDirection="deplete"
           />
         </TuiContainer>
       </View>
@@ -260,7 +265,7 @@ export const Stats: React.FC<StatsProps> = ({
       >
 
         {/* 02: SPENT ALLOCATION CONTAINER */}
-        <TuiContainer label="Spent Allocation" badge={sortedSpending.length > 0 ? `${sortedSpending.length} Categories` : undefined}>
+        <TuiContainer label="Spent Allocation" badge={sortedSpending.length > 0 ? `${sortedSpending.length} ${sortedSpending.length === 1 ? 'Category' : 'Categories'}` : undefined}>
           {sortedSpending.length === 0 ? (
             <TuiText size="xs" variant="muted" style={styles.emptyState}>
               No category transactions recorded yet.
@@ -341,7 +346,7 @@ export const Stats: React.FC<StatsProps> = ({
                         {t.description || 'LOGGED TRANSACTION'}
                       </TuiText>
                       <TuiText size="sm" variant="muted">
-                        {t.date} | {t.category.toUpperCase()}
+                        {t.date} | {t.category.charAt(0).toUpperCase() + t.category.slice(1)}
                       </TuiText>
                     </View>
 
@@ -392,10 +397,11 @@ const styles = StyleSheet.create({
   },
   categoryLimitsList: {
     paddingTop: 8,
+    paddingBottom: 8,
     marginTop: 4,
+    gap: 16,
   },
   categoryItem: {
-    marginBottom: 20,
     position: 'relative',
     paddingTop: 8,
   },

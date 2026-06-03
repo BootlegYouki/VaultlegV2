@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Animated } from 'react-native';
 import { LayoutGrid, FileText, Landmark, Plus, TrendingUp } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
@@ -11,12 +11,16 @@ interface TuiTabBarProps {
   currentScreen: ScreenType;
   onNavigate: (screen: ScreenType) => void;
   onLongPressAdd?: () => void;
+  startAnimation?: boolean;
 }
+
+let hasAnimatedNav = false;
 
 export const TuiTabBar: React.FC<TuiTabBarProps> = ({
   currentScreen,
   onNavigate,
   onLongPressAdd,
+  startAnimation = false,
 }) => {
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
@@ -34,6 +38,61 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
 
   const isPlusActive = currentScreen === 'add-transaction';
 
+  // Staggering animation refs for tab pop-in/slide-up
+  const initialValue = hasAnimatedNav ? 1 : 0;
+  const tabAnimHome = React.useRef(new Animated.Value(initialValue)).current;
+  const tabAnimLogs = React.useRef(new Animated.Value(initialValue)).current;
+  const tabAnimStats = React.useRef(new Animated.Value(initialValue)).current;
+  const tabAnimDebts = React.useRef(new Animated.Value(initialValue)).current;
+  const tabAnimAdd = React.useRef(new Animated.Value(initialValue)).current;
+
+  React.useEffect(() => {
+    if (!startAnimation || hasAnimatedNav) return;
+    hasAnimatedNav = true;
+
+    Animated.stagger(40, [
+      Animated.spring(tabAnimHome, {
+        toValue: 1,
+        friction: 9,
+        tension: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(tabAnimLogs, {
+        toValue: 1,
+        friction: 9,
+        tension: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(tabAnimStats, {
+        toValue: 1,
+        friction: 9,
+        tension: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(tabAnimDebts, {
+        toValue: 1,
+        friction: 9,
+        tension: 100,
+        useNativeDriver: true,
+      }),
+      Animated.spring(tabAnimAdd, {
+        toValue: 1,
+        friction: 9,
+        tension: 100,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [startAnimation]);
+
+  const tabAnims: Record<ScreenType, Animated.Value> = {
+    dashboard: tabAnimHome,
+    expenses: tabAnimLogs,
+    stats: tabAnimStats,
+    debts: tabAnimDebts,
+    'add-transaction': tabAnimAdd,
+    settings: React.useRef(new Animated.Value(1)).current,
+  };
+
   return (
     <View style={[styles.shadowWrapper, { bottom: insets.bottom }]}>
       <View style={styles.navRow}>
@@ -44,136 +103,168 @@ export const TuiTabBar: React.FC<TuiTabBarProps> = ({
           const bWidth = buttonWidths[item.screen] || 70;
           const lWidth = legendWidths[item.screen] || 32;
           const topSegmentWidth = Math.max(0, (bWidth - lWidth) / 2);
+          const anim = tabAnims[item.screen];
 
           return (
-            <Pressable
+            <Animated.View
               key={item.screen}
-              onPress={() => onNavigate(item.screen)}
-              onLayout={(e) => {
-                const width = e.nativeEvent.layout.width;
-                setButtonWidths(prev => ({ ...prev, [item.screen]: width }));
+              style={{
+                flex: 1,
+                marginRight: idx === menuItems.length - 1 ? 48 : 8,
+                opacity: anim,
+                transform: [
+                  { scale: anim },
+                  {
+                    translateY: anim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [24, 0],
+                    }),
+                  },
+                ],
               }}
-              style={[
-                styles.tabSquare,
-                {
-                  backgroundColor: isActive ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                  marginRight: idx === menuItems.length - 1 ? 48 : 8, // 14px gap before '+' button, 4px between menu tabs
-                },
-              ]}
             >
-              {/* Dynamic Segmented Borders */}
-              <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
-              <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
-              <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
-              <View style={[styles.borderTopLeft, { backgroundColor: borderAccent, width: topSegmentWidth }]} />
-              <View style={[styles.borderTopRight, { backgroundColor: borderAccent, width: topSegmentWidth }]} />
-
-              {/* Brutalist legend resting on top border */}
-              <View
+              <Pressable
+                onPress={() => onNavigate(item.screen)}
                 onLayout={(e) => {
                   const width = e.nativeEvent.layout.width;
-                  setLegendWidths(prev => ({ ...prev, [item.screen]: width }));
+                  setButtonWidths(prev => ({ ...prev, [item.screen]: width }));
                 }}
                 style={[
-                  styles.legendWrapper,
+                  styles.tabSquare,
                   {
-                    backgroundColor: 'transparent',
-                    paddingHorizontal: 2,
-                  }
+                    backgroundColor: isActive ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                  },
                 ]}
               >
-                <TuiText
-                  weight="bold"
+                {/* Dynamic Segmented Borders */}
+                <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
+                <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
+                <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
+                <View style={[styles.borderTopLeft, { backgroundColor: borderAccent, width: topSegmentWidth }]} />
+                <View style={[styles.borderTopRight, { backgroundColor: borderAccent, width: topSegmentWidth }]} />
+
+                {/* Brutalist legend resting on top border */}
+                <View
+                  onLayout={(e) => {
+                    const width = e.nativeEvent.layout.width;
+                    setLegendWidths(prev => ({ ...prev, [item.screen]: width }));
+                  }}
                   style={[
-                    styles.legendText,
-                    { color: isActive ? colors.primary : colors.mutedForeground },
+                    styles.legendWrapper,
+                    {
+                      backgroundColor: 'transparent',
+                      paddingHorizontal: 2,
+                    }
                   ]}
                 >
-                  {item.label}
-                </TuiText>
-              </View>
+                  <TuiText
+                    weight="bold"
+                    style={[
+                      styles.legendText,
+                      { color: isActive ? colors.primary : colors.mutedForeground },
+                    ]}
+                  >
+                    {item.label}
+                  </TuiText>
+                </View>
 
-              <View style={styles.tabContent} pointerEvents="none">
-                <item.Icon
-                  size={18}
-                  color={isActive ? colors.primary : colors.mutedForeground}
-                />
-              </View>
-            </Pressable>
+                <View style={styles.tabContent} pointerEvents="none">
+                  <item.Icon
+                    size={18}
+                    color={isActive ? colors.primary : colors.mutedForeground}
+                  />
+                </View>
+              </Pressable>
+            </Animated.View>
           );
         })}
 
         {/* STANDALONE PLUS LOG BUTTON */}
-        <Pressable
-          onPress={() => onNavigate('add-transaction')}
-          onLongPress={onLongPressAdd}
-          delayLongPress={350}
-          onLayout={(e) => {
-            const width = e.nativeEvent.layout.width;
-            setButtonWidths(prev => ({ ...prev, ['add-transaction']: width }));
+        <Animated.View
+          style={{
+            opacity: tabAnimAdd,
+            transform: [
+              { scale: tabAnimAdd },
+              {
+                translateY: tabAnimAdd.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [24, 0],
+                }),
+              },
+            ],
           }}
-          style={[
-            styles.plusBtnSquare,
-            {
-              backgroundColor: isPlusActive ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-            },
-          ]}
         >
-          {/* Dynamic Segmented Borders */}
-          <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
-          <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
-          <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
-          <View
-            style={[
-              styles.borderTopLeft,
-              {
-                backgroundColor: borderAccent,
-                width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2)
-              }
-            ]}
-          />
-          <View
-            style={[
-              styles.borderTopRight,
-              {
-                backgroundColor: borderAccent,
-                width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2)
-              }
-            ]}
-          />
-
-          {/* Brutalist legend resting on top border */}
-          <View
+          <Pressable
+            onPress={() => onNavigate('add-transaction')}
+            onLongPress={onLongPressAdd}
+            delayLongPress={350}
             onLayout={(e) => {
               const width = e.nativeEvent.layout.width;
-              setLegendWidths(prev => ({ ...prev, ['add-transaction']: width }));
+              setButtonWidths(prev => ({ ...prev, ['add-transaction']: width }));
             }}
             style={[
-              styles.legendWrapper,
+              styles.plusBtnSquare,
               {
-                backgroundColor: 'transparent',
-                paddingHorizontal: 2,
-              }
+                backgroundColor: isPlusActive ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+              },
             ]}
           >
-            <TuiText
-              weight="bold"
+            {/* Dynamic Segmented Borders */}
+            <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
+            <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
+            <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
+            <View
               style={[
-                styles.legendText,
-                { color: isPlusActive ? colors.primary : colors.mutedForeground },
+                styles.borderTopLeft,
+                {
+                  backgroundColor: borderAccent,
+                  width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2)
+                }
+              ]}
+            />
+            <View
+              style={[
+                styles.borderTopRight,
+                {
+                  backgroundColor: borderAccent,
+                  width: Math.max(0, ((buttonWidths['add-transaction'] || 52) - (legendWidths['add-transaction'] || 24)) / 2)
+                }
+              ]}
+            />
+
+            {/* Brutalist legend resting on top border */}
+            <View
+              onLayout={(e) => {
+                const width = e.nativeEvent.layout.width;
+                setLegendWidths(prev => ({ ...prev, ['add-transaction']: width }));
+              }}
+              style={[
+                styles.legendWrapper,
+                {
+                  backgroundColor: 'transparent',
+                  paddingHorizontal: 2,
+                }
               ]}
             >
-              Add
-            </TuiText>
-          </View>
+              <TuiText
+                weight="bold"
+                style={[
+                  styles.legendText,
+                  { color: isPlusActive ? colors.primary : colors.mutedForeground },
+                ]}
+              >
+                Add
+              </TuiText>
+            </View>
 
-          <View style={styles.tabContent} pointerEvents="none">
-            <Plus
-              size={18}
-              color={isPlusActive ? colors.primary : colors.mutedForeground}
-            />
-          </View>
-        </Pressable>
+            <View style={styles.tabContent} pointerEvents="none">
+              <Plus
+                size={18}
+                color={isPlusActive ? colors.primary : colors.mutedForeground}
+              />
+            </View>
+          </Pressable>
+        </Animated.View>
 
       </View>
     </View>
@@ -186,7 +277,7 @@ const styles = StyleSheet.create({
     bottom: 15,
     left: 20, // Comfortable breathing room
     right: 20, // Comfortable breathing room
-    zIndex: 99,
+    zIndex: 9995,
   },
   navRow: {
     flexDirection: 'row',

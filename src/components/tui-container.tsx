@@ -83,7 +83,7 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
               },
             ]}
           >
-            <TuiText size="xs" weight="bold" style={{ color: colors.primary }}>
+            <TuiText size="sm" weight="bold" style={{ color: colors.primary }}>
               {badge}
             </TuiText>
           </Pressable>

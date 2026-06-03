@@ -16,7 +16,7 @@ import { ThemeProvider, useTheme } from './src/theme/theme-provider';
 import { Wallet, PiggyBank, FileText, TrendingUp, TrendingDown, Calendar, Landmark, Settings as SettingsIcon, ArrowUpCircle, ArrowDownCircle } from 'lucide-react-native';
 import { Dashboard } from './src/screens/dashboard';
 import { getCategoryIcon } from './src/utils/category-icon';
-import { Expenses } from './src/screens/expenses';
+import { Expenses } from './src/screens/logs';
 import { Stats } from './src/screens/stats';
 import { Debts } from './src/screens/debts';
 import { Settings } from './src/screens/settings';
@@ -51,6 +51,13 @@ function MainApp() {
   const selectionBarAnim = useRef(new Animated.Value(0)).current;
   const [selectionBarVisible, setSelectionBarVisible] = useState(false);
   const [highlightedTransactionId, setHighlightedTransactionId] = useState<string | undefined>(undefined);
+  const [animateStatsMeter, setAnimateStatsMeter] = useState(false);
+
+  // FAB Menu staggering animation states and refs
+  const [shouldRenderFab, setShouldRenderFab] = useState(false);
+  const fabAnimExpense = useRef(new Animated.Value(0)).current;
+  const fabAnimIncome = useRef(new Animated.Value(0)).current;
+  const fabAnimDebt = useRef(new Animated.Value(0)).current;
 
   // Gist Auto-Sync states
   const [gistPat, setGistPat] = useState('');
@@ -228,11 +235,14 @@ function MainApp() {
     backupTimeoutRef.current = setTimeout(async () => {
       logger.log('SYSTEM', 'AUTO_GIST_SYNC_TRIGGERED');
       try {
+        const localUpdateStr = await AsyncStorage.getItem('tui_last_local_update');
+        const localUpdate = localUpdateStr ? parseInt(localUpdateStr, 10) : Date.now();
+
         const payload: GistBackupPayload = {
           transactions: currentTxs,
           debts: currentDebts,
           categoryLimits: currentLimits,
-          timestamp: Date.now(),
+          timestamp: localUpdate,
         };
 
         if (gistId && gistId.trim() !== '') {
@@ -365,7 +375,53 @@ function MainApp() {
   const [incomeLegendWidth, setIncomeLegendWidth] = useState(0);
   const [expenseLegendWidth, setExpenseLegendWidth] = useState(0);
 
-  const handleNavigate = (screen: ScreenType) => {
+  useEffect(() => {
+    if (logMenuOpen) {
+      setShouldRenderFab(true);
+      Animated.stagger(15, [
+        Animated.spring(fabAnimExpense, {
+          toValue: 1,
+          friction: 13,
+          tension: 180,
+          useNativeDriver: true,
+        }),
+        Animated.spring(fabAnimIncome, {
+          toValue: 1,
+          friction: 13,
+          tension: 180,
+          useNativeDriver: true,
+        }),
+        Animated.spring(fabAnimDebt, {
+          toValue: 1,
+          friction: 13,
+          tension: 180,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(fabAnimExpense, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fabAnimIncome, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fabAnimDebt, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setShouldRenderFab(false);
+      });
+    }
+  }, [logMenuOpen]);
+
+  const handleNavigate = (screen: ScreenType, shouldAnimateStats = false) => {
     if (screen === 'add-transaction') {
       setLogMenuOpen(prev => !prev);
       return;
@@ -374,6 +430,13 @@ function MainApp() {
     setSelectedIds([]);
     setIsSelectionMode(false);
     setActiveScreen(screen);
+    setAnimateStatsMeter(shouldAnimateStats);
+
+    if (shouldAnimateStats) {
+      setTimeout(() => {
+        setAnimateStatsMeter(false);
+      }, 1500);
+    }
   };
 
   const handleLongPressAdd = () => {
@@ -671,12 +734,14 @@ function MainApp() {
     setSyncingStatus('syncing');
     logger.log('SYSTEM', 'MANUAL_GIST_SYNC_TRIGGERED');
 
+    const syncTime = Date.now();
+
     try {
       const payload: GistBackupPayload = {
         transactions,
         debts,
         categoryLimits,
-        timestamp: Date.now(),
+        timestamp: syncTime,
       };
 
       let activeGistId = gistId;
@@ -735,6 +800,7 @@ function MainApp() {
                       setSyncingStatus('syncing');
                       try {
                         await gistBackupService.updateGist(gistPat, activeGistId, payload);
+                        await updateLastLocalUpdate(syncTime);
                         setSyncingStatus('success');
                         setTimeout(() => setSyncingStatus('idle'), 3000);
                         Alert.alert('Sync Successful', 'Your local database successfully overwrote the cloud Gist.');
@@ -773,6 +839,7 @@ function MainApp() {
 
         // Default path: local data is newer, so overwrite remote Gist
         await gistBackupService.updateGist(gistPat, activeGistId, payload);
+        await updateLastLocalUpdate(syncTime);
         setSyncingStatus('success');
         setTimeout(() => setSyncingStatus('idle'), 3000);
         Alert.alert('Sync Successful', 'Your active database was successfully backed up to your private GitHub Gist!');
@@ -862,11 +929,14 @@ function MainApp() {
                 }}
                 onDeleteTransaction={handleDeleteTransaction}
                 onEditTransaction={startEditTransaction}
-                onNavigateToStats={() => handleNavigate('stats')}
+                onNavigateToStats={() => {
+                   handleNavigate('stats', true);
+                 }}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
                 editingTransactionId={editingTransaction?.id}
                 onRecentTransactionPress={handleRecentTransactionPress}
+                startAnimation={!splashVisible}
               />
             )}
 
@@ -904,6 +974,7 @@ function MainApp() {
                 onResetAutoOpenDrawer={() => setAutoOpenStatsDrawer(false)}
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
+                animateMeter={animateStatsMeter}
               />
             )}
 
@@ -984,6 +1055,7 @@ function MainApp() {
             currentScreen={activeScreen}
             onNavigate={handleNavigate}
             onLongPressAdd={handleLongPressAdd}
+            startAnimation={!splashVisible}
           />
 
           {/* Bottom safe-area fill — matches nav card color so home indicator strip is consistent */}
@@ -998,193 +1070,238 @@ function MainApp() {
           )}
 
           {/* FAB Choices stacked directly on top of the LOG button */}
-          {logMenuOpen && (
+          {shouldRenderFab && (
             <View style={[styles.fabMenuContainer, { bottom: 70 + insets.bottom }]}>
 
               {/* DEBT KEY (Top) */}
-              <Pressable
-                onPress={() => {
-                  setAddDebtDrawerOpen(true);
-                  setTimeout(() => {
-                    setLogMenuOpen(false);
-                  }, 60);
-                  logger.log('NAVIGATOR', 'FAB_OPEN_ADD_DEBT_DRAWER');
+              <Animated.View
+                style={{
+                  opacity: fabAnimDebt,
+                  transform: [
+                    { scale: fabAnimDebt },
+                    {
+                      translateY: fabAnimDebt.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [24, 0],
+                      }),
+                    },
+                  ],
                 }}
-                style={({ pressed }) => [
-                  styles.fabKey,
-                  {
-                    backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                  }
-                ]}
               >
-                {/* Dynamic Segmented Borders */}
-                <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
-                <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
-                <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
-                <View
-                  style={[
-                    styles.fabBorderTopLeft,
+                <Pressable
+                  onPress={() => {
+                    setAddDebtDrawerOpen(true);
+                    setTimeout(() => {
+                      setLogMenuOpen(false);
+                    }, 60);
+                    logger.log('NAVIGATOR', 'FAB_OPEN_ADD_DEBT_DRAWER');
+                  }}
+                  style={({ pressed }) => [
+                    styles.fabKey,
                     {
-                      backgroundColor: borderAccent,
-                      width: Math.max(0, (52 - debtLegendWidth) / 2)
+                      backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
                     }
                   ]}
-                />
-                <View
-                  style={[
-                    styles.fabBorderTopRight,
-                    {
-                      backgroundColor: borderAccent,
-                      width: Math.max(0, (52 - debtLegendWidth) / 2)
-                    }
-                  ]}
-                />
-
-                {/* Centered Legend resting on top border */}
-                <View
-                  onLayout={(e) => setDebtLegendWidth(e.nativeEvent.layout.width)}
-                  style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
                 >
-                  <TuiText
-                    weight="bold"
+                  {/* Dynamic Segmented Borders */}
+                  <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
+                  <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
+                  <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
+                  <View
                     style={[
-                      styles.fabLegendText,
-                      { color: colors.primary },
+                      styles.fabBorderTopLeft,
+                      {
+                        backgroundColor: borderAccent,
+                        width: Math.max(0, (52 - debtLegendWidth) / 2)
+                      }
                     ]}
-                  >
-                    Debt
-                  </TuiText>
-                </View>
+                  />
+                  <View
+                    style={[
+                      styles.fabBorderTopRight,
+                      {
+                        backgroundColor: borderAccent,
+                        width: Math.max(0, (52 - debtLegendWidth) / 2)
+                      }
+                    ]}
+                  />
 
-                <View style={styles.fabContent} pointerEvents="none">
-                  <Landmark size={18} color={colors.primary} />
-                </View>
-              </Pressable>
+                  {/* Centered Legend resting on top border */}
+                  <View
+                    onLayout={(e) => setDebtLegendWidth(e.nativeEvent.layout.width)}
+                    style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
+                  >
+                    <TuiText
+                      weight="bold"
+                      style={[
+                        styles.fabLegendText,
+                        { color: colors.primary },
+                      ]}
+                    >
+                      Debt
+                    </TuiText>
+                  </View>
+
+                  <View style={styles.fabContent} pointerEvents="none">
+                    <Landmark size={18} color={colors.primary} />
+                  </View>
+                </Pressable>
+              </Animated.View>
 
               {/* INCOME KEY (Middle) */}
-              <Pressable
-                onPress={() => {
-                  setLogType('income');
-                  setLogCategory(INCOME_CATEGORIES[0].id);
-                  setAddTransactionDrawerOpen(true);
-                  setTimeout(() => {
-                    setLogMenuOpen(false);
-                  }, 60);
-                  logger.log('NAVIGATOR', 'FAB_OPEN_ADD_INCOME_DRAWER');
+              <Animated.View
+                style={{
+                  opacity: fabAnimIncome,
+                  transform: [
+                    { scale: fabAnimIncome },
+                    {
+                      translateY: fabAnimIncome.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [24, 0],
+                      }),
+                    },
+                  ],
                 }}
-                style={({ pressed }) => [
-                  styles.fabKey,
-                  {
-                    backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                  }
-                ]}
               >
-                {/* Dynamic Segmented Borders */}
-                <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
-                <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
-                <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
-                <View
-                  style={[
-                    styles.fabBorderTopLeft,
+                <Pressable
+                  onPress={() => {
+                    setLogType('income');
+                    setLogCategory(INCOME_CATEGORIES[0].id);
+                    setAddTransactionDrawerOpen(true);
+                    setTimeout(() => {
+                      setLogMenuOpen(false);
+                    }, 60);
+                    logger.log('NAVIGATOR', 'FAB_OPEN_ADD_INCOME_DRAWER');
+                  }}
+                  style={({ pressed }) => [
+                    styles.fabKey,
                     {
-                      backgroundColor: borderAccent,
-                      width: Math.max(0, (52 - incomeLegendWidth) / 2)
+                      backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
                     }
                   ]}
-                />
-                <View
-                  style={[
-                    styles.fabBorderTopRight,
-                    {
-                      backgroundColor: borderAccent,
-                      width: Math.max(0, (52 - incomeLegendWidth) / 2)
-                    }
-                  ]}
-                />
-
-                {/* Centered Legend resting on top border */}
-                <View
-                  onLayout={(e) => setIncomeLegendWidth(e.nativeEvent.layout.width)}
-                  style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
                 >
-                  <TuiText
-                    weight="bold"
+                  {/* Dynamic Segmented Borders */}
+                  <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
+                  <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
+                  <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
+                  <View
                     style={[
-                      styles.fabLegendText,
-                      { color: colors.primary },
+                      styles.fabBorderTopLeft,
+                      {
+                        backgroundColor: borderAccent,
+                        width: Math.max(0, (52 - incomeLegendWidth) / 2)
+                      }
                     ]}
-                  >
-                    Inc
-                  </TuiText>
-                </View>
+                  />
+                  <View
+                    style={[
+                      styles.fabBorderTopRight,
+                      {
+                        backgroundColor: borderAccent,
+                        width: Math.max(0, (52 - incomeLegendWidth) / 2)
+                      }
+                    ]}
+                  />
 
-                <View style={styles.fabContent} pointerEvents="none">
-                  <TrendingUp size={18} color={colors.primary} />
-                </View>
-              </Pressable>
+                  {/* Centered Legend resting on top border */}
+                  <View
+                    onLayout={(e) => setIncomeLegendWidth(e.nativeEvent.layout.width)}
+                    style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
+                  >
+                    <TuiText
+                      weight="bold"
+                      style={[
+                        styles.fabLegendText,
+                        { color: colors.primary },
+                      ]}
+                    >
+                      Inc
+                    </TuiText>
+                  </View>
+
+                  <View style={styles.fabContent} pointerEvents="none">
+                    <TrendingUp size={18} color={colors.primary} />
+                  </View>
+                </Pressable>
+              </Animated.View>
 
               {/* EXPENSE KEY (Bottom) */}
-              <Pressable
-                onPress={() => {
-                  setLogType('expense');
-                  setLogCategory(CATEGORIES[0].id);
-                  setAddTransactionDrawerOpen(true);
-                  setTimeout(() => {
-                    setLogMenuOpen(false);
-                  }, 60);
-                  logger.log('NAVIGATOR', 'FAB_OPEN_ADD_TRANSACTION_DRAWER');
+              <Animated.View
+                style={{
+                  opacity: fabAnimExpense,
+                  transform: [
+                    { scale: fabAnimExpense },
+                    {
+                      translateY: fabAnimExpense.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [24, 0],
+                      }),
+                    },
+                  ],
                 }}
-                style={({ pressed }) => [
-                  styles.fabKey,
-                  {
-                    backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
-                    marginBottom: 0, // Sits closest to the bottom nav LOG button
-                  }
-                ]}
               >
-                {/* Dynamic Segmented Borders */}
-                <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
-                <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
-                <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
-                <View
-                  style={[
-                    styles.fabBorderTopLeft,
+                <Pressable
+                  onPress={() => {
+                    setLogType('expense');
+                    setLogCategory(CATEGORIES[0].id);
+                    setAddTransactionDrawerOpen(true);
+                    setTimeout(() => {
+                      setLogMenuOpen(false);
+                    }, 60);
+                    logger.log('NAVIGATOR', 'FAB_OPEN_ADD_TRANSACTION_DRAWER');
+                  }}
+                  style={({ pressed }) => [
+                    styles.fabKey,
                     {
-                      backgroundColor: borderAccent,
-                      width: Math.max(0, (52 - expenseLegendWidth) / 2)
+                      backgroundColor: pressed ? (isDark ? '#27272A' : '#E4E4E7') : colors.card,
+                      marginBottom: 0, // Sits closest to the bottom nav LOG button
                     }
                   ]}
-                />
-                <View
-                  style={[
-                    styles.fabBorderTopRight,
-                    {
-                      backgroundColor: borderAccent,
-                      width: Math.max(0, (52 - expenseLegendWidth) / 2)
-                    }
-                  ]}
-                />
-
-                {/* Centered Legend resting on top border */}
-                <View
-                  onLayout={(e) => setExpenseLegendWidth(e.nativeEvent.layout.width)}
-                  style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
                 >
-                  <TuiText
-                    weight="bold"
+                  {/* Dynamic Segmented Borders */}
+                  <View style={[styles.fabBorderLeft, { backgroundColor: borderAccent }]} />
+                  <View style={[styles.fabBorderRight, { backgroundColor: borderAccent }]} />
+                  <View style={[styles.fabBorderBottom, { backgroundColor: borderAccent }]} />
+                  <View
                     style={[
-                      styles.fabLegendText,
-                      { color: colors.primary },
+                      styles.fabBorderTopLeft,
+                      {
+                        backgroundColor: borderAccent,
+                        width: Math.max(0, (52 - expenseLegendWidth) / 2)
+                      }
                     ]}
-                  >
-                    Exp
-                  </TuiText>
-                </View>
+                  />
+                  <View
+                    style={[
+                      styles.fabBorderTopRight,
+                      {
+                        backgroundColor: borderAccent,
+                        width: Math.max(0, (52 - expenseLegendWidth) / 2)
+                      }
+                    ]}
+                  />
 
-                <View style={styles.fabContent} pointerEvents="none">
-                  <FileText size={18} color={colors.primary} />
-                </View>
-              </Pressable>
+                  {/* Centered Legend resting on top border */}
+                  <View
+                    onLayout={(e) => setExpenseLegendWidth(e.nativeEvent.layout.width)}
+                    style={[styles.fabLegendWrapper, { backgroundColor: 'transparent' }]}
+                  >
+                    <TuiText
+                      weight="bold"
+                      style={[
+                        styles.fabLegendText,
+                        { color: colors.primary },
+                      ]}
+                    >
+                      Exp
+                    </TuiText>
+                  </View>
+
+                  <View style={styles.fabContent} pointerEvents="none">
+                    <FileText size={18} color={colors.primary} />
+                  </View>
+                </Pressable>
+              </Animated.View>
 
             </View>
           )}
@@ -1400,12 +1517,14 @@ function MainApp() {
                     }}
                     onPress={() => setShowLogDatePicker(false)}
                   />
+                  {/* Calendar for Log Transaction (Expense/Income) Drawer */}
                   <View
                     style={[
                       styles.floatingCalendarContainer,
                       {
                         backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
                         zIndex: 100,
+                        bottom: 70
                       }
                     ]}
                   >
@@ -1696,6 +1815,7 @@ function MainApp() {
                     }}
                     onPress={() => setShowDebtDatePicker(false)}
                   />
+                  {/* Calendar for Add Debt Drawer */}
                   <View
                     style={[
                       styles.floatingCalendarContainer,
@@ -1703,7 +1823,7 @@ function MainApp() {
                         backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
                         zIndex: 100,
                         borderColor: logBorderColor,
-                        bottom: 90,
+                        bottom: 86,
                       }
                     ]}
                   >
@@ -1952,12 +2072,14 @@ function MainApp() {
                     }}
                     onPress={() => setShowEditTxDatePicker(false)}
                   />
+                  {/* Calendar for Edit Transaction Drawer */}
                   <View
                     style={[
                       styles.floatingCalendarContainer,
                       {
                         backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
                         zIndex: 100,
+                        bottom: 70
                       }
                     ]}
                   >
@@ -2194,6 +2316,7 @@ function MainApp() {
                     }}
                     onPress={() => setShowEditDebtDatePicker(false)}
                   />
+                  {/* Calendar for Edit Debt Drawer */}
                   <View
                     style={[
                       styles.floatingCalendarContainer,
@@ -2201,7 +2324,7 @@ function MainApp() {
                         backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
                         zIndex: 100,
                         borderColor: logBorderColor,
-                        bottom: 90,
+                        bottom: 86,
                       }
                     ]}
                   >
@@ -2569,7 +2692,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
     right: 20,
-    zIndex: 101,
+    zIndex: 9998,
   },
   floatingSelectionBar: {
     flexDirection: 'row',

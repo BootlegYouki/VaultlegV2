@@ -117,7 +117,7 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
             }
           ]}
         >
-          <ChevronLeft size={14} color={colors.primary} />
+          <ChevronLeft size={18} color={colors.primary} />
         </Pressable>
 
         <TuiText weight="bold" size="sm" style={[styles.monthYearText, { color: colors.primary }]}>
@@ -134,7 +134,7 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
             }
           ]}
         >
-          <ChevronRight size={14} color={colors.primary} />
+          <ChevronRight size={18} color={colors.primary} />
         </Pressable>
       </View>
 
@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
   },
   navBtn: {
     borderWidth: 1.5,
-    width: 28,
-    height: 28,
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
   },
