@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\App.tsx": {
-    "mtime": 1780448221.6103556,
-    "ast_hash": "a4230b5a3b4a4cf45894a8244ec86299",
+    "mtime": 1780448359.3470879,
+    "ast_hash": "e8cc080b6cec202b777da61bd9f5752b",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\index.ts": {
@@ -339,11 +339,6 @@
     "ast_hash": "a6ab61b88dbd47573d02a5026731fd55",
     "semantic_hash": ""
   },
-  "E:\\Github\\VaultlegV2\\src\\screens\\expenses.tsx": {
-    "mtime": 1780446259.4920876,
-    "ast_hash": "28363b668dab4dc0212d4a1f28902e2c",
-    "semantic_hash": ""
-  },
   "E:\\Github\\VaultlegV2\\src\\components\\tui-drawer.tsx": {
     "mtime": 1780381653.038579,
     "ast_hash": "c38e8dfa6c1bee8e6bbc5c2018e11904",
@@ -397,6 +392,11 @@
   "E:\\Github\\VaultlegV2\\src\\utils\\gist-backup.ts": {
     "mtime": 1780409501.2149475,
     "ast_hash": "eda492a41d22864dcf1b9354265f0ff9",
+    "semantic_hash": ""
+  },
+  "E:\\Github\\VaultlegV2\\src\\screens\\logs.tsx": {
+    "mtime": 1780446259.4920876,
+    "ast_hash": "28363b668dab4dc0212d4a1f28902e2c",
     "semantic_hash": ""
   }
 }

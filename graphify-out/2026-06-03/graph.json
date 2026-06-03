@@ -214,7 +214,7 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L2384",
+      "source_location": "L2390",
       "id": "vaultlegv2_app_app",
       "community": 1,
       "norm_label": "app()"
@@ -223,7 +223,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L2394",
+      "source_location": "L2400",
       "id": "vaultlegv2_app_styles",
       "community": 1,
       "norm_label": "styles"
@@ -1453,65 +1453,65 @@
       "norm_label": "styles"
     },
     {
-      "label": "expenses.tsx",
+      "label": "logs.tsx",
       "file_type": "code",
-      "source_file": "src/screens/expenses.tsx",
+      "source_file": "src/screens/logs.tsx",
       "source_location": "L1",
-      "id": "src_screens_expenses_tsx",
+      "id": "src_screens_logs_tsx",
       "community": 24,
-      "norm_label": "expenses.tsx"
+      "norm_label": "logs.tsx"
     },
     {
       "label": "ExpensesProps",
       "file_type": "code",
-      "source_file": "src/screens/expenses.tsx",
+      "source_file": "src/screens/logs.tsx",
       "source_location": "L12",
-      "id": "screens_expenses_expensesprops",
+      "id": "screens_logs_expensesprops",
       "community": 1,
       "norm_label": "expensesprops"
     },
     {
       "label": "FilterType",
       "file_type": "code",
-      "source_file": "src/screens/expenses.tsx",
+      "source_file": "src/screens/logs.tsx",
       "source_location": "L28",
-      "id": "screens_expenses_filtertype",
+      "id": "screens_logs_filtertype",
       "community": 24,
       "norm_label": "filtertype"
     },
     {
       "label": "TransactionRowProps",
       "file_type": "code",
-      "source_file": "src/screens/expenses.tsx",
+      "source_file": "src/screens/logs.tsx",
       "source_location": "L30",
-      "id": "screens_expenses_transactionrowprops",
+      "id": "screens_logs_transactionrowprops",
       "community": 1,
       "norm_label": "transactionrowprops"
     },
     {
       "label": "TransactionRow()",
       "file_type": "code",
-      "source_file": "src/screens/expenses.tsx",
+      "source_file": "src/screens/logs.tsx",
       "source_location": "L41",
-      "id": "screens_expenses_transactionrow",
+      "id": "screens_logs_transactionrow",
       "community": 24,
       "norm_label": "transactionrow()"
     },
     {
       "label": "Expenses()",
       "file_type": "code",
-      "source_file": "src/screens/expenses.tsx",
+      "source_file": "src/screens/logs.tsx",
       "source_location": "L125",
-      "id": "screens_expenses_expenses",
+      "id": "screens_logs_expenses",
       "community": 24,
       "norm_label": "expenses()"
     },
     {
       "label": "styles",
       "file_type": "code",
-      "source_file": "src/screens/expenses.tsx",
+      "source_file": "src/screens/logs.tsx",
       "source_location": "L277",
-      "id": "screens_expenses_styles",
+      "id": "screens_logs_styles",
       "community": 24,
       "norm_label": "styles"
     },
@@ -3299,11 +3299,11 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "App.tsx",
-      "source_location": "L13",
+      "source_location": "L19",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "app_tsx",
-      "target": "screens_expenses_expenses"
+      "target": "screens_logs_expenses",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -3453,11 +3453,11 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "App.tsx",
-      "source_location": "L13",
+      "source_location": "L19",
       "weight": 1.0,
-      "confidence_score": 1.0,
       "source": "app_tsx",
-      "target": "src_screens_expenses_tsx"
+      "target": "src_screens_logs_tsx",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -4613,12 +4613,12 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L7",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L8",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "src_components_tui_button_tsx"
+      "source": "src_screens_logs_tsx",
+      "target": "src_components_tui_button_tsx",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -4668,12 +4668,12 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L7",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L8",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "components_tui_button_tuibutton"
+      "source": "src_screens_logs_tsx",
+      "target": "components_tui_button_tuibutton",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -5286,12 +5286,12 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L5",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L6",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "src_components_tui_container_tsx"
+      "source": "src_screens_logs_tsx",
+      "target": "src_components_tui_container_tsx",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -5363,12 +5363,12 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L5",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L6",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "components_tui_container_tuicontainer"
+      "source": "src_screens_logs_tsx",
+      "target": "components_tui_container_tuicontainer",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -5981,12 +5981,12 @@
       "relation": "imports_from",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L6",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L7",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "src_components_tui_text_tsx"
+      "source": "src_screens_logs_tsx",
+      "target": "src_components_tui_text_tsx",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports_from",
@@ -6047,12 +6047,12 @@
       "relation": "imports",
       "context": "import",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L6",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L7",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "components_tui_text_tuitext"
+      "source": "src_screens_logs_tsx",
+      "target": "components_tui_text_tuitext",
+      "confidence_score": 1.0
     },
     {
       "relation": "imports",
@@ -6256,17 +6256,6 @@
       "confidence_score": 1.0,
       "source": "src_screens_dashboard_tsx",
       "target": "utils_logger_logger"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L9",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "src_screens_dashboard_tsx"
     },
     {
       "relation": "imports_from",
@@ -6482,173 +6471,162 @@
       "target": "theme_theme_provider_usetheme"
     },
     {
-      "relation": "imports",
-      "context": "import",
+      "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L9",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L125",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "screens_dashboard_getcategoryicon"
+      "source": "src_screens_logs_tsx",
+      "target": "screens_logs_expenses",
+      "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L18",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "screens_expenses_expenses"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L11",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "screens_expenses_expensesprops"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "screens_expenses_filtertype"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L163",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "screens_expenses_styles"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L37",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "screens_expenses_transactionrow"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L27",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "screens_expenses_transactionrowprops"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "src_theme_theme_provider_tsx"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "src_types_index_ts"
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "src_utils_category_icon_tsx"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L4",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "theme_theme_provider_usetheme"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L8",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "types_index_transaction"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L10",
-      "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "src_screens_expenses_tsx",
-      "target": "utils_category_icon_getcategoryicon"
-    },
-    {
-      "relation": "references",
-      "context": "field",
-      "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
+      "source_file": "src/screens/logs.tsx",
       "source_location": "L12",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "screens_expenses_expensesprops",
-      "target": "types_index_transaction"
+      "source": "src_screens_logs_tsx",
+      "target": "screens_logs_expensesprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L28",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "screens_logs_filtertype",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L277",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "screens_logs_styles",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "screens_logs_transactionrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "screens_logs_transactionrowprops",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "src_theme_theme_provider_tsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "src_types_index_ts",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports_from",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "src_utils_category_icon_tsx",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "theme_theme_provider_usetheme",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "types_index_transaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L10",
+      "weight": 1.0,
+      "source": "src_screens_logs_tsx",
+      "target": "utils_category_icon_getcategoryicon",
+      "confidence_score": 1.0
     },
     {
       "relation": "references",
       "context": "field",
       "confidence": "EXTRACTED",
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L28",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L13",
       "weight": 1.0,
-      "confidence_score": 1.0,
-      "source": "screens_expenses_transactionrowprops",
-      "target": "types_index_transaction"
+      "source": "screens_logs_expensesprops",
+      "target": "types_index_transaction",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "references",
+      "context": "field",
+      "confidence": "EXTRACTED",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L31",
+      "weight": 1.0,
+      "source": "screens_logs_transactionrowprops",
+      "target": "types_index_transaction",
+      "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L122",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L99",
       "weight": 1.0,
-      "source": "screens_expenses_transactionrow",
+      "source": "screens_logs_transactionrow",
       "target": "utils_category_icon_getcategoryicon"
     },
     {
@@ -6656,10 +6634,10 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
-      "source_file": "src/screens/expenses.tsx",
-      "source_location": "L22",
+      "source_file": "src/screens/logs.tsx",
+      "source_location": "L140",
       "weight": 1.0,
-      "source": "screens_expenses_expenses",
+      "source": "screens_logs_expenses",
       "target": "theme_theme_provider_usetheme"
     },
     {

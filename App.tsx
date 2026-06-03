@@ -2,10 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Pressable, Platform, TextInput, Keyboard, Animated, Image, Alert } from 'react-native';
 import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import * as SplashScreen from 'expo-splash-screen';
-
-// Keep the splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync().catch(() => { });
 import {
   useFonts,
   JetBrainsMono_400Regular,
@@ -551,7 +547,6 @@ function MainApp() {
   // Hide splash screen once fonts and data are loaded, and set app ready
   useEffect(() => {
     if (fontsLoaded && dataLoaded) {
-      SplashScreen.hideAsync().catch(() => { });
       setIsAppReady(true);
     }
   }, [fontsLoaded, dataLoaded]);

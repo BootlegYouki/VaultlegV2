@@ -205,7 +205,7 @@
       "label": "MainApp()",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L38",
+      "source_location": "L34",
       "id": "vaultlegv2_app_mainapp",
       "community": 4,
       "norm_label": "mainapp()"
@@ -214,7 +214,7 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L2390",
+      "source_location": "L2385",
       "id": "vaultlegv2_app_app",
       "community": 1,
       "norm_label": "app()"
@@ -223,7 +223,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L2400",
+      "source_location": "L2395",
       "id": "vaultlegv2_app_styles",
       "community": 1,
       "norm_label": "styles"
@@ -436,19 +436,10 @@
       "norm_label": "expo-sharing"
     },
     {
-      "label": "expo-splash-screen",
-      "file_type": "code",
-      "source_file": "package.json",
-      "source_location": "L24",
-      "id": "vaultlegv2_package_dependencies_expo_splash_screen",
-      "community": 2,
-      "norm_label": "expo-splash-screen"
-    },
-    {
       "label": "expo-status-bar",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L25",
+      "source_location": "L24",
       "id": "vaultlegv2_package_dependencies_expo_status_bar",
       "community": 2,
       "norm_label": "expo-status-bar"
@@ -457,7 +448,7 @@
       "label": "lucide-react-native",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L26",
+      "source_location": "L25",
       "id": "vaultlegv2_package_dependencies_lucide_react_native",
       "community": 2,
       "norm_label": "lucide-react-native"
@@ -466,7 +457,7 @@
       "label": "react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L27",
+      "source_location": "L26",
       "id": "vaultlegv2_package_dependencies_react",
       "community": 2,
       "norm_label": "react"
@@ -475,7 +466,7 @@
       "label": "react-dom",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L28",
+      "source_location": "L27",
       "id": "vaultlegv2_package_dependencies_react_dom",
       "community": 2,
       "norm_label": "react-dom"
@@ -484,7 +475,7 @@
       "label": "react-native",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L29",
+      "source_location": "L28",
       "id": "vaultlegv2_package_dependencies_react_native",
       "community": 2,
       "norm_label": "react-native"
@@ -493,7 +484,7 @@
       "label": "react-native-safe-area-context",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L30",
+      "source_location": "L29",
       "id": "vaultlegv2_package_dependencies_react_native_safe_area_context",
       "community": 2,
       "norm_label": "react-native-safe-area-context"
@@ -502,7 +493,7 @@
       "label": "react-native-svg",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L31",
+      "source_location": "L30",
       "id": "vaultlegv2_package_dependencies_react_native_svg",
       "community": 2,
       "norm_label": "react-native-svg"
@@ -511,7 +502,7 @@
       "label": "react-native-web",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L32",
+      "source_location": "L31",
       "id": "vaultlegv2_package_dependencies_react_native_web",
       "community": 2,
       "norm_label": "react-native-web"
@@ -520,7 +511,7 @@
       "label": "devDependencies",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L34",
+      "source_location": "L33",
       "id": "vaultlegv2_package_devdependencies",
       "community": 9,
       "norm_label": "devdependencies"
@@ -529,7 +520,7 @@
       "label": "@eslint/js",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L35",
+      "source_location": "L34",
       "id": "vaultlegv2_package_devdependencies_eslint_js",
       "community": 9,
       "norm_label": "@eslint/js"
@@ -538,7 +529,7 @@
       "label": "@types/node",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L36",
+      "source_location": "L35",
       "id": "vaultlegv2_package_devdependencies_types_node",
       "community": 9,
       "norm_label": "@types/node"
@@ -547,7 +538,7 @@
       "label": "@types/react",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L37",
+      "source_location": "L36",
       "id": "vaultlegv2_package_devdependencies_types_react",
       "community": 9,
       "norm_label": "@types/react"
@@ -556,7 +547,7 @@
       "label": "eslint",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L38",
+      "source_location": "L37",
       "id": "vaultlegv2_package_devdependencies_eslint",
       "community": 9,
       "norm_label": "eslint"
@@ -565,7 +556,7 @@
       "label": "eslint-plugin-react-hooks",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L39",
+      "source_location": "L38",
       "id": "vaultlegv2_package_devdependencies_eslint_plugin_react_hooks",
       "community": 9,
       "norm_label": "eslint-plugin-react-hooks"
@@ -574,7 +565,7 @@
       "label": "eslint-plugin-react-refresh",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L40",
+      "source_location": "L39",
       "id": "vaultlegv2_package_devdependencies_eslint_plugin_react_refresh",
       "community": 9,
       "norm_label": "eslint-plugin-react-refresh"
@@ -583,7 +574,7 @@
       "label": "globals",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L41",
+      "source_location": "L40",
       "id": "vaultlegv2_package_devdependencies_globals",
       "community": 9,
       "norm_label": "globals"
@@ -592,7 +583,7 @@
       "label": "prettier",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L42",
+      "source_location": "L41",
       "id": "vaultlegv2_package_devdependencies_prettier",
       "community": 9,
       "norm_label": "prettier"
@@ -601,7 +592,7 @@
       "label": "typescript",
       "file_type": "code",
       "source_file": "package.json",
-      "source_location": "L43",
+      "source_location": "L42",
       "id": "vaultlegv2_package_devdependencies_typescript",
       "community": 9,
       "norm_label": "typescript"
@@ -2101,6 +2092,15 @@
       "norm_label": "readme.md"
     },
     {
+      "label": "expo-splash-screen",
+      "file_type": "code",
+      "source_file": "package.json",
+      "source_location": "L24",
+      "community": 2,
+      "norm_label": "expo-splash-screen",
+      "id": "vaultlegv2_package_dependencies_expo_splash_screen"
+    },
+    {
       "label": "splash",
       "file_type": "code",
       "source_file": "app.json",
@@ -3301,9 +3301,9 @@
       "source_file": "App.tsx",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_tsx",
-      "target": "screens_logs_expenses",
-      "confidence_score": 1.0
+      "target": "screens_logs_expenses"
     },
     {
       "relation": "imports",
@@ -3455,9 +3455,9 @@
       "source_file": "App.tsx",
       "source_location": "L19",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_tsx",
-      "target": "src_screens_logs_tsx",
-      "confidence_score": 1.0
+      "target": "src_screens_logs_tsx"
     },
     {
       "relation": "imports_from",
@@ -4616,9 +4616,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "src_components_tui_button_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_tui_button_tsx"
     },
     {
       "relation": "imports_from",
@@ -4671,9 +4671,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "components_tui_button_tuibutton",
-      "confidence_score": 1.0
+      "target": "components_tui_button_tuibutton"
     },
     {
       "relation": "imports",
@@ -5289,9 +5289,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "src_components_tui_container_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_tui_container_tsx"
     },
     {
       "relation": "imports_from",
@@ -5366,9 +5366,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L6",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "components_tui_container_tuicontainer",
-      "confidence_score": 1.0
+      "target": "components_tui_container_tuicontainer"
     },
     {
       "relation": "imports",
@@ -5984,9 +5984,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "src_components_tui_text_tsx",
-      "confidence_score": 1.0
+      "target": "src_components_tui_text_tsx"
     },
     {
       "relation": "imports_from",
@@ -6050,9 +6050,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L7",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "components_tui_text_tuitext",
-      "confidence_score": 1.0
+      "target": "components_tui_text_tuitext"
     },
     {
       "relation": "imports",
@@ -6476,9 +6476,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L125",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "screens_logs_expenses",
-      "confidence_score": 1.0
+      "target": "screens_logs_expenses"
     },
     {
       "relation": "contains",
@@ -6486,9 +6486,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L12",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "screens_logs_expensesprops",
-      "confidence_score": 1.0
+      "target": "screens_logs_expensesprops"
     },
     {
       "relation": "contains",
@@ -6496,9 +6496,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L28",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "screens_logs_filtertype",
-      "confidence_score": 1.0
+      "target": "screens_logs_filtertype"
     },
     {
       "relation": "contains",
@@ -6506,9 +6506,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L277",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "screens_logs_styles",
-      "confidence_score": 1.0
+      "target": "screens_logs_styles"
     },
     {
       "relation": "contains",
@@ -6516,9 +6516,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L41",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "screens_logs_transactionrow",
-      "confidence_score": 1.0
+      "target": "screens_logs_transactionrow"
     },
     {
       "relation": "contains",
@@ -6526,9 +6526,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L30",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "screens_logs_transactionrowprops",
-      "confidence_score": 1.0
+      "target": "screens_logs_transactionrowprops"
     },
     {
       "relation": "imports_from",
@@ -6537,9 +6537,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "src_theme_theme_provider_tsx",
-      "confidence_score": 1.0
+      "target": "src_theme_theme_provider_tsx"
     },
     {
       "relation": "imports_from",
@@ -6548,9 +6548,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "src_types_index_ts",
-      "confidence_score": 1.0
+      "target": "src_types_index_ts"
     },
     {
       "relation": "imports_from",
@@ -6559,9 +6559,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "src_utils_category_icon_tsx",
-      "confidence_score": 1.0
+      "target": "src_utils_category_icon_tsx"
     },
     {
       "relation": "imports",
@@ -6570,9 +6570,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L5",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "theme_theme_provider_usetheme",
-      "confidence_score": 1.0
+      "target": "theme_theme_provider_usetheme"
     },
     {
       "relation": "imports",
@@ -6581,9 +6581,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L9",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "types_index_transaction",
-      "confidence_score": 1.0
+      "target": "types_index_transaction"
     },
     {
       "relation": "imports",
@@ -6592,9 +6592,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L10",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_logs_tsx",
-      "target": "utils_category_icon_getcategoryicon",
-      "confidence_score": 1.0
+      "target": "utils_category_icon_getcategoryicon"
     },
     {
       "relation": "references",
@@ -6603,9 +6603,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L13",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "screens_logs_expensesprops",
-      "target": "types_index_transaction",
-      "confidence_score": 1.0
+      "target": "types_index_transaction"
     },
     {
       "relation": "references",
@@ -6614,9 +6614,9 @@
       "source_file": "src/screens/logs.tsx",
       "source_location": "L31",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "screens_logs_transactionrowprops",
-      "target": "types_index_transaction",
-      "confidence_score": 1.0
+      "target": "types_index_transaction"
     },
     {
       "relation": "calls",
@@ -8235,5 +8235,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "b04a1085276fa76ec24052475080ad2643c6e166"
+  "built_at_commit": "3dc74b6702f4126dc07b54dc5c31ecb7b0fc609b"
 }

@@ -1,11 +1,11 @@
 # Graph Report - VaultlegV2  (2026-06-03)
 
 ## Corpus Check
-- 38 files · ~26,823 words
+- 38 files · ~26,833 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 321 nodes · 509 edges · 20 communities (14 shown, 6 thin omitted)
+- 321 nodes · 507 edges · 20 communities (14 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
@@ -110,7 +110,7 @@ Cohesion: 0.20
 Nodes (9): compilerOptions, paths, files, @/*, references, compilerOptions, strict, exclude (+1 more)
 
 ### Community 24 - "Community 24"
-Cohesion: 0.08
+Cohesion: 0.07
 Nodes (48): styles, TuiButton(), TuiButtonProps, ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps (+40 more)
 
 ## Knowledge Gaps
