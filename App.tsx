@@ -21,7 +21,6 @@ import { TuiText } from './src/components/tui-text';
 import { TuiContainer } from './src/components/tui-container';
 import { TuiButton } from './src/components/tui-button';
 import { TuiDrawer } from './src/components/tui-drawer';
-import { TuiSkeletonLoader } from './src/components/tui-skeleton';
 import { TuiCalendar } from './src/components/tui-calendar';
 import { TuiInput } from './src/components/tui-input';
 import { Transaction, CATEGORIES, INCOME_CATEGORIES, Debt } from './src/types';
