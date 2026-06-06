@@ -861,7 +861,7 @@ function MainApp() {
           overflow: 'hidden',
         }}
       >
-        <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}>
+        <View style={[styles.safeArea, { backgroundColor: 'transparent', paddingTop: insets.top }]}>
           <StatusBar style={isDark ? 'light' : 'dark'} />
 
           {/* Top Header Status Bar */}
@@ -2343,7 +2343,7 @@ function MainApp() {
 
             {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
           </TuiDrawer>
-        </SafeAreaView>
+        </View>
       </Animated.View>
 
 
