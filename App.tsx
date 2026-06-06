@@ -26,7 +26,6 @@ import { TuiInput } from './src/components/tui-input';
 import { Transaction, CATEGORIES, INCOME_CATEGORIES, Debt } from './src/types';
 import { storage } from './src/utils/storage';
 import { logger } from './src/utils/logger';
-import { SplashIcon } from './src/components/splash-icon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { gistBackupService, GistBackupPayload } from './src/utils/gist-backup';
 
@@ -539,9 +538,7 @@ function MainApp() {
     initAppData();
   }, []);
 
-  const [splashVisible, setSplashVisible] = useState(true);
   const [isAppReady, setIsAppReady] = useState(false);
-  const splashOpacity = useRef(new Animated.Value(1)).current;
 
   // Hide splash screen once fonts and data are loaded, and set app ready
   useEffect(() => {
@@ -549,20 +546,6 @@ function MainApp() {
       setIsAppReady(true);
     }
   }, [fontsLoaded, dataLoaded]);
-
-  // Fade out splash screen when app is ready (stay visible for 1.2 seconds first)
-  useEffect(() => {
-    if (isAppReady) {
-      Animated.timing(splashOpacity, {
-        toValue: 0,
-        duration: 200,
-        delay: 1000,
-        useNativeDriver: true,
-      }).start(() => {
-        setSplashVisible(false);
-      });
-    }
-  }, [isAppReady]);
 
   const handleUpdateCategoryLimit = async (category: string, limit: number) => {
     const updated = { ...categoryLimits };
@@ -848,11 +831,7 @@ function MainApp() {
   // Render initial dark/light splash screen until the app is ready
   if (!isAppReady) {
     const splashBg = isDark ? '#09090B' : '#FAFAFA';
-    return (
-      <View style={{ flex: 1, backgroundColor: splashBg, justifyContent: 'center', alignItems: 'center' }}>
-        <SplashIcon color={colors.primary} size={160} />
-      </View>
-    );
+    return <View style={{ flex: 1, backgroundColor: splashBg }} />;
   }
 
   const borderAccent = colors.primary;
@@ -930,7 +909,7 @@ function MainApp() {
                 onRefresh={handleRefresh}
                 editingTransactionId={editingTransaction?.id}
                 onRecentTransactionPress={handleRecentTransactionPress}
-                startAnimation={!splashVisible}
+                startAnimation={true}
               />
             )}
 
@@ -1049,7 +1028,7 @@ function MainApp() {
             currentScreen={activeScreen}
             onNavigate={handleNavigate}
             onLongPressAdd={handleLongPressAdd}
-            startAnimation={!splashVisible}
+            startAnimation={true}
           />
 
           {/* Bottom safe-area fill — matches nav card color so home indicator strip is consistent */}
@@ -2358,23 +2337,7 @@ function MainApp() {
         </SafeAreaView>
       </Animated.View>
 
-      {splashVisible && (
-        <Animated.View
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              backgroundColor: splashBg,
-              justifyContent: 'center',
-              alignItems: 'center',
-              opacity: splashOpacity,
-              zIndex: 99999,
-            },
-          ]}
-          pointerEvents="none"
-        >
-          <SplashIcon color={colors.primary} size={160} />
-        </Animated.View>
-      )}
+
     </View>
   );
 }

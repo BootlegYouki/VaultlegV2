@@ -205,8 +205,8 @@
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\App.tsx": {
-    "mtime": 1780718158.7402978,
-    "ast_hash": "bc3682f8bc49cdb9c1d5eea7ff7451a0",
+    "mtime": 1780718230.7362003,
+    "ast_hash": "8b4490b2781a5a16417bd901567331bb",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\index.ts": {
@@ -372,11 +372,6 @@
   "E:\\Github\\VaultlegV2\\src\\utils\\category-icon.tsx": {
     "mtime": 1780401747.8037474,
     "ast_hash": "a01868d71d1d57c5a9337a59667900a9",
-    "semantic_hash": ""
-  },
-  "E:\\Github\\VaultlegV2\\src\\components\\splash-icon.tsx": {
-    "mtime": 1780402528.3010046,
-    "ast_hash": "0de4bd9ae3c4906b2fd0e62ce558c839",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\sidestore.json": {
