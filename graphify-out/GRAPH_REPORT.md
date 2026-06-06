@@ -1,16 +1,16 @@
 # Graph Report - VaultlegV2  (2026-06-06)
 
 ## Corpus Check
-- 36 files · ~25,138 words
+- 36 files · ~25,143 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 319 nodes · 496 edges · 20 communities (14 shown, 6 thin omitted)
+- 320 nodes · 497 edges · 20 communities (14 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `19446af1`
+- Built from commit: `cf77fb48`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -54,20 +54,20 @@
   App.tsx → src/theme/theme-provider.tsx
 - `MainApp()` --calls--> `getTodayDateString()`  [EXTRACTED]
   App.tsx → src/screens/debts.tsx
-- `ExpensesProps` --references--> `Transaction`  [EXTRACTED]
-  src/screens/logs.tsx → src/types/index.ts
-- `TransactionRowProps` --references--> `Transaction`  [EXTRACTED]
-  src/screens/logs.tsx → src/types/index.ts
+- `Graphify Memory & Ingestion Layer` --references--> `graphify-out/`  [EXTRACTED]
+  CLAUDE.md → README.md
+- `graphify query` --references--> `graphify-out/`  [EXTRACTED]
+  .agents/rules/graphify.md → README.md
 
 ## Communities (20 total, 6 thin omitted)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.09
-Nodes (30): BrandLogo(), BrandLogoProps, DashboardProps, getCategoryIcon(), DebtRowProps, DebtsProps, Settings(), SettingsProps (+22 more)
+Cohesion: 0.10
+Nodes (27): getCategoryIcon(), Expenses(), ExpensesProps, FilterType, styles, TransactionRow(), TransactionRowProps, CategoryLimitCard() (+19 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.11
-Nodes (18): dependencies, expo, expo-document-picker, expo-file-system, expo-font, @expo-google-fonts/jetbrains-mono, expo-sharing, expo-splash-screen (+10 more)
+Nodes (19): dependencies, expo, expo-document-picker, expo-file-system, expo-font, @expo-google-fonts/jetbrains-mono, expo-sharing, expo-splash-screen (+11 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.07
@@ -75,7 +75,7 @@ Nodes (28): backgroundColor, backgroundImage, foregroundImage, monochromeImage, 
 
 ### Community 4 - "Community 4"
 Cohesion: 0.10
-Nodes (20): MONTHS, styles, TuiCalendar(), TuiCalendarProps, WEEKDAYS, SPRING_CONFIG_CLOSE, SPRING_CONFIG_OPEN, SPRING_CONFIG_RECOVER (+12 more)
+Nodes (22): MONTHS, styles, TuiCalendar(), TuiCalendarProps, WEEKDAYS, SPRING_CONFIG_CLOSE, SPRING_CONFIG_OPEN, SPRING_CONFIG_RECOVER (+14 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.50
@@ -111,10 +111,10 @@ Nodes (9): compilerOptions, paths, files, @/*, references, compilerOptions, stri
 
 ### Community 24 - "Community 24"
 Cohesion: 0.07
-Nodes (45): styles, TuiButton(), TuiButtonProps, ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps (+37 more)
+Nodes (46): BrandLogo(), BrandLogoProps, styles, TuiButton(), TuiButtonProps, ChartItem, MeterSegment, styles (+38 more)
 
 ## Knowledge Gaps
-- **194 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+189 more)
+- **195 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+190 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -124,14 +124,14 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `scripts` connect `Community 6` to `Community 8`?**
   _High betweenness centrality (0.037) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `Community 2` to `Community 8`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+  _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **Why does `devDependencies` connect `Community 9` to `Community 8`?**
   _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **What connects `name`, `slug`, `version` to the rest of the system?**
-  _197 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _198 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.09102564102564102 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1021021021021021 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
-  _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.06896551724137931 - nodes in this community are weakly interconnected._
