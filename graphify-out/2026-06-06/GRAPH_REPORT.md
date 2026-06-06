@@ -1,16 +1,16 @@
 # Graph Report - VaultlegV2  (2026-06-06)
 
 ## Corpus Check
-- 37 files · ~25,594 words
+- 36 files · ~25,131 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 318 nodes · 496 edges · 20 communities (14 shown, 6 thin omitted)
+- 315 nodes · 492 edges · 20 communities (14 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0e0d7759`
+- Built from commit: `19446af1`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -54,16 +54,16 @@
   App.tsx → src/theme/theme-provider.tsx
 - `MainApp()` --calls--> `getTodayDateString()`  [EXTRACTED]
   App.tsx → src/screens/debts.tsx
-- `TuiCheckbox()` --calls--> `useTheme()`  [EXTRACTED]
-  src/components/tui-checkbox.tsx → src/theme/theme-provider.tsx
-- `TuiSwitch()` --calls--> `useTheme()`  [EXTRACTED]
-  src/components/tui-switch.tsx → src/theme/theme-provider.tsx
+- `Graphify Memory & Ingestion Layer` --references--> `graphify-out/`  [EXTRACTED]
+  CLAUDE.md → README.md
+- `graphify query` --references--> `graphify-out/`  [EXTRACTED]
+  .agents/rules/graphify.md → README.md
 
 ## Communities (20 total, 6 thin omitted)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.08
-Nodes (30): BrandLogo(), BrandLogoProps, SplashIcon(), SplashIconProps, ScreenType, styles, TuiTabBar(), TuiTabBarProps (+22 more)
+Nodes (32): BrandLogo(), BrandLogoProps, styles, TuiInput(), TuiInputProps, ScreenType, styles, TuiTabBar() (+24 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.11
@@ -74,8 +74,8 @@ Cohesion: 0.08
 Nodes (24): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, predictiveBackGestureEnabled, expo, android (+16 more)
 
 ### Community 4 - "Community 4"
-Cohesion: 0.07
-Nodes (33): styles, TuiButtonProps, MONTHS, styles, TuiCalendar(), TuiCalendarProps, WEEKDAYS, styles (+25 more)
+Cohesion: 0.12
+Nodes (17): MONTHS, styles, TuiCalendar(), TuiCalendarProps, WEEKDAYS, SPRING_CONFIG_CLOSE, SPRING_CONFIG_OPEN, SPRING_CONFIG_RECOVER (+9 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.50
@@ -90,12 +90,12 @@ Cohesion: 0.14
 Nodes (14): dependencies, class-variance-authority, clsx, @fontsource-variable/jetbrains-mono, radix-ui, react, react-dom, recharts (+6 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.06
-Nodes (32): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, prettier-plugin-tailwindcss (+24 more)
+Cohesion: 0.07
+Nodes (27): name, private, type, version, author, devDependencies, eslint, @eslint/js (+19 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.20
-Nodes (10): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, @types/node (+2 more)
+Cohesion: 0.13
+Nodes (15): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, prettier-plugin-tailwindcss (+7 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.10
@@ -110,11 +110,11 @@ Cohesion: 0.20
 Nodes (9): compilerOptions, paths, files, @/*, references, compilerOptions, strict, exclude (+1 more)
 
 ### Community 24 - "Community 24"
-Cohesion: 0.10
-Nodes (34): TuiButton(), ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps, TuiProgressMeter(), TuiProgressMeterProps (+26 more)
+Cohesion: 0.08
+Nodes (46): styles, TuiButton(), TuiButtonProps, ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps (+38 more)
 
 ## Knowledge Gaps
-- **192 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+187 more)
+- **191 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+186 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -122,16 +122,16 @@ Nodes (34): TuiButton(), ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarC
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `scripts` connect `Community 6` to `Community 8`?**
-  _High betweenness centrality (0.037) - this node is a cross-community bridge._
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `Community 2` to `Community 8`?**
   _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **Why does `devDependencies` connect `Community 9` to `Community 8`?**
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **What connects `name`, `slug`, `version` to the rest of the system?**
-  _195 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _194 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.07804878048780488 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07973421926910298 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.1111111111111111 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._
-- **Should `Community 4` be split into smaller, more focused modules?**
-  _Cohesion score 0.07317073170731707 - nodes in this community are weakly interconnected._

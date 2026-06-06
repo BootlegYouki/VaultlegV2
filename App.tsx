@@ -28,9 +28,12 @@ import { storage } from './src/utils/storage';
 import { logger } from './src/utils/logger';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { gistBackupService, GistBackupPayload } from './src/utils/gist-backup';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function MainApp() {
-  const { colors, isDark, setThemeMode } = useTheme();
+  const { colors, isDark, setThemeMode, themeLoaded } = useTheme();
   const insets = useSafeAreaInsets();
   const [activeScreen, setActiveScreen] = useState<ScreenType>('dashboard');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -540,12 +543,19 @@ function MainApp() {
 
   const [isAppReady, setIsAppReady] = useState(false);
 
-  // Hide splash screen once fonts and data are loaded, and set app ready
+  // Hide splash screen once fonts, theme and data are loaded, and set app ready
   useEffect(() => {
-    if (fontsLoaded && dataLoaded) {
+    if (fontsLoaded && dataLoaded && themeLoaded) {
       setIsAppReady(true);
     }
-  }, [fontsLoaded, dataLoaded]);
+  }, [fontsLoaded, dataLoaded, themeLoaded]);
+
+  // Hide native splash screen when app is ready
+  useEffect(() => {
+    if (isAppReady) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [isAppReady]);
 
   const handleUpdateCategoryLimit = async (category: string, limit: number) => {
     const updated = { ...categoryLimits };

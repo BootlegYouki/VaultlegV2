@@ -5,16 +5,25 @@
     "version": "1.0.6",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/android-icon-monochrome.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F4F4F5"
+    },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bootlegyouki.vaultleg"
+      "bundleIdentifier": "com.bootlegyouki.vaultleg",
+      "icon": {
+        "light": "./assets/icon.png",
+        "dark": "./assets/icon.png",
+        "tinted": "./assets/android-icon-monochrome.png"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#18181B",
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
@@ -23,7 +32,19 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/android-icon-monochrome.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#F4F4F5",
+          "dark": {
+            "image": "./assets/android-icon-foreground.png",
+            "backgroundColor": "#18181B"
+          }
+        }
+      ]
     ]
   }
 }
