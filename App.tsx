@@ -184,35 +184,21 @@ function MainApp() {
     setShowEditDebtDatePicker(false);
   };
 
-  // Animated values for iOS-style deck transition
-  const screenScaleAnim = useRef(new Animated.Value(1)).current;
-  const screenTranslateYAnim = useRef(new Animated.Value(0)).current;
-  const screenBorderRadiusAnim = useRef(new Animated.Value(0)).current;
+  // Animated values for iOS-style deck transition (parallax scaleout)
+  const drawerProgressAnim = useRef(new Animated.Value(0)).current;
 
-  const isDrawerOpen = addTransactionDrawerOpen || addDebtDrawerOpen || editingTransaction !== null || editingDebt !== null;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.spring(screenScaleAnim, {
-        toValue: isDrawerOpen ? 0.93 : 1,
-        friction: 8,
-        tension: 50,
-        useNativeDriver: false,
-      }),
-      Animated.spring(screenTranslateYAnim, {
-        toValue: isDrawerOpen ? 12 : 0,
-        friction: 8,
-        tension: 50,
-        useNativeDriver: false,
-      }),
-      Animated.spring(screenBorderRadiusAnim, {
-        toValue: isDrawerOpen ? 16 : 0,
-        friction: 8,
-        tension: 50,
-        useNativeDriver: false,
-      }),
-    ]).start();
-  }, [isDrawerOpen]);
+  const screenScaleAnim = drawerProgressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0.93],
+  });
+  const screenTranslateYAnim = drawerProgressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 12],
+  });
+  const screenBorderRadiusAnim = drawerProgressAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 16],
+  });
 
   const backupTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -1288,6 +1274,9 @@ function MainApp() {
             </View>
           )}
 
+        </View>
+      </Animated.View>
+
           {/* Drawer for logging expense */}
           <TuiDrawer
             visible={addTransactionDrawerOpen}
@@ -1303,6 +1292,7 @@ function MainApp() {
               }, 250);
             }}
             title="Log Transaction"
+            progressAnim={drawerProgressAnim}
           >
             {/* 01: AMOUNT INPUT */}
             <TuiInput
@@ -1595,6 +1585,7 @@ function MainApp() {
               }, 250);
             }}
             title="Add Debt"
+            progressAnim={drawerProgressAnim}
           >
             {/* Name Input */}
             <TuiInput
@@ -1868,7 +1859,8 @@ function MainApp() {
               setEditingTransaction(null);
               setShowEditTxDatePicker(false);
             }}
-            title="Edit Transaction"
+            title="Edit Log"
+            progressAnim={drawerProgressAnim}
           >
             {/* 01: AMOUNT INPUT */}
             <TuiInput
@@ -2107,6 +2099,7 @@ function MainApp() {
               setShowEditDebtDatePicker(false);
             }}
             title="Edit Debt"
+            progressAnim={drawerProgressAnim}
           >
             {/* Name Input */}
             <TuiInput
@@ -2344,12 +2337,8 @@ function MainApp() {
             {isKeyboardVisible && <View style={{ height: Platform.OS === 'ios' ? 50 : 70 }} />}
           </TuiDrawer>
         </View>
-      </Animated.View>
-
-
-    </View>
-  );
-}
+      );
+    }
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
