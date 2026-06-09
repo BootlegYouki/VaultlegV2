@@ -34,4 +34,4 @@ try {
   console.error('\x1b[31m%s\x1b[0m', `✘ Failed to restore template. Make sure you are in a Git repository. Error: ${error.message}`);
 }
 
-console.log('\x1b[36m%s\x1b[0m', '\nInitialization complete! Run "pnpm run dev" to see the showcase.');
+console.log('\x1b[36m%s\x1b[0m', '\nInitialization complete! Run "npm run dev" to see the showcase.');

@@ -1,12 +1,12 @@
 # CLAUDE.md — Workspace Rules & Workflows
 
 ## Command Guidelines
-Always use `pnpm` for Node.js package operations and script execution (user preference).
-- **Development**: `pnpm run dev`
-- **Build**: `pnpm run build`
-- **Lint**: `pnpm run lint`
-- **Format**: `pnpm run format`
-- **Typecheck**: `pnpm run typecheck`
+Always use `npm` for Node.js package operations and script execution (user preference).
+- **Development**: `npm run dev`
+- **Build**: `npm run build`
+- **Lint**: `npm run lint`
+- **Format**: `npm run format`
+- **Typecheck**: `npm run typecheck`
 
 ## Graphify Memory & Ingestion Layer
 This codebase is fully mapped into a structured semantic knowledge graph using **Graphify**. 

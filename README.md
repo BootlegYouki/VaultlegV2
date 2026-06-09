@@ -49,17 +49,17 @@ Powered by **React 19**, **Vite 8**, **Tailwind CSS v4**, **Radix UI**, and **Sh
 
 ## 🛠️ Quick Start
 
-Install dependencies and start development using `pnpm` (workspace preference):
+Install dependencies and start development using `npm` (workspace preference):
 
 ```bash
 # 1. Install workspace dependencies
-pnpm install
+npm install
 
 # 2. Launch the local development server
-pnpm run dev
+npm run dev
 
 # 3. Compile the production-ready minified bundle
-pnpm run build
+npm run build
 ```
 
 ---
@@ -71,13 +71,13 @@ The design system showcase is fully isolated from the core application canvas. W
 ### 🧼 Clean the Template (Start Fresh)
 To delete the entire showcase folder, clean the imports, and set up a clean, minimal retro-brutalist starter page in `src/App.tsx`:
 ```bash
-pnpm run rm-template
+node scripts/rm-template.js
 ```
 
 ### 📟 Restore/Initialize the Template
 If you want to restore the design system showcase files and the original `src/App.tsx` back (without affecting your other custom work or modified files in the repository):
 ```bash
-pnpm run int-template
+node scripts/int-template.js
 ```
 *(Note: This utilizes local Git history to cleanly restore `src/components/tui-template` and the original `src/App.tsx` from `HEAD`, leaving any other files you have created or modified completely untouched.)*
 

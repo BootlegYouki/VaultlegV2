@@ -1,8 +1,8 @@
 # .cursorrules — Workspace Rules & Workflows
 
 ## Node.js Environment
-- You MUST always use `pnpm` for all node package and script executions.
-- Use `pnpm run build` or `pnpm run typecheck` to verify changes before completing your turn.
+- You MUST always use `npm` for all node package and script executions.
+- Use `npm run build` or `npm run typecheck` to verify changes before completing your turn.
 
 ## Graphify Knowledge Graph Rules
 This workspace utilizes **Graphify** to convert codebase architecture and documentation into an ingestion-ready knowledge graph.
