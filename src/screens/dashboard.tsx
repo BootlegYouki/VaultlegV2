@@ -13,7 +13,7 @@ import { TuiContainer } from '../components/tui-container';
 import { TuiText } from '../components/tui-text';
 import { TuiButton } from '../components/tui-button';
 import { TuiSegmentedMeter } from '../components/tui-chart';
-import { Transaction, CATEGORIES, Debt } from '../types';
+import { Transaction, CATEGORIES, INCOME_CATEGORIES, Debt } from '../types';
 import { logger } from '../utils/logger';
 import { getCategoryIcon } from '../utils/category-icon';
 
@@ -415,7 +415,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
                           {t.description}
                         </TuiText>
                         <TuiText size="sm" variant="muted">
-                          {t.date} | {t.category.charAt(0).toUpperCase() + t.category.slice(1)}
+                          {(() => {
+                            const catObj = CATEGORIES.find(c => c.id === t.category) || INCOME_CATEGORIES.find(c => c.id === t.category);
+                            const catLabel = catObj ? catObj.label : t.category.charAt(0).toUpperCase() + t.category.slice(1);
+                            return `${t.date} | ${catLabel}`;
+                          })()}
                         </TuiText>
                       </View>
 

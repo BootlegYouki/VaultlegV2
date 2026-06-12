@@ -1,16 +1,16 @@
 # Graph Report - VaultlegV2  (2026-06-13)
 
 ## Corpus Check
-- 37 files · ~28,283 words
+- 37 files · ~28,329 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 327 nodes · 517 edges · 20 communities (14 shown, 6 thin omitted)
+- 328 nodes · 518 edges · 20 communities (14 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6d3e96a7`
+- Built from commit: `39643bab`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -71,7 +71,7 @@ Nodes (19): dependencies, expo, expo-document-picker, expo-file-system, expo-fon
 
 ### Community 3 - "Community 3"
 Cohesion: 0.07
-Nodes (28): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, predictiveBackGestureEnabled, expo, android (+20 more)
+Nodes (29): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, predictiveBackGestureEnabled, versionCode, expo (+21 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.13
@@ -114,7 +114,7 @@ Cohesion: 0.07
 Nodes (34): BrandLogo(), BrandLogoProps, styles, TuiInput(), TuiInputProps, ScreenType, styles, TuiTabBar() (+26 more)
 
 ## Knowledge Gaps
-- **195 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+190 more)
+- **196 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+191 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -122,16 +122,16 @@ Nodes (34): BrandLogo(), BrandLogoProps, styles, TuiInput(), TuiInputProps, Scre
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `expo` connect `Community 3` to `Community 24`?**
-  _High betweenness centrality (0.075) - this node is a cross-community bridge._
+  _High betweenness centrality (0.077) - this node is a cross-community bridge._
 - **Why does `scripts` connect `Community 6` to `Community 8`?**
   _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **Why does `useTheme()` connect `Community 1` to `Community 24`, `Community 16`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **What connects `name`, `slug`, `version` to the rest of the system?**
-  _198 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _199 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 1` be split into smaller, more focused modules?**
   _Cohesion score 0.07539450613676213 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.07142857142857142 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06896551724137931 - nodes in this community are weakly interconnected._

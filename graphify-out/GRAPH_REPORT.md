@@ -1,16 +1,16 @@
 # Graph Report - VaultlegV2  (2026-06-13)
 
 ## Corpus Check
-- 37 files · ~28,296 words
+- 37 files · ~28,409 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 328 nodes · 518 edges · 20 communities (14 shown, 6 thin omitted)
+- 328 nodes · 522 edges · 20 communities (14 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6e1afb1d`
+- Built from commit: `39643bab`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 

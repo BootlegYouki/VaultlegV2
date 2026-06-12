@@ -229,10 +229,19 @@
       "norm_label": "predictivebackgestureenabled"
     },
     {
+      "label": "versionCode",
+      "file_type": "code",
+      "source_file": "app.json",
+      "source_location": "L30",
+      "id": "vaultlegv2_app_android_versioncode",
+      "community": 3,
+      "norm_label": "versioncode"
+    },
+    {
       "label": "web",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L31",
+      "source_location": "L32",
       "id": "vaultlegv2_app_expo_web",
       "community": 3,
       "norm_label": "web"
@@ -241,7 +250,7 @@
       "label": "favicon",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L32",
+      "source_location": "L33",
       "id": "vaultlegv2_app_web_favicon",
       "community": 3,
       "norm_label": "favicon"
@@ -250,7 +259,7 @@
       "label": "plugins",
       "file_type": "code",
       "source_file": "app.json",
-      "source_location": "L34",
+      "source_location": "L35",
       "id": "vaultlegv2_app_expo_plugins",
       "community": 3,
       "norm_label": "plugins"
@@ -1600,7 +1609,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "src/screens/settings.tsx",
-      "source_location": "L300",
+      "source_location": "L313",
       "id": "screens_settings_styles",
       "community": 24,
       "norm_label": "styles"
@@ -3012,9 +3021,9 @@
       "source_file": "src/screens/settings.tsx",
       "source_location": "L15",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_settings_tsx",
-      "target": "app_json",
-      "confidence_score": 1.0
+      "target": "app_json"
     },
     {
       "relation": "imports_from",
@@ -3023,9 +3032,9 @@
       "source_file": "src/utils/update-checker.ts",
       "source_location": "L2",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_utils_update_checker_ts",
-      "target": "app_json",
-      "confidence_score": 1.0
+      "target": "app_json"
     },
     {
       "relation": "contains",
@@ -3246,6 +3255,16 @@
       "confidence_score": 1.0,
       "source": "vaultlegv2_app_expo_android",
       "target": "vaultlegv2_app_android_predictivebackgestureenabled"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "app.json",
+      "source_location": "L30",
+      "weight": 1.0,
+      "confidence_score": 1.0,
+      "source": "vaultlegv2_app_expo_android",
+      "target": "vaultlegv2_app_android_versioncode"
     },
     {
       "relation": "contains",
@@ -3656,9 +3675,9 @@
       "source_file": "App.tsx",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_tsx",
-      "target": "src_utils_update_checker_ts",
-      "confidence_score": 1.0
+      "target": "src_utils_update_checker_ts"
     },
     {
       "relation": "imports",
@@ -3788,9 +3807,9 @@
       "source_file": "App.tsx",
       "source_location": "L32",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "app_tsx",
-      "target": "utils_update_checker_checkforupdates",
-      "confidence_score": 1.0
+      "target": "utils_update_checker_checkforupdates"
     },
     {
       "relation": "contains",
@@ -6844,9 +6863,9 @@
       "source_file": "src/screens/settings.tsx",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_settings_tsx",
-      "target": "src_utils_update_checker_ts",
-      "confidence_score": 1.0
+      "target": "src_utils_update_checker_ts"
     },
     {
       "relation": "imports",
@@ -6910,9 +6929,9 @@
       "source_file": "src/screens/settings.tsx",
       "source_location": "L16",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_screens_settings_tsx",
-      "target": "utils_update_checker_checkforupdates",
-      "confidence_score": 1.0
+      "target": "utils_update_checker_checkforupdates"
     },
     {
       "relation": "references",
@@ -7545,9 +7564,9 @@
       "source_file": "src/utils/update-checker.ts",
       "source_location": "L21",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_utils_update_checker_ts",
-      "target": "utils_update_checker_checkforupdates",
-      "confidence_score": 1.0
+      "target": "utils_update_checker_checkforupdates"
     },
     {
       "relation": "contains",
@@ -7555,9 +7574,9 @@
       "source_file": "src/utils/update-checker.ts",
       "source_location": "L8",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "src_utils_update_checker_ts",
-      "target": "utils_update_checker_isnewerversion",
-      "confidence_score": 1.0
+      "target": "utils_update_checker_isnewerversion"
     },
     {
       "relation": "calls",
@@ -7566,9 +7585,9 @@
       "source_file": "src/utils/update-checker.ts",
       "source_location": "L62",
       "weight": 1.0,
+      "confidence_score": 1.0,
       "source": "utils_update_checker_checkforupdates",
-      "target": "utils_update_checker_isnewerversion",
-      "confidence_score": 1.0
+      "target": "utils_update_checker_isnewerversion"
     },
     {
       "relation": "contains",
@@ -8392,5 +8411,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6d3e96a736ef7023b057a4f561f3d168052060f3"
+  "built_at_commit": "39643baba09a8f9e1f9850cda5ec6317775b793c"
 }

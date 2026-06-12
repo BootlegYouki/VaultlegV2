@@ -8,7 +8,7 @@ import { TuiText } from '../components/tui-text';
 import { TuiButton } from '../components/tui-button';
 import { TuiCalendar } from '../components/tui-calendar';
 import { TuiSegmentedMeter } from '../components/tui-chart';
-import { Transaction } from '../types';
+import { Transaction, CATEGORIES, INCOME_CATEGORIES } from '../types';
 import { getCategoryIcon } from '../utils/category-icon';
 
 interface ExpensesProps {
@@ -106,7 +106,11 @@ const TransactionRow: React.FC<TransactionRowProps> = ({
           {t.description}
         </TuiText>
         <TuiText size="sm" variant="muted">
-          {t.date} | {t.category.charAt(0).toUpperCase() + t.category.slice(1)}
+          {(() => {
+            const catObj = CATEGORIES.find(c => c.id === t.category) || INCOME_CATEGORIES.find(c => c.id === t.category);
+            const catLabel = catObj ? catObj.label : t.category.charAt(0).toUpperCase() + t.category.slice(1);
+            return `${t.date} | ${catLabel}`;
+          })()}
         </TuiText>
       </View>
 

@@ -258,7 +258,7 @@ export const Settings: React.FC<SettingsProps> = ({
         {/* 02: DATABASE UTILITIES CARD */}
         <TuiContainer label="Database Operations">
           <TuiText size="sm" variant="muted" style={styles.preferenceLabel}>
-            Local database actions (saved directly on your phone):
+            Local database actions:
           </TuiText>
 
           <View style={styles.actionGridRow}>
@@ -279,23 +279,32 @@ export const Settings: React.FC<SettingsProps> = ({
           </TuiButton>
         </TuiContainer>
 
-        {/* 03: APPLICATION INFO CARD */}
-        <TuiContainer label="Application Info">
-          <View style={{ alignItems: 'center', paddingVertical: 4 }}>
-            <TuiText size="sm" variant="muted" style={{ letterSpacing: 0.5 }}>
-              Vaultleg Version {appJson.expo.version || '1.0.0'}
-            </TuiText>
-            {Platform.OS === 'android' && (
+        {/* 03: APPLICATION INFO CARD (Android Only) */}
+        {Platform.OS === 'android' && (
+          <TuiContainer label="Application Info">
+            <View style={{ alignItems: 'center', paddingVertical: 4 }}>
+              <TuiText size="sm" variant="muted" style={{ letterSpacing: 0.5 }}>
+                Vaultleg Version {appJson.expo.version || '1.0.0'}
+              </TuiText>
               <TuiButton
                 onPress={() => checkForUpdates(true)}
                 variant="outline"
-                style={{ marginTop: 12, height: 44, width: '100%', justifyContent: 'center', marginVertical: 0 }}
+                style={{ marginTop: 12, width: '100%', marginVertical: 0 }}
               >
                 Check for Updates
               </TuiButton>
-            )}
+            </View>
+          </TuiContainer>
+        )}
+
+        {/* iOS Only - simple version text at the bottom */}
+        {Platform.OS === 'ios' && (
+          <View style={{ alignItems: 'center', marginTop: 16, marginBottom: 8 }}>
+            <TuiText size="xs" variant="muted">
+              Version {appJson.expo.version || '1.0.0'}
+            </TuiText>
           </View>
-        </TuiContainer>
+        )}
       </ScrollView>
     </View>
   );

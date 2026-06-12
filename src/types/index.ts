@@ -22,9 +22,9 @@ export const CATEGORIES = [
 ];
 
 export const INCOME_CATEGORIES = [
-  { id: 'allowance', label: 'Allowance', icon: 'wallet' },
+  { id: 'pocket', label: 'Pocket', icon: 'wallet' },
   { id: 'salary', label: 'Salary', icon: 'briefcase' },
-  { id: 'freelance', label: 'Freelance', icon: 'code' },
+  { id: 'outside', label: 'Outside', icon: 'code' },
   { id: 'other_income', label: 'Other', icon: 'plus-circle' },
 ];
 
