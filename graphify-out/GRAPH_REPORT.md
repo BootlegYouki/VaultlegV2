@@ -1,16 +1,16 @@
 # Graph Report - VaultlegV2  (2026-06-13)
 
 ## Corpus Check
-- 36 files · ~27,581 words
+- 37 files · ~28,283 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 324 nodes · 508 edges · 21 communities (15 shown, 6 thin omitted)
+- 327 nodes · 517 edges · 20 communities (14 shown, 6 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 1 edges (avg confidence: 0.9)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `27fb3041`
+- Built from commit: `6d3e96a7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -24,7 +24,6 @@
 - [[_COMMUNITY_Community 6|Community 6]]
 - [[_COMMUNITY_Community 7|Community 7]]
 - [[_COMMUNITY_Community 8|Community 8]]
-- [[_COMMUNITY_Community 9|Community 9]]
 - [[_COMMUNITY_Community 10|Community 10]]
 - [[_COMMUNITY_Community 11|Community 11]]
 - [[_COMMUNITY_Community 12|Community 12]]
@@ -51,24 +50,20 @@
 ## Surprising Connections (you probably didn't know these)
 - `graphify pipeline` --conceptually_related_to--> `Graphify Memory & Ingestion Layer`  [INFERRED]
   .agents/workflows/graphify.md → CLAUDE.md
-- `MainApp()` --calls--> `getTodayDateString()`  [EXTRACTED]
-  App.tsx → src/screens/debts.tsx
 - `MainApp()` --calls--> `useTheme()`  [EXTRACTED]
   App.tsx → src/theme/theme-provider.tsx
+- `MainApp()` --calls--> `getTodayDateString()`  [EXTRACTED]
+  App.tsx → src/screens/debts.tsx
 - `Graphify Memory & Ingestion Layer` --references--> `graphify-out/`  [EXTRACTED]
   CLAUDE.md → README.md
 - `graphify query` --references--> `graphify-out/`  [EXTRACTED]
   .agents/rules/graphify.md → README.md
 
-## Communities (21 total, 6 thin omitted)
-
-### Community 0 - "Community 0"
-Cohesion: 0.21
-Nodes (5): GistBackupPayload, gistBackupService, logger, LogListener, TuiLogger
+## Communities (20 total, 6 thin omitted)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.08
-Nodes (48): styles, TuiButton(), TuiButtonProps, TuiCalendar(), styles, TuiCheckbox(), TuiCheckboxProps, styles (+40 more)
+Nodes (48): styles, TuiButton(), TuiButtonProps, ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps (+40 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.11
@@ -77,6 +72,10 @@ Nodes (19): dependencies, expo, expo-document-picker, expo-file-system, expo-fon
 ### Community 3 - "Community 3"
 Cohesion: 0.07
 Nodes (28): backgroundColor, backgroundImage, foregroundImage, monochromeImage, adaptiveIcon, predictiveBackGestureEnabled, expo, android (+20 more)
+
+### Community 4 - "Community 4"
+Cohesion: 0.13
+Nodes (15): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, prettier-plugin-tailwindcss (+7 more)
 
 ### Community 5 - "Community 5"
 Cohesion: 0.50
@@ -91,12 +90,8 @@ Cohesion: 0.14
 Nodes (14): dependencies, class-variance-authority, clsx, @fontsource-variable/jetbrains-mono, radix-ui, react, react-dom, recharts (+6 more)
 
 ### Community 8 - "Community 8"
-Cohesion: 0.06
-Nodes (32): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, prettier-plugin-tailwindcss (+24 more)
-
-### Community 9 - "Community 9"
-Cohesion: 0.20
-Nodes (10): devDependencies, eslint, @eslint/js, eslint-plugin-react-hooks, eslint-plugin-react-refresh, globals, prettier, @types/node (+2 more)
+Cohesion: 0.07
+Nodes (27): name, private, type, version, author, devDependencies, eslint, @eslint/js (+19 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.10
@@ -111,12 +106,12 @@ Cohesion: 0.20
 Nodes (9): compilerOptions, paths, files, @/*, references, compilerOptions, strict, exclude (+1 more)
 
 ### Community 16 - "Community 16"
-Cohesion: 0.33
-Nodes (6): compareDatesStr(), MONTHS, parseDateString(), styles, TuiCalendarProps, WEEKDAYS
+Cohesion: 0.11
+Nodes (19): compareDatesStr(), MONTHS, parseDateString(), styles, TuiCalendar(), TuiCalendarProps, WEEKDAYS, SPRING_CONFIG_CLOSE (+11 more)
 
 ### Community 24 - "Community 24"
-Cohesion: 0.08
-Nodes (39): ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps, TuiProgressMeter(), TuiProgressMeterProps, TuiSegmentedMeter() (+31 more)
+Cohesion: 0.07
+Nodes (34): BrandLogo(), BrandLogoProps, styles, TuiInput(), TuiInputProps, ScreenType, styles, TuiTabBar() (+26 more)
 
 ## Knowledge Gaps
 - **195 isolated node(s):** `name`, `slug`, `version`, `orientation`, `icon` (+190 more)
@@ -126,17 +121,17 @@ Nodes (39): ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps, Tu
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
+- **Why does `expo` connect `Community 3` to `Community 24`?**
+  _High betweenness centrality (0.075) - this node is a cross-community bridge._
 - **Why does `scripts` connect `Community 6` to `Community 8`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `Community 2` to `Community 8`?**
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
+- **Why does `useTheme()` connect `Community 1` to `Community 24`, `Community 16`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
 - **What connects `name`, `slug`, `version` to the rest of the system?**
   _198 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.0750925436277102 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07539450613676213 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._
 - **Should `Community 3` be split into smaller, more focused modules?**
-  _Cohesion score 0.06896551724137931 - nodes in this community are weakly interconnected._
-- **Should `Community 6` be split into smaller, more focused modules?**
-  _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07142857142857142 - nodes in this community are weakly interconnected._

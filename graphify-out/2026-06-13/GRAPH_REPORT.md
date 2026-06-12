@@ -1,7 +1,7 @@
-# Graph Report - VaultlegV2  (2026-06-12)
+# Graph Report - VaultlegV2  (2026-06-13)
 
 ## Corpus Check
-- 36 files · ~27,566 words
+- 36 files · ~27,581 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

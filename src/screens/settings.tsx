@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert, Pressable, Linking } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, Pressable, Linking, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
@@ -12,6 +12,8 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
 import { TuiInput } from '../components/tui-input';
+import appJson from '../../app.json';
+import { checkForUpdates } from '../utils/update-checker';
 
 interface SettingsProps {
   transactions: Transaction[];
@@ -181,6 +183,20 @@ export const Settings: React.FC<SettingsProps> = ({
         <TuiContainer label="Made by BootlegYouki">
           <View style={styles.logoContainer}>
             <BrandLogo color={colors.primary} height={80} />
+          </View>
+          <View style={{ marginTop: 12, alignItems: 'center' }}>
+            <TuiText size="xs" variant="muted">
+              Version {appJson.expo.version || '1.0.0'}
+            </TuiText>
+            {Platform.OS === 'android' && (
+              <TuiButton
+                onPress={() => checkForUpdates(true)}
+                variant="outline"
+                style={{ marginTop: 8, height: 36, width: 'auto', paddingHorizontal: 16, paddingVertical: 0, justifyContent: 'center', marginVertical: 0 }}
+              >
+                Check for Updates
+              </TuiButton>
+            )}
           </View>
         </TuiContainer>
 

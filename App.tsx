@@ -29,6 +29,7 @@ import { logger } from './src/utils/logger';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { gistBackupService, GistBackupPayload } from './src/utils/gist-backup';
 import * as SplashScreen from 'expo-splash-screen';
+import { checkForUpdates } from './src/utils/update-checker';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -734,6 +735,13 @@ function MainApp() {
               logger.log('SYSTEM_ERROR', `STARTUP_GIST_CHECK_FAILED: ${err.message}`);
             }
           }, 1500);
+        }
+
+        // Startup check for updates on Android
+        if (Platform.OS === 'android') {
+          setTimeout(() => {
+            checkForUpdates(false).catch(() => {});
+          }, 3000);
         }
       } catch (err: any) {
         logger.log('SYSTEM_ERROR', `RESOURCE_INIT_FAILED: ${err.message}`);
