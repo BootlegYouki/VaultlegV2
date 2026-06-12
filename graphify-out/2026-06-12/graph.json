@@ -277,7 +277,7 @@
       "label": "App()",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L2636",
+      "source_location": "L2632",
       "id": "vaultlegv2_app_app",
       "community": 1,
       "norm_label": "app()"
@@ -286,7 +286,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "App.tsx",
-      "source_location": "L2646",
+      "source_location": "L2642",
       "id": "vaultlegv2_app_styles",
       "community": 1,
       "norm_label": "styles"
@@ -1564,7 +1564,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "src/screens/logs.tsx",
-      "source_location": "L520",
+      "source_location": "L514",
       "id": "screens_logs_styles",
       "community": 24,
       "norm_label": "styles"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Pressable, TextInput } from 'react-native';
+import { StyleSheet, View, Pressable, TextInput, PanResponder } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -64,6 +64,19 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const { colors, isDark } = useTheme();
   const insets = useSafeAreaInsets();
   const [hideBalances, setHideBalances] = useState(false);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        // Swipe up: vertical delta is negative and exceeds threshold, and vertical speed/delta is dominant
+        return gestureState.dy < -40 && Math.abs(gestureState.dy) > Math.abs(gestureState.dx) * 1.5;
+      },
+      onPanResponderRelease: (evt, gestureState) => {
+        onNavigateToAdd();
+      },
+    })
+  ).current;
 
   useEffect(() => {
     AsyncStorage.getItem('tui_hide_balances')
@@ -177,7 +190,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
   });
 
   return (
-    <View style={[styles.mainWrapper, { backgroundColor: colors.background }]}>
+    <View 
+      {...panResponder.panHandlers}
+      style={[styles.mainWrapper, { backgroundColor: colors.background }]}
+    >
       
       {/* 01: FIXED TOP SECTION (HEADER & BALANCES CARD) */}
       <View style={[styles.fixedTopSection, { backgroundColor: colors.background }]}>

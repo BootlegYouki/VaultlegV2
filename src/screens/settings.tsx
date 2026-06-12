@@ -175,7 +175,7 @@ export const Settings: React.FC<SettingsProps> = ({
     <View style={styles.mainWrapper}>
       <ScrollView
         style={[styles.container, { backgroundColor: colors.background }]}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 36 + insets.bottom }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 65 + insets.bottom }]}
       >
         {/* 00: BRAND LOGO CARD (BLANK CONTAINER) */}
         <TuiContainer label="Made by BootlegYouki">

@@ -5,8 +5,12 @@ import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
 
 interface TuiCalendarProps {
-  value: string; // MM-DD-YYYY format
-  onChange: (date: string) => void;
+  value?: string; // MM-DD-YYYY format
+  onChange?: (date: string) => void;
+  isRangeMode?: boolean;
+  startDate?: string | null;
+  endDate?: string | null;
+  onRangeChange?: (start: string | null, end: string | null) => void;
 }
 
 // Month names list
@@ -18,7 +22,31 @@ const MONTHS = [
 // Weekdays headers
 const WEEKDAYS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
 
-export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => {
+const parseDateString = (dateStr: string): Date => {
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const m = parseInt(parts[0], 10) - 1;
+    const d = parseInt(parts[1], 10);
+    const y = parseInt(parts[2], 10);
+    if (!isNaN(m) && !isNaN(d) && !isNaN(y)) {
+      return new Date(y, m, d);
+    }
+  }
+  return new Date();
+};
+
+const compareDatesStr = (d1Str: string, d2Str: string): number => {
+  return parseDateString(d1Str).getTime() - parseDateString(d2Str).getTime();
+};
+
+export const TuiCalendar: React.FC<TuiCalendarProps> = ({
+  value = '',
+  onChange,
+  isRangeMode = false,
+  startDate = null,
+  endDate = null,
+  onRangeChange,
+}) => {
   const { colors, isDark } = useTheme();
 
   // Parse MM-DD-YYYY into year, month, day state
@@ -36,7 +64,7 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
     return { day: today.getDate(), month: today.getMonth(), year: today.getFullYear() };
   };
 
-  const initialDate = parseDate(value);
+  const initialDate = parseDate(value || startDate || '');
   
   // Navigation states
   const [currentMonth, setCurrentMonth] = useState(initialDate.month);
@@ -45,11 +73,11 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
 
   // Sync state if value prop changes
   useEffect(() => {
-    const parsed = parseDate(value);
+    const parsed = parseDate(value || startDate || '');
     setSelectedDate(parsed);
     setCurrentMonth(parsed.month);
     setCurrentYear(parsed.year);
-  }, [value]);
+  }, [value, startDate]);
 
   // Calendar calculations
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -73,19 +101,57 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
     }
   };
 
-  const handleSelectDay = (day: number) => {
-    const mStr = String(currentMonth + 1).padStart(2, '0');
-    const dStr = String(day).padStart(2, '0');
-    const newFormattedDate = `${mStr}-${dStr}-${currentYear}`;
-    onChange(newFormattedDate);
+  const handleSelectCell = (cell: { type: 'day' | 'prev-month' | 'next-month'; day: number }) => {
+    let targetMonth = currentMonth;
+    let targetYear = currentYear;
+
+    if (cell.type === 'prev-month') {
+      if (currentMonth === 0) {
+        targetMonth = 11;
+        targetYear = currentYear - 1;
+      } else {
+        targetMonth = currentMonth - 1;
+      }
+      setCurrentMonth(targetMonth);
+      setCurrentYear(targetYear);
+    } else if (cell.type === 'next-month') {
+      if (currentMonth === 11) {
+        targetMonth = 0;
+        targetYear = currentYear + 1;
+      } else {
+        targetMonth = currentMonth + 1;
+      }
+      setCurrentMonth(targetMonth);
+      setCurrentYear(targetYear);
+    }
+
+    const mStr = String(targetMonth + 1).padStart(2, '0');
+    const dStr = String(cell.day).padStart(2, '0');
+    const clickedDateStr = `${mStr}-${dStr}-${targetYear}`;
+
+    if (isRangeMode && onRangeChange) {
+      if (!startDate || (startDate && endDate)) {
+        onRangeChange(clickedDateStr, null);
+      } else {
+        if (compareDatesStr(clickedDateStr, startDate) >= 0) {
+          onRangeChange(startDate, clickedDateStr);
+        } else {
+          onRangeChange(clickedDateStr, null);
+        }
+      }
+    } else {
+      onChange?.(clickedDateStr);
+    }
   };
 
   // Generate grid cells
-  const cells: { type: 'empty' | 'day'; day?: number }[] = [];
+  const cells: { type: 'day' | 'prev-month' | 'next-month'; day: number }[] = [];
 
-  // Padding cells for starting offset of the month
+  // Padding cells for starting offset of the month (previous month dates)
+  const prevMonthDays = new Date(currentYear, currentMonth, 0).getDate();
   for (let i = 0; i < firstDayIndex; i++) {
-    cells.push({ type: 'empty' });
+    const dayNum = prevMonthDays - firstDayIndex + 1 + i;
+    cells.push({ type: 'prev-month', day: dayNum });
   }
 
   // Active days of the month
@@ -93,12 +159,14 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
     cells.push({ type: 'day', day: i });
   }
 
-  // Fill up grid with empty cells to match rows of 7 cells
-  while (cells.length % 7 !== 0) {
-    cells.push({ type: 'empty' });
+  // Fill up grid with next month dates (until we hit 42 cells)
+  let nextMonthDay = 1;
+  while (cells.length < 42) {
+    cells.push({ type: 'next-month', day: nextMonthDay });
+    nextMonthDay++;
   }
 
-  const borderAccent = isDark ? colors.primary : '#000000';
+  const borderAccent = isDark ? colors.primary + '40' : '#000000';
   const gridSeparatorColor = isDark ? '#27272A' : '#E4E4E7';
   const today = new Date();
 
@@ -109,6 +177,7 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
       <View style={[styles.navHeader, { borderBottomWidth: 1.5, borderColor: borderAccent }]}>
         <Pressable
           onPress={handlePrevMonth}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
           style={({ pressed }) => [
             styles.navBtn,
             {
@@ -117,7 +186,7 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
             }
           ]}
         >
-          <ChevronLeft size={18} color={colors.primary} />
+          <ChevronLeft size={22} color={colors.primary} />
         </Pressable>
 
         <TuiText weight="bold" size="sm" style={[styles.monthYearText, { color: colors.primary }]}>
@@ -126,6 +195,7 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
 
         <Pressable
           onPress={handleNextMonth}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
           style={({ pressed }) => [
             styles.navBtn,
             {
@@ -134,7 +204,7 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
             }
           ]}
         >
-          <ChevronRight size={18} color={colors.primary} />
+          <ChevronRight size={22} color={colors.primary} />
         </Pressable>
       </View>
 
@@ -164,60 +234,152 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({ value, onChange }) => 
             ]}
           >
             {cells.slice(rowIndex * 7, (rowIndex + 1) * 7).map((cell, cellIndex) => {
-              if (cell.type === 'empty') {
-                return (
-                  <View
-                    key={cellIndex}
-                    style={[
-                      styles.cellWrapper,
-                      {
-                        borderRightWidth: cellIndex === 6 ? 0 : 1,
-                        borderColor: gridSeparatorColor,
-                        backgroundColor: isDark ? '#131316' : '#FAFAFA',
-                      }
-                    ]}
-                  >
-                    <TuiText size="xs" style={{ color: 'transparent', textAlign: 'center' }}>00</TuiText>
-                  </View>
-                );
+              const isDimmed = cell.type === 'prev-month' || cell.type === 'next-month';
+
+              let cellMonth = currentMonth;
+              let cellYear = currentYear;
+              if (cell.type === 'prev-month') {
+                if (currentMonth === 0) {
+                  cellMonth = 11;
+                  cellYear = currentYear - 1;
+                } else {
+                  cellMonth = currentMonth - 1;
+                }
+              } else if (cell.type === 'next-month') {
+                if (currentMonth === 11) {
+                  cellMonth = 0;
+                  cellYear = currentYear + 1;
+                } else {
+                  cellMonth = currentMonth + 1;
+                }
               }
 
-              const isSelected =
-                selectedDate.day === cell.day &&
-                selectedDate.month === currentMonth &&
-                selectedDate.year === currentYear;
+              const mStr = String(cellMonth + 1).padStart(2, '0');
+              const dStr = String(cell.day).padStart(2, '0');
+              const cellDateStr = `${mStr}-${dStr}-${cellYear}`;
+
+              let isSelected = false;
+              let isStart = false;
+              let isEnd = false;
+              let isInRange = false;
+              let isBetween = false;
+
+              if (isRangeMode) {
+                isStart = !!startDate && cellDateStr === startDate;
+                isEnd = !!endDate && cellDateStr === endDate;
+                if (startDate && endDate) {
+                  const cellTime = parseDateString(cellDateStr).getTime();
+                  const startTime = parseDateString(startDate).getTime();
+                  const endTime = parseDateString(endDate).getTime();
+                  isBetween = cellTime > startTime && cellTime < endTime;
+                  isInRange = isStart || isEnd || isBetween;
+                } else {
+                  isInRange = isStart;
+                }
+                isSelected = isStart || isEnd;
+              } else {
+                isSelected =
+                  !isDimmed &&
+                  selectedDate.day === cell.day &&
+                  selectedDate.month === currentMonth &&
+                  selectedDate.year === currentYear;
+              }
 
               const isToday =
+                !isDimmed &&
                 today.getDate() === cell.day &&
                 today.getMonth() === currentMonth &&
                 today.getFullYear() === currentYear;
 
+              const getTextColor = () => {
+                if (isSelected) {
+                  if (isRangeMode) {
+                    return isDark ? '#000000' : '#FFFFFF';
+                  }
+                  return colors.primaryForeground;
+                }
+                if (isToday) return colors.primary;
+                return colors.foreground;
+              };
+
+              const renderCellBackground = () => {
+                if (!isRangeMode) {
+                  if (isSelected) {
+                    return (
+                      <View style={[styles.selectedBgSingle, { backgroundColor: colors.primary }]} />
+                    );
+                  }
+                  return null;
+                }
+
+                if (!isInRange) return null;
+
+                if (isStart || isEnd) {
+                  const hasRange = !!(startDate && endDate);
+                  return (
+                    <View style={styles.rangeEdgeWrapper}>
+                      {hasRange && (
+                        <View
+                          style={[
+                            styles.rangeCapsuleBg,
+                            {
+                              backgroundColor: isDark ? '#27272A' : '#E4E4E7',
+                              left: isStart ? '50%' : 0,
+                              right: isEnd ? '50%' : 0,
+                            },
+                          ]}
+                        />
+                      )}
+                      <View
+                        style={[
+                          styles.selectedBgSingle,
+                          {
+                            backgroundColor: isDark ? '#FFFFFF' : '#000000',
+                          },
+                        ]}
+                      />
+                    </View>
+                  );
+                }
+
+                if (isBetween) {
+                  return (
+                    <View
+                      style={[
+                        styles.rangeCapsuleBg,
+                        {
+                          backgroundColor: isDark ? '#27272A' : '#E4E4E7',
+                          left: 0,
+                          right: 0,
+                        },
+                      ]}
+                    />
+                  );
+                }
+
+                return null;
+              };
+
               return (
                 <Pressable
                   key={cellIndex}
-                  onPress={() => handleSelectDay(cell.day!)}
+                  onPress={() => handleSelectCell(cell)}
                   style={({ pressed }) => [
                     styles.cellWrapper,
                     {
                       borderRightWidth: cellIndex === 6 ? 0 : 1,
                       borderColor: gridSeparatorColor,
-                      backgroundColor: isSelected
-                        ? colors.primary
-                        : pressed
-                        ? (isDark ? '#27272A' : '#E4E4E7')
-                        : 'transparent',
+                      backgroundColor: 'transparent',
                     }
                   ]}
                 >
+                  {renderCellBackground()}
                   <TuiText
                     size="xs"
                     weight={isSelected || isToday ? 'bold' : 'regular'}
                     style={{
-                      color: isSelected
-                        ? colors.primaryForeground
-                        : isToday
-                        ? colors.primary
-                        : colors.foreground,
+                      color: getTextColor(),
+                      opacity: isDimmed ? (isDark ? 0.25 : 0.35) : 1,
                       textAlign: 'center',
                     }}
                   >
@@ -246,12 +408,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 6,
+    paddingHorizontal: 8,
+    height: 48,
   },
   navBtn: {
     borderWidth: 1.5,
-    width: 36,
-    height: 36,
+    width: 38,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -261,7 +424,7 @@ const styles = StyleSheet.create({
   weekdaysRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 30,
+    height: 34,
   },
   gridBody: {
     width: '100%',
@@ -269,12 +432,29 @@ const styles = StyleSheet.create({
   gridRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 46,
+    height: 50,
   },
   cellWrapper: {
     flex: 1,
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  selectedBgSingle: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+  },
+  rangeEdgeWrapper: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  rangeCapsuleBg: {
+    position: 'absolute',
+    top: 7,
+    bottom: 7,
   },
 });

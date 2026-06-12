@@ -92,6 +92,7 @@ interface TuiSegmentedMeterProps {
   startAnimation?: boolean;
   animateMode?: 'once' | 'always' | 'none';
   animationDirection?: 'grow' | 'deplete';
+  rightLabel?: React.ReactNode;
 }
 
 let hasAnimatedBudget = false;
@@ -106,17 +107,46 @@ export const TuiSegmentedMeter: React.FC<TuiSegmentedMeterProps> = ({
   startAnimation = true,
   animateMode = 'always',
   animationDirection = 'grow',
+  rightLabel,
 }) => {
   const { colors, isDark } = useTheme();
   const percentage = totalLimit > 0 ? Math.round((totalSpent / totalLimit) * 100) : 0;
   const overallProgress = totalLimit > 0 ? totalSpent / totalLimit : 0;
   const headerColor = overallProgress >= 0.9 ? colors.destructive : colors.mutedForeground;
 
-  // Generate list of colors for each block based on segment weights
-  const blockColors: string[] = [];
-  segments.forEach((seg) => {
+  // Allocate blocks using Largest Remainder Method
+  const allocatedBlocks: number[] = segments.map(() => 0);
+  const remainders: { index: number; rem: number }[] = [];
+  let totalAllocated = 0;
+
+  segments.forEach((seg, index) => {
+    if (seg.value <= 0) return;
     const raw = totalLimit > 0 ? (seg.value / totalLimit) * totalBlocks : 0;
-    const count = Math.round(raw);
+    let blocks = Math.floor(raw);
+    
+    allocatedBlocks[index] = blocks;
+    totalAllocated += blocks;
+    remainders.push({ index, rem: raw - Math.floor(raw) });
+  });
+
+  // Distribute remaining blocks to segments with largest remainders
+  if (totalAllocated < totalBlocks && remainders.length > 0) {
+    let underflow = totalBlocks - totalAllocated;
+    remainders.sort((a, b) => b.rem - a.rem);
+    
+    let rIdx = 0;
+    while (underflow > 0) {
+      const targetSegmentIdx = remainders[rIdx % remainders.length].index;
+      allocatedBlocks[targetSegmentIdx]++;
+      underflow--;
+      rIdx++;
+    }
+  }
+
+  // Generate list of colors for each block based on allocated segment counts
+  const blockColors: string[] = [];
+  segments.forEach((seg, index) => {
+    const count = allocatedBlocks[index];
     for (let i = 0; i < count; i++) {
       blockColors.push(seg.color);
     }
@@ -131,10 +161,8 @@ export const TuiSegmentedMeter: React.FC<TuiSegmentedMeterProps> = ({
   const activeBlocksCount = finalColors.filter(c => c !== inactiveColor).length;
 
   // Find how many blocks belong to the unspent segment (colored with colors.primary)
-  const unspentSegment = segments.find(seg => seg.color === colors.primary);
-  const unspentBlocksCount = unspentSegment && totalLimit > 0
-    ? Math.min(totalBlocks, Math.round((unspentSegment.value / totalLimit) * totalBlocks))
-    : 0;
+  const unspentSegmentIndex = segments.findIndex(seg => seg.color === colors.primary);
+  const unspentBlocksCount = unspentSegmentIndex !== -1 ? allocatedBlocks[unspentSegmentIndex] : 0;
 
   const blockActiveColorsRef = React.useRef<string[]>([]);
   
@@ -249,9 +277,19 @@ export const TuiSegmentedMeter: React.FC<TuiSegmentedMeterProps> = ({
             label
           )
         )}
-        <TuiText size="sm" weight="bold" style={{ color: headerColor }}>
-          {displayPercentage}%
-        </TuiText>
+        {rightLabel !== undefined ? (
+          typeof rightLabel === 'string' ? (
+            <TuiText size="sm" weight="bold" style={{ color: headerColor }}>
+              {rightLabel}
+            </TuiText>
+          ) : (
+            rightLabel
+          )
+        ) : (
+          <TuiText size="sm" weight="bold" style={{ color: headerColor }}>
+            {displayPercentage}%
+          </TuiText>
+        )}
       </View>
 
       {/* Multi-color segmented progress bar */}

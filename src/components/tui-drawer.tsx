@@ -19,6 +19,7 @@ interface TuiDrawerProps {
   children: React.ReactNode;
   keyboardOffset?: number;
   progressAnim?: Animated.Value;
+  onSwipeUp?: () => void;
 }
 
 export const TuiDrawer: React.FC<TuiDrawerProps> = ({
@@ -28,6 +29,7 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
   children,
   keyboardOffset = 0,
   progressAnim,
+  onSwipeUp,
 }) => {
   const { colors, isDark } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
@@ -40,17 +42,21 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
 
   const slideAnim = activeAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: [cardHeight || 300, 0],
+    outputRange: [(cardHeight || 300) + 40, 0],
   });
 
-  const latest = useRef({ cardHeight, onClose });
-  latest.current = { cardHeight, onClose };
+  const latest = useRef({ cardHeight, onClose, onSwipeUp });
+  latest.current = { cardHeight, onClose, onSwipeUp };
 
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
+      onStartShouldSetPanResponder: () => false,
+      onStartShouldSetPanResponderCapture: () => false,
       onMoveShouldSetPanResponder: (evt, gestureState) => {
-        return Math.abs(gestureState.dy) > 2;
+        return Math.abs(gestureState.dy) > 5;
+      },
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => {
+        return Math.abs(gestureState.dy) > 7 && Math.abs(gestureState.dy) > Math.abs(gestureState.dx);
       },
       onPanResponderMove: (evt, gestureState) => {
         if (gestureState.dy > 0) {
@@ -65,7 +71,16 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
           return;
         }
 
-        const { cardHeight: currentHeight, onClose: currentOnClose } = latest.current;
+        const { cardHeight: currentHeight, onClose: currentOnClose, onSwipeUp: currentOnSwipeUp } = latest.current;
+
+        if (gestureState.dy < -40 && currentOnSwipeUp) {
+          currentOnSwipeUp();
+          Animated.spring(activeAnim, {
+            toValue: 1,
+            ...SPRING_CONFIG_OPEN,
+          }).start();
+          return;
+        }
 
         if (gestureState.dy > 100 || gestureState.vy > 0.5) {
           Animated.timing(activeAnim, {
@@ -142,7 +157,10 @@ export const TuiDrawer: React.FC<TuiDrawerProps> = ({
       transparent={true}
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
+      <View 
+        {...panResponder.panHandlers}
+        style={styles.modalOverlay}
+      >
         {/* Dimmed backdrop view fading in/out during open/close transitions */}
         <Animated.View
           style={[

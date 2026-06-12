@@ -265,7 +265,7 @@ export const Debts: React.FC<DebtsProps> = ({
       {/* 02: SCROLLABLE BODY SECTION */}
       <ScrollView
         style={styles.container}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 36 + insets.bottom }]}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: 65 + insets.bottom }]}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
