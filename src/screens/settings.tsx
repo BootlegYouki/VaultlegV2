@@ -184,20 +184,6 @@ export const Settings: React.FC<SettingsProps> = ({
           <View style={styles.logoContainer}>
             <BrandLogo color={colors.primary} height={80} />
           </View>
-          <View style={{ marginTop: 12, alignItems: 'center' }}>
-            <TuiText size="xs" variant="muted">
-              Version {appJson.expo.version || '1.0.0'}
-            </TuiText>
-            {Platform.OS === 'android' && (
-              <TuiButton
-                onPress={() => checkForUpdates(true)}
-                variant="outline"
-                style={{ marginTop: 8, height: 36, width: 'auto', paddingHorizontal: 16, paddingVertical: 0, justifyContent: 'center', marginVertical: 0 }}
-              >
-                Check for Updates
-              </TuiButton>
-            )}
-          </View>
         </TuiContainer>
 
         {/* 01: SYSTEM PREFERENCES CARD */}
@@ -291,6 +277,24 @@ export const Settings: React.FC<SettingsProps> = ({
           <TuiButton onPress={handleWipe} variant="destructive" style={styles.wipeBtn}>
             Reset All Data
           </TuiButton>
+        </TuiContainer>
+
+        {/* 03: APPLICATION INFO CARD */}
+        <TuiContainer label="Application Info">
+          <View style={{ alignItems: 'center', paddingVertical: 4 }}>
+            <TuiText size="sm" variant="muted" style={{ letterSpacing: 0.5 }}>
+              Vaultleg Version {appJson.expo.version || '1.0.0'}
+            </TuiText>
+            {Platform.OS === 'android' && (
+              <TuiButton
+                onPress={() => checkForUpdates(true)}
+                variant="outline"
+                style={{ marginTop: 12, height: 44, width: '100%', justifyContent: 'center', marginVertical: 0 }}
+              >
+                Check for Updates
+              </TuiButton>
+            )}
+          </View>
         </TuiContainer>
       </ScrollView>
     </View>
