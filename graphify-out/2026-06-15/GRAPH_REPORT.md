@@ -1,11 +1,11 @@
 # Graph Report - VaultlegV2  (2026-06-15)
 
 ## Corpus Check
-- 64 files · ~71,085 words
+- 63 files · ~71,073 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 700 nodes · 1191 edges · 66 communities (60 shown, 6 thin omitted)
+- 693 nodes · 1177 edges · 60 communities (53 shown, 7 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 2 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
@@ -71,14 +71,8 @@
 - [[_COMMUNITY_Community 55|Community 55]]
 - [[_COMMUNITY_Community 56|Community 56]]
 - [[_COMMUNITY_Community 57|Community 57]]
-- [[_COMMUNITY_Community 58|Community 58]]
 - [[_COMMUNITY_Community 59|Community 59]]
 - [[_COMMUNITY_Community 60|Community 60]]
-- [[_COMMUNITY_Community 61|Community 61]]
-- [[_COMMUNITY_Community 62|Community 62]]
-- [[_COMMUNITY_Community 63|Community 63]]
-- [[_COMMUNITY_Community 64|Community 64]]
-- [[_COMMUNITY_Community 65|Community 65]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `useTheme()` - 62 edges
@@ -104,15 +98,15 @@
 - `MainApp()` --calls--> `useFabMenu()`  [EXTRACTED]
   App.tsx → src/hooks/use-fab-menu.ts
 
-## Communities (66 total, 6 thin omitted)
+## Communities (60 total, 7 thin omitted)
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
 Nodes (39): Agent Rules, Analyze specific workspaces, Audit a project for cleanup opportunities, Catch typos in entry file exports, Check if a PR introduces quality risk, Commands, Common Workflows, Configuration (+31 more)
 
 ### Community 1 - "Community 1"
-Cohesion: 0.07
-Nodes (65): BrandLogo(), BrandLogoProps, styles, TuiButton(), TuiButtonProps, TuiCalendar(), styles, TuiContainer() (+57 more)
+Cohesion: 0.08
+Nodes (58): styles, TuiButton(), TuiButtonProps, TuiCalendar(), SPRING_CONFIG_CLOSE, SPRING_CONFIG_OPEN, SPRING_CONFIG_RECOVER, styles (+50 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.11
@@ -143,8 +137,8 @@ Cohesion: 0.14
 Nodes (14): dependencies, class-variance-authority, clsx, @fontsource-variable/jetbrains-mono, radix-ui, react, react-dom, recharts (+6 more)
 
 ### Community 9 - "Community 9"
-Cohesion: 0.18
-Nodes (11): useBalanceAnimation(), BUDGET_COLORS, Dashboard(), DashboardBalancesCardProps, DashboardBudgetCardProps, DashboardDebtsCard(), DashboardDebtsCardProps, DashboardRecentTransactionsCard() (+3 more)
+Cohesion: 0.06
+Nodes (64): ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps, TuiProgressMeter(), TuiProgressMeterProps, TuiSegmentedMeter() (+56 more)
 
 ### Community 10 - "Community 10"
 Cohesion: 0.10
@@ -176,11 +170,7 @@ Nodes (17): CI Pipeline Setup, GitHub Actions: Basic, GitHub Actions: Duplicatio
 
 ### Community 23 - "Community 23"
 Cohesion: 0.22
-Nodes (8): Combined Dead Code + Duplication, Fallow: Common Workflow Patterns & Recipes, Full audit (default), Production audit, Production vs Full Audit, Step 1: Run combined analysis, Step 2: Prioritize cleanup, Table of Contents
-
-### Community 24 - "Community 24"
-Cohesion: 0.23
-Nodes (7): translateDatabaseMessage(), translateLogMessage(), translateNavigationMessage(), translateOperationMessage(), translateSystemMessage(), translateThemeMessage(), TuiLogger
+Nodes (8): Combined Dead Code + Duplication, Fallow: Common Workflow Patterns & Recipes, PR Dead Code Check, Step 1: Analyze changed files, Step 1: Run combined analysis, Step 2: If issues found, show specifics, Step 2: Prioritize cleanup, Table of Contents
 
 ### Community 25 - "Community 25"
 Cohesion: 0.15
@@ -211,8 +201,8 @@ Cohesion: 0.25
 Nodes (7): computedHash, skillPath, source, sourceType, skills, fallow, version
 
 ### Community 32 - "Community 32"
-Cohesion: 0.08
-Nodes (32): FabItem(), FabItemProps, FabMenu(), FabMenuProps, styles, ScreenType, styles, TuiTabBar() (+24 more)
+Cohesion: 0.07
+Nodes (38): BrandLogo(), BrandLogoProps, FabItem(), FabItemProps, FabMenu(), FabMenuProps, styles, ScreenType (+30 more)
 
 ### Community 33 - "Community 33"
 Cohesion: 0.29
@@ -295,8 +285,8 @@ Cohesion: 0.50
 Nodes (4): All-in-one with `--ci`, GitHub Code Scanning Integration, Step 1: Generate SARIF output, Step 2: Upload via GitHub Action
 
 ### Community 53 - "Community 53"
-Cohesion: 0.18
-Nodes (11): TuiSegmentedMeter(), TuiScrollView(), TuiScrollViewProps, getCategoryIcon(), CategoryLimitCard(), CategoryLimitCardProps, Stats(), STATS_COLORS (+3 more)
+Cohesion: 0.67
+Nodes (3): Full audit (default), Production audit, Production vs Full Audit
 
 ### Community 55 - "Community 55"
 Cohesion: 0.67
@@ -310,45 +300,21 @@ Nodes (3): Examples, Flags, `list`: Project Introspection
 Cohesion: 0.67
 Nodes (3): Examples, Flags, `init`: Config Generation
 
-### Community 58 - "Community 58"
-Cohesion: 0.18
-Nodes (11): styles, TuiCheckbox(), TuiCheckboxProps, styles, TuiSwitch(), TuiSwitchProps, EditDebtDrawer(), DashboardBalancesCard() (+3 more)
-
 ### Community 60 - "Community 60"
 Cohesion: 0.50
 Nodes (3): health, ignore, ignoreDependencies
 
-### Community 61 - "Community 61"
-Cohesion: 0.18
-Nodes (9): Expenses(), FilterType, LogsBalanceMeter(), LogsBalanceMeterProps, LogsControlsHeader(), LogsControlsHeaderProps, LogsListProps, styles (+1 more)
-
-### Community 62 - "Community 62"
-Cohesion: 0.22
-Nodes (8): ChartItem, MeterSegment, styles, TuiBarChart(), TuiBarChartProps, TuiProgressMeter(), TuiProgressMeterProps, TuiSegmentedMeterProps
-
-### Community 63 - "Community 63"
-Cohesion: 0.32
-Nodes (6): TuiMiniCheckbox(), TuiMiniCheckboxProps, styles, TuiTransactionRow(), TuiTransactionRowProps, getCategoryLabel()
-
-### Community 64 - "Community 64"
-Cohesion: 0.25
-Nodes (7): ACCENT_COLORS, AccentTheme, ThemeColors, ThemeContext, ThemeContextType, ThemeMode, ThemeProvider()
-
-### Community 65 - "Community 65"
-Cohesion: 0.67
-Nodes (3): PR Dead Code Check, Step 1: Analyze changed files, Step 2: If issues found, show specifics
-
 ## Knowledge Gaps
 - **434 isolated node(s):** `ignoreDependencies`, `ignore`, `name`, `slug`, `version` (+429 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **7 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `expo` connect `Community 3` to `Community 32`?**
   _High betweenness centrality (0.029) - this node is a cross-community bridge._
-- **Why does `useTheme()` connect `Community 58` to `Community 32`, `Community 1`, `Community 64`, `Community 9`, `Community 53`, `Community 25`, `Community 61`, `Community 62`, `Community 63`?**
+- **Why does `useTheme()` connect `Community 9` to `Community 32`, `Community 1`, `Community 25`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **Why does `Fallow CLI Reference` connect `Community 21` to `Community 33`, `Community 34`, `Community 37`, `Community 45`, `Community 46`, `Community 47`, `Community 48`, `Community 49`, `Community 50`, `Community 51`, `Community 55`, `Community 56`, `Community 57`, `Community 28`, `Community 29`, `Community 30`?**
   _High betweenness centrality (0.020) - this node is a cross-community bridge._
@@ -357,6 +323,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `Community 0` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `Community 1` be split into smaller, more focused modules?**
-  _Cohesion score 0.07137129109863673 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07567567567567568 - nodes in this community are weakly interconnected._
 - **Should `Community 2` be split into smaller, more focused modules?**
   _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._

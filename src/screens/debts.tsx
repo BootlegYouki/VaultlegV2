@@ -1,25 +1,20 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, RefreshControl, Alert } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, StyleSheet, Pressable, Alert } from 'react-native';
 import { Landmark, ArrowUpCircle, ArrowDownCircle, Trash2 } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
 import { TuiText } from '../components/tui-text';
 import { TuiButton } from '../components/tui-button';
+import { TuiScrollView } from '../components/tui-scrollview';
+import { TuiMiniCheckbox } from '../components/tui-mini-checkbox';
+import { TuiRetroBorders } from '../components/tui-retro-borders';
+import { parseDateString } from '../utils/date';
 import { Debt } from '../types';
 
 const getDueLabel = (dueDateStr: string, colors: any) => {
   if (!dueDateStr) return { text: '', color: colors.mutedForeground };
   
-  // Parse MM-DD-YYYY
-  const parts = dueDateStr.split('-');
-  if (parts.length !== 3) return { text: '', color: colors.mutedForeground };
-  
-  const month = parseInt(parts[0], 10) - 1;
-  const day = parseInt(parts[1], 10);
-  const year = parseInt(parts[2], 10);
-  
-  const dueDate = new Date(year, month, day);
+  const dueDate = parseDateString(dueDateStr);
   
   // Normalize today and due date to midnight
   const today = new Date();
@@ -93,11 +88,7 @@ const DebtRow: React.FC<DebtRowProps> = ({
       ]}
     >
       {/* Segmented borders */}
-      <View style={[styles.borderLeft, { backgroundColor: borderAccent }]} />
-      <View style={[styles.borderRight, { backgroundColor: borderAccent }]} />
-      <View style={[styles.borderBottom, { backgroundColor: borderAccent }]} />
-      <View style={[styles.borderTopLeft, { backgroundColor: borderAccent }]} />
-      <View style={[styles.borderTopRight, { backgroundColor: borderAccent, left: borderTopRightLeft }]} />
+      <TuiRetroBorders borderColor={borderAccent} legendWidth={legendWidth} />
 
       {/* Legend label + badge on top border */}
       <View
@@ -113,30 +104,7 @@ const DebtRow: React.FC<DebtRowProps> = ({
 
       {/* Row Body Content */}
       <View style={styles.debtRowBody}>
-        {isSelectionMode && (
-          <View
-            style={{
-              width: 18,
-              height: 18,
-              borderWidth: 1.5,
-              borderColor: isSelected ? colors.primary : (isDark ? '#3F3F46' : '#A1A1AA'),
-              backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: 10,
-            }}
-          >
-            {isSelected && (
-              <View
-                style={{
-                  width: 8,
-                  height: 8,
-                  backgroundColor: colors.primary,
-                }}
-              />
-            )}
-          </View>
-        )}
+        {isSelectionMode && <TuiMiniCheckbox checked={isSelected} />}
 
         <View
           style={[
@@ -208,7 +176,6 @@ export const Debts: React.FC<DebtsProps> = ({
   editingDebtId,
 }) => {
   const { colors, isDark } = useTheme();
-  const insets = useSafeAreaInsets();
 
   const payables = debts.filter((d) => d.type === 'payable');
   const receivables = debts.filter((d) => d.type === 'receivable');
@@ -222,6 +189,34 @@ export const Debts: React.FC<DebtsProps> = ({
     } else {
       onEditDebt?.(debt);
     }
+  };
+
+  const renderDebtList = (list: Debt[], type: 'payable' | 'receivable') => {
+    if (list.length === 0) {
+      return (
+        <TuiText size="xs" variant="muted" style={styles.emptyState}>
+          No entries recorded yet.
+        </TuiText>
+      );
+    }
+    return list.map((debt) => {
+      const isSelected = selectedIds.includes(debt.id);
+      const isEditing = editingDebtId === debt.id;
+      return (
+        <DebtRow
+          key={debt.id}
+          debt={debt}
+          isSelected={isSelected}
+          isEditing={isEditing}
+          isSelectionMode={isSelectionMode}
+          onPress={() => handlePressRow(debt)}
+          onLongPress={() => onLongPressSelect?.(debt.id)}
+          colors={colors}
+          isDark={isDark}
+          type={type}
+        />
+      );
+    });
   };
 
   return (
@@ -263,81 +258,28 @@ export const Debts: React.FC<DebtsProps> = ({
       </View>
 
       {/* 02: SCROLLABLE BODY SECTION */}
-      <ScrollView
+      <TuiScrollView
         style={styles.container}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 65 + insets.bottom }]}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.primary}
-            colors={[colors.primary]}
-            progressBackgroundColor={isDark ? '#1C1C1E' : '#FFFFFF'}
-          />
-        }
+        contentContainerStyle={styles.scrollContent}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       >
 
         {/* 02: PAYABLES LIST FOLDER */}
         <TuiContainer label="I Owe" badge={`${payables.length} ${payables.length === 1 ? 'account' : 'accounts'}`}>
           <View style={styles.debtsList}>
-            {payables.length === 0 ? (
-              <TuiText size="xs" variant="muted" style={styles.emptyState}>
-                No entries recorded yet.
-              </TuiText>
-            ) : (
-              payables.map((debt) => {
-                const isSelected = selectedIds.includes(debt.id);
-                const isEditing = editingDebtId === debt.id;
-                return (
-                  <DebtRow
-                    key={debt.id}
-                    debt={debt}
-                    isSelected={isSelected}
-                    isEditing={isEditing}
-                    isSelectionMode={isSelectionMode}
-                    onPress={() => handlePressRow(debt)}
-                    onLongPress={() => onLongPressSelect?.(debt.id)}
-                    colors={colors}
-                    isDark={isDark}
-                    type="payable"
-                  />
-                );
-              })
-            )}
+            {renderDebtList(payables, 'payable')}
           </View>
         </TuiContainer>
 
         {/* 03: RECEIVABLES LIST FOLDER */}
         <TuiContainer label="Owes Me" badge={`${receivables.length} ${receivables.length === 1 ? 'account' : 'accounts'}`}>
           <View style={styles.debtsList}>
-            {receivables.length === 0 ? (
-              <TuiText size="xs" variant="muted" style={styles.emptyState}>
-                No entries recorded yet.
-              </TuiText>
-            ) : (
-              receivables.map((debt) => {
-                const isSelected = selectedIds.includes(debt.id);
-                const isEditing = editingDebtId === debt.id;
-                return (
-                  <DebtRow
-                    key={debt.id}
-                    debt={debt}
-                    isSelected={isSelected}
-                    isEditing={isEditing}
-                    isSelectionMode={isSelectionMode}
-                    onPress={() => handlePressRow(debt)}
-                    onLongPress={() => onLongPressSelect?.(debt.id)}
-                    colors={colors}
-                    isDark={isDark}
-                    type="receivable"
-                  />
-                );
-              })
-            )}
+            {renderDebtList(receivables, 'receivable')}
           </View>
         </TuiContainer>
 
-      </ScrollView>
+      </TuiScrollView>
     </View>
   );
 };

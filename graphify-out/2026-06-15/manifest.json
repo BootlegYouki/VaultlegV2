@@ -275,8 +275,8 @@
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\utils\\logger.ts": {
-    "mtime": 1781494765.4036162,
-    "ast_hash": "be1b30d679014845f8d633472bd16d8e",
+    "mtime": 1781491671.302097,
+    "ast_hash": "4e6a3dcdc563b2dea9535e146ce71924",
     "semantic_hash": ""
   },
   "E:\\Github\\VaultlegV2\\src\\utils\\storage.ts": {
@@ -517,11 +517,6 @@
   "E:\\Github\\VaultlegV2\\src\\hooks\\use-gist-sync.ts": {
     "mtime": 1781491734.698956,
     "ast_hash": "9e6876403808c9991e510a9c78a8b984",
-    "semantic_hash": ""
-  },
-  "E:\\Github\\VaultlegV2\\src\\utils\\log-translator.ts": {
-    "mtime": 1781494758.8835258,
-    "ast_hash": "d073a687d26fba8b9aaf8025cc95af6a",
     "semantic_hash": ""
   }
 }

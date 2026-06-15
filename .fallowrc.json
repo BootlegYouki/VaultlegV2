@@ -1,0 +1,18 @@
+{
+  "ignoreDependencies": [
+    "expo-font",
+    "expo-system-ui",
+    "react-native-web"
+  ],
+  "health": {
+    "ignore": [
+      "src/components/**",
+      "src/screens/**",
+      "App.tsx",
+      "src/hooks/use-app-state.ts",
+      "src/hooks/use-gist-sync.ts",
+      "src/utils/update-checker.ts",
+      "src/theme/theme-provider.tsx"
+    ]
+  }
+}

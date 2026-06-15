@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable, RefreshControl } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
 import { TuiText } from '../components/tui-text';
 import { TuiSegmentedMeter } from '../components/tui-chart';
-import { Transaction, CATEGORIES, INCOME_CATEGORIES } from '../types';
+import { TuiScrollView } from '../components/tui-scrollview';
+import { Transaction, CATEGORIES, INCOME_CATEGORIES, getCategoryLabel } from '../types';
 import { getCategoryIcon } from '../utils/category-icon';
 
 interface StatsProps {
@@ -153,7 +153,6 @@ export const Stats: React.FC<StatsProps> = ({
   animateMeter = false,
 }) => {
   const { colors, isDark } = useTheme();
-  const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
 
   // Aggregate calculations
@@ -250,18 +249,11 @@ export const Stats: React.FC<StatsProps> = ({
       </View>
 
       {/* 02: SCROLLABLE BODY SECTION */}
-      <ScrollView
+      <TuiScrollView
         style={styles.container}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 65 + insets.bottom }]}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={colors.primary}
-            colors={[colors.primary]}
-            progressBackgroundColor={isDark ? '#1C1C1E' : '#FFFFFF'}
-          />
-        }
+        contentContainerStyle={styles.scrollContent}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
       >
 
         {/* 02: SPENT ALLOCATION CONTAINER */}
@@ -346,11 +338,7 @@ export const Stats: React.FC<StatsProps> = ({
                         {t.description || 'LOGGED TRANSACTION'}
                       </TuiText>
                       <TuiText size="sm" variant="muted">
-                        {(() => {
-                          const catObj = CATEGORIES.find(c => c.id === t.category) || INCOME_CATEGORIES.find(c => c.id === t.category);
-                          const catLabel = catObj ? catObj.label : t.category.charAt(0).toUpperCase() + t.category.slice(1);
-                          return `${t.date} | ${catLabel}`;
-                        })()}
+                        {`${t.date} | ${getCategoryLabel(t.category)}`}
                       </TuiText>
                     </View>
 
@@ -371,7 +359,7 @@ export const Stats: React.FC<StatsProps> = ({
           })()}
         </TuiContainer>
 
-      </ScrollView>
+      </TuiScrollView>
     </View>
   );
 };

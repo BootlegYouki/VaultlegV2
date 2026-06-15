@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
+import { parseDateString } from '../utils/date';
 
 interface TuiCalendarProps {
   value?: string; // MM-DD-YYYY format
@@ -22,21 +23,248 @@ const MONTHS = [
 // Weekdays headers
 const WEEKDAYS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
 
-const parseDateString = (dateStr: string): Date => {
-  const parts = dateStr.split('-');
-  if (parts.length === 3) {
-    const m = parseInt(parts[0], 10) - 1;
-    const d = parseInt(parts[1], 10);
-    const y = parseInt(parts[2], 10);
-    if (!isNaN(m) && !isNaN(d) && !isNaN(y)) {
-      return new Date(y, m, d);
-    }
-  }
-  return new Date();
-};
+
 
 const compareDatesStr = (d1Str: string, d2Str: string): number => {
   return parseDateString(d1Str).getTime() - parseDateString(d2Str).getTime();
+};
+
+interface CalendarCellProps {
+  cell: { type: 'day' | 'prev-month' | 'next-month'; day: number };
+  cellIndex: number;
+  currentMonth: number;
+  currentYear: number;
+  selectedDate: { day: number; month: number; year: number };
+  isRangeMode: boolean;
+  startDate: string | null;
+  endDate: string | null;
+  today: Date;
+  colors: any;
+  isDark: boolean;
+  gridSeparatorColor: string;
+  onSelect: (cell: { type: 'day' | 'prev-month' | 'next-month'; day: number }) => void;
+}
+
+const getCellDateString = (
+  cellType: 'day' | 'prev-month' | 'next-month',
+  day: number,
+  currentMonth: number,
+  currentYear: number
+): string => {
+  let cellMonth = currentMonth;
+  let cellYear = currentYear;
+  if (cellType === 'prev-month') {
+    if (currentMonth === 0) {
+      cellMonth = 11;
+      cellYear = currentYear - 1;
+    } else {
+      cellMonth = currentMonth - 1;
+    }
+  } else if (cellType === 'next-month') {
+    if (currentMonth === 11) {
+      cellMonth = 0;
+      cellYear = currentYear + 1;
+    } else {
+      cellMonth = currentMonth + 1;
+    }
+  }
+  return `${String(cellMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}-${cellYear}`;
+};
+
+const getCellRangeInfo = (
+  cellDateStr: string,
+  isRangeMode: boolean,
+  startDate: string | null,
+  endDate: string | null,
+  cellDay: number,
+  currentMonth: number,
+  currentYear: number,
+  selectedDate: { day: number; month: number; year: number },
+  isDimmed: boolean
+) => {
+  if (!isRangeMode) {
+    const isSelected =
+      !isDimmed &&
+      selectedDate.day === cellDay &&
+      selectedDate.month === currentMonth &&
+      selectedDate.year === currentYear;
+    return { isSelected, isStart: false, isEnd: false, isInRange: false, isBetween: false };
+  }
+
+  const isStart = !!startDate && cellDateStr === startDate;
+  const isEnd = !!endDate && cellDateStr === endDate;
+  let isBetween = false;
+
+  if (startDate && endDate) {
+    const cellTime = parseDateString(cellDateStr).getTime();
+    const startTime = parseDateString(startDate).getTime();
+    const endTime = parseDateString(endDate).getTime();
+    isBetween = cellTime > startTime && cellTime < endTime;
+  }
+
+  const isInRange = isStart || isEnd || isBetween;
+  const isSelected = isStart || isEnd;
+
+  return { isSelected, isStart, isEnd, isInRange, isBetween };
+};
+
+const getTextColor = (
+  isSelected: boolean,
+  isRangeMode: boolean,
+  isToday: boolean,
+  isDark: boolean,
+  colors: any
+) => {
+  if (isSelected) {
+    return isRangeMode ? (isDark ? '#000000' : '#FFFFFF') : colors.primaryForeground;
+  }
+  if (isToday) return colors.primary;
+  return colors.foreground;
+};
+
+const renderCellBackground = (
+  isRangeMode: boolean,
+  isSelected: boolean,
+  isInRange: boolean,
+  isStart: boolean,
+  isEnd: boolean,
+  isBetween: boolean,
+  startDate: string | null,
+  endDate: string | null,
+  isDark: boolean,
+  colors: any
+) => {
+  if (!isRangeMode) {
+    return isSelected ? (
+      <View style={[styles.selectedBgSingle, { backgroundColor: colors.primary }]} />
+    ) : null;
+  }
+
+  if (!isInRange) return null;
+
+  if (isStart || isEnd) {
+    const hasRange = !!(startDate && endDate);
+    return (
+      <View style={styles.rangeEdgeWrapper}>
+        {hasRange && (
+          <View
+            style={[
+              styles.rangeCapsuleBg,
+              {
+                backgroundColor: isDark ? '#27272A' : '#E4E4E7',
+                left: isStart ? '50%' : 0,
+                right: isEnd ? '50%' : 0,
+              },
+            ]}
+          />
+        )}
+        <View
+          style={[
+            styles.selectedBgSingle,
+            {
+              backgroundColor: isDark ? '#FFFFFF' : '#000000',
+            },
+          ]}
+        />
+      </View>
+    );
+  }
+
+  if (isBetween) {
+    return (
+      <View
+        style={[
+          styles.rangeCapsuleBg,
+          {
+            backgroundColor: isDark ? '#27272A' : '#E4E4E7',
+            left: 0,
+            right: 0,
+          },
+        ]}
+      />
+    );
+  }
+
+  return null;
+};
+
+const CalendarCell: React.FC<CalendarCellProps> = ({
+  cell,
+  cellIndex,
+  currentMonth,
+  currentYear,
+  selectedDate,
+  isRangeMode,
+  startDate,
+  endDate,
+  today,
+  colors,
+  isDark,
+  gridSeparatorColor,
+  onSelect,
+}) => {
+  const isDimmed = cell.type === 'prev-month' || cell.type === 'next-month';
+  const cellDateStr = getCellDateString(cell.type, cell.day, currentMonth, currentYear);
+
+  const { isSelected, isStart, isEnd, isInRange, isBetween } = getCellRangeInfo(
+    cellDateStr,
+    isRangeMode,
+    startDate,
+    endDate,
+    cell.day,
+    currentMonth,
+    currentYear,
+    selectedDate,
+    isDimmed
+  );
+
+  const isToday =
+    !isDimmed &&
+    today.getDate() === cell.day &&
+    today.getMonth() === currentMonth &&
+    today.getFullYear() === currentYear;
+
+  const textColor = getTextColor(isSelected, isRangeMode, isToday, isDark, colors);
+
+  return (
+    <Pressable
+      onPress={() => onSelect(cell)}
+      style={({ pressed }) => [
+        styles.cellWrapper,
+        {
+          borderRightWidth: cellIndex === 6 ? 0 : 1,
+          borderColor: gridSeparatorColor,
+          backgroundColor: 'transparent',
+        }
+      ]}
+    >
+      {renderCellBackground(
+        isRangeMode,
+        isSelected,
+        isInRange,
+        isStart,
+        isEnd,
+        isBetween,
+        startDate,
+        endDate,
+        isDark,
+        colors
+      )}
+      <TuiText
+        size="xs"
+        weight={isSelected || isToday ? 'bold' : 'regular'}
+        style={{
+          color: textColor,
+          opacity: isDimmed ? (isDark ? 0.25 : 0.35) : 1,
+          textAlign: 'center',
+        }}
+      >
+        {isToday && !isSelected
+          ? `[${cell.day}]`
+          : String(cell.day)}
+      </TuiText>
+    </Pressable>
+  );
 };
 
 export const TuiCalendar: React.FC<TuiCalendarProps> = ({
@@ -51,17 +279,8 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({
 
   // Parse MM-DD-YYYY into year, month, day state
   const parseDate = (dateStr: string) => {
-    const parts = dateStr.split('-');
-    if (parts.length === 3) {
-      const m = parseInt(parts[0], 10) - 1;
-      const d = parseInt(parts[1], 10);
-      const y = parseInt(parts[2], 10);
-      if (!isNaN(m) && !isNaN(d) && !isNaN(y)) {
-        return { day: d, month: m, year: y };
-      }
-    }
-    const today = new Date();
-    return { day: today.getDate(), month: today.getMonth(), year: today.getFullYear() };
+    const dt = parseDateString(dateStr);
+    return { day: dt.getDate(), month: dt.getMonth(), year: dt.getFullYear() };
   };
 
   const initialDate = parseDate(value || startDate || '');
@@ -233,163 +452,24 @@ export const TuiCalendar: React.FC<TuiCalendarProps> = ({
               }
             ]}
           >
-            {cells.slice(rowIndex * 7, (rowIndex + 1) * 7).map((cell, cellIndex) => {
-              const isDimmed = cell.type === 'prev-month' || cell.type === 'next-month';
-
-              let cellMonth = currentMonth;
-              let cellYear = currentYear;
-              if (cell.type === 'prev-month') {
-                if (currentMonth === 0) {
-                  cellMonth = 11;
-                  cellYear = currentYear - 1;
-                } else {
-                  cellMonth = currentMonth - 1;
-                }
-              } else if (cell.type === 'next-month') {
-                if (currentMonth === 11) {
-                  cellMonth = 0;
-                  cellYear = currentYear + 1;
-                } else {
-                  cellMonth = currentMonth + 1;
-                }
-              }
-
-              const mStr = String(cellMonth + 1).padStart(2, '0');
-              const dStr = String(cell.day).padStart(2, '0');
-              const cellDateStr = `${mStr}-${dStr}-${cellYear}`;
-
-              let isSelected = false;
-              let isStart = false;
-              let isEnd = false;
-              let isInRange = false;
-              let isBetween = false;
-
-              if (isRangeMode) {
-                isStart = !!startDate && cellDateStr === startDate;
-                isEnd = !!endDate && cellDateStr === endDate;
-                if (startDate && endDate) {
-                  const cellTime = parseDateString(cellDateStr).getTime();
-                  const startTime = parseDateString(startDate).getTime();
-                  const endTime = parseDateString(endDate).getTime();
-                  isBetween = cellTime > startTime && cellTime < endTime;
-                  isInRange = isStart || isEnd || isBetween;
-                } else {
-                  isInRange = isStart;
-                }
-                isSelected = isStart || isEnd;
-              } else {
-                isSelected =
-                  !isDimmed &&
-                  selectedDate.day === cell.day &&
-                  selectedDate.month === currentMonth &&
-                  selectedDate.year === currentYear;
-              }
-
-              const isToday =
-                !isDimmed &&
-                today.getDate() === cell.day &&
-                today.getMonth() === currentMonth &&
-                today.getFullYear() === currentYear;
-
-              const getTextColor = () => {
-                if (isSelected) {
-                  if (isRangeMode) {
-                    return isDark ? '#000000' : '#FFFFFF';
-                  }
-                  return colors.primaryForeground;
-                }
-                if (isToday) return colors.primary;
-                return colors.foreground;
-              };
-
-              const renderCellBackground = () => {
-                if (!isRangeMode) {
-                  if (isSelected) {
-                    return (
-                      <View style={[styles.selectedBgSingle, { backgroundColor: colors.primary }]} />
-                    );
-                  }
-                  return null;
-                }
-
-                if (!isInRange) return null;
-
-                if (isStart || isEnd) {
-                  const hasRange = !!(startDate && endDate);
-                  return (
-                    <View style={styles.rangeEdgeWrapper}>
-                      {hasRange && (
-                        <View
-                          style={[
-                            styles.rangeCapsuleBg,
-                            {
-                              backgroundColor: isDark ? '#27272A' : '#E4E4E7',
-                              left: isStart ? '50%' : 0,
-                              right: isEnd ? '50%' : 0,
-                            },
-                          ]}
-                        />
-                      )}
-                      <View
-                        style={[
-                          styles.selectedBgSingle,
-                          {
-                            backgroundColor: isDark ? '#FFFFFF' : '#000000',
-                          },
-                        ]}
-                      />
-                    </View>
-                  );
-                }
-
-                if (isBetween) {
-                  return (
-                    <View
-                      style={[
-                        styles.rangeCapsuleBg,
-                        {
-                          backgroundColor: isDark ? '#27272A' : '#E4E4E7',
-                          left: 0,
-                          right: 0,
-                        },
-                      ]}
-                    />
-                  );
-                }
-
-                return null;
-              };
-
-              return (
-                <Pressable
-                  key={cellIndex}
-                  onPress={() => handleSelectCell(cell)}
-                  style={({ pressed }) => [
-                    styles.cellWrapper,
-                    {
-                      borderRightWidth: cellIndex === 6 ? 0 : 1,
-                      borderColor: gridSeparatorColor,
-                      backgroundColor: 'transparent',
-                    }
-                  ]}
-                >
-                  {renderCellBackground()}
-                  <TuiText
-                    size="xs"
-                    weight={isSelected || isToday ? 'bold' : 'regular'}
-                    style={{
-                      color: getTextColor(),
-                      opacity: isDimmed ? (isDark ? 0.25 : 0.35) : 1,
-                      textAlign: 'center',
-                    }}
-                  >
-                    {isToday && !isSelected
-                      ? `[${cell.day}]`
-                      : String(cell.day)}
-                  </TuiText>
-                </Pressable>
-              );
-            })}
+            {cells.slice(rowIndex * 7, (rowIndex + 1) * 7).map((cell, cellIndex) => (
+              <CalendarCell
+                key={cellIndex}
+                cell={cell}
+                cellIndex={cellIndex}
+                currentMonth={currentMonth}
+                currentYear={currentYear}
+                selectedDate={selectedDate}
+                isRangeMode={isRangeMode}
+                startDate={startDate}
+                endDate={endDate}
+                today={today}
+                colors={colors}
+                isDark={isDark}
+                gridSeparatorColor={gridSeparatorColor}
+                onSelect={handleSelectCell}
+              />
+            ))}
           </View>
         ))}
       </View>

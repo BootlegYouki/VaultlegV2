@@ -16,6 +16,8 @@ import { TuiSegmentedMeter } from '../components/tui-chart';
 import { Transaction, CATEGORIES, INCOME_CATEGORIES, Debt } from '../types';
 import { logger } from '../utils/logger';
 import { getCategoryIcon } from '../utils/category-icon';
+import { TuiTransactionRow } from '../components/tui-transaction-row';
+import { useBalanceAnimation } from '../hooks/use-balance-animation';
 
 // Re-export for backwards compatibility
 export { getCategoryIcon };
@@ -25,8 +27,6 @@ const STATS_COLORS = [
   '#00E5FF', '#69FF47', '#FF6B6B', '#FFD93D', '#C77DFF',
   '#FF9F1C', '#2EC4B6', '#FF4D6D', '#A8FF78', '#4D96FF',
 ];
-
-let hasAnimatedBalance = false;
 
 interface DashboardProps {
   transactions: Transaction[];
@@ -44,8 +44,272 @@ interface DashboardProps {
   startAnimation?: boolean;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-component: Balance totals with hide/reveal toggle
+// ─────────────────────────────────────────────────────────────────────────────
+interface DashboardBalancesCardProps {
+  balance: number;
+  totalIncome: number;
+  totalExpense: number;
+  animatedBalance: number;
+  hideBalances: boolean;
+  onToggleHide: () => void;
+}
 
+const DashboardBalancesCard: React.FC<DashboardBalancesCardProps> = ({
+  balance,
+  totalIncome,
+  totalExpense,
+  animatedBalance,
+  hideBalances,
+  onToggleHide,
+}) => {
+  const { colors, isDark } = useTheme();
 
+  const formatAmount = (val: number) => val.toFixed(2);
+  const formatCurrency = (val: number) =>
+    `${val < 0 ? '-' : ''}₱${Math.abs(val).toFixed(2)}`;
+
+  return (
+    <TuiContainer label="Balances">
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        {hideBalances ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 4 }}>
+            <TuiText
+              size="3xl"
+              weight="bold"
+              style={{ color: balance >= 0 ? colors.primary : colors.destructive }}
+            >
+              {balance < 0 ? '-' : ''}₱
+            </TuiText>
+            <View
+              style={{
+                width: 90,
+                height: 24,
+                backgroundColor: balance >= 0 ? colors.primary : colors.destructive,
+                opacity: 0.7,
+                marginLeft: 6,
+                borderRadius: 1,
+              }}
+            />
+          </View>
+        ) : (
+          <TuiText
+            size="3xl"
+            weight="bold"
+            style={{
+              color: balance >= 0 ? colors.primary : colors.destructive,
+              marginVertical: 4,
+            }}
+          >
+            {formatCurrency(animatedBalance)}
+          </TuiText>
+        )}
+
+        <Pressable onPress={onToggleHide} style={{ padding: 6 }}>
+          <View
+            style={{
+              width: 26,
+              height: 26,
+              borderWidth: 1.5,
+              borderColor: hideBalances ? colors.primary : (isDark ? '#3F3F46' : '#A1A1AA'),
+              backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            {hideBalances && (
+              <View style={{ width: 12, height: 12, backgroundColor: colors.primary }} />
+            )}
+          </View>
+        </Pressable>
+      </View>
+
+      <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginTop: 2 }}>
+        <TuiText size="sm" variant="muted">Income: +₱</TuiText>
+        {hideBalances ? (
+          <View
+            style={{
+              width: 40,
+              height: 11,
+              backgroundColor: colors.mutedForeground,
+              opacity: 0.6,
+              marginHorizontal: 4,
+              borderRadius: 1,
+            }}
+          />
+        ) : (
+          <TuiText size="sm" variant="muted">{formatAmount(totalIncome)}</TuiText>
+        )}
+        <TuiText size="sm" variant="muted">{" | Expenses: -₱"}</TuiText>
+        {hideBalances ? (
+          <View
+            style={{
+              width: 40,
+              height: 11,
+              backgroundColor: colors.mutedForeground,
+              opacity: 0.6,
+              marginHorizontal: 4,
+              borderRadius: 1,
+            }}
+          />
+        ) : (
+          <TuiText size="sm" variant="muted">{formatAmount(totalExpense)}</TuiText>
+        )}
+      </View>
+    </TuiContainer>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-component: Overall Budget bar chart
+// ─────────────────────────────────────────────────────────────────────────────
+interface DashboardBudgetCardProps {
+  segments: { color: string; value: number }[];
+  totalLimit: number;
+  totalExpense: number;
+  hideBalances: boolean;
+  startAnimation: boolean;
+  onPress?: () => void;
+}
+
+const DashboardBudgetCard: React.FC<DashboardBudgetCardProps> = ({
+  segments,
+  totalLimit,
+  totalExpense,
+  hideBalances,
+  startAnimation,
+  onPress,
+}) => {
+  const { colors } = useTheme();
+
+  return (
+    <Pressable onPress={onPress}>
+      <TuiContainer label="Overall Budget">
+        <TuiSegmentedMeter
+          segments={segments}
+          totalLimit={totalLimit}
+          totalSpent={totalExpense}
+          label={hideBalances ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TuiText size="sm" weight="bold">₱</TuiText>
+              <View
+                style={{
+                  width: 40,
+                  height: 12,
+                  backgroundColor: colors.foreground,
+                  opacity: 0.7,
+                  marginHorizontal: 4,
+                  borderRadius: 1,
+                }}
+              />
+              <TuiText size="sm" weight="bold">left</TuiText>
+            </View>
+          ) : (
+            `₱${(totalLimit - totalExpense).toFixed(2)} left`
+          )}
+          startAnimation={startAnimation}
+          animateMode="once"
+          animationDirection="grow"
+        />
+      </TuiContainer>
+    </Pressable>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-component: I Owe / Owes Me grid
+// ─────────────────────────────────────────────────────────────────────────────
+interface DashboardDebtsCardProps {
+  totalOwe: number;
+  totalReceivable: number;
+}
+
+const DashboardDebtsCard: React.FC<DashboardDebtsCardProps> = ({ totalOwe, totalReceivable }) => {
+  const { colors } = useTheme();
+
+  const formatLocalized = (val: number) =>
+    `₱${val.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
+
+  return (
+    <TuiContainer label="My Debts">
+      <View style={styles.debtsGrid}>
+        <View style={[styles.debtCol, { borderRightWidth: 1, borderColor: colors.border }]}>
+          <View style={styles.titleRow}>
+            <ArrowDownCircle size={12} color={colors.destructive} style={styles.titleIcon} />
+            <TuiText size="xs" variant="muted" weight="bold">I OWE</TuiText>
+          </View>
+          <TuiText size="lg" weight="bold" style={{ color: colors.destructive, marginTop: 4 }}>
+            {formatLocalized(totalOwe)}
+          </TuiText>
+        </View>
+
+        <View style={[styles.debtCol, { paddingLeft: 12 }]}>
+          <View style={styles.titleRow}>
+            <ArrowUpCircle size={12} color={colors.primary} style={styles.titleIcon} />
+            <TuiText size="xs" variant="muted" weight="bold">OWES ME</TuiText>
+          </View>
+          <TuiText size="lg" weight="bold" style={{ color: colors.primary, marginTop: 4 }}>
+            {formatLocalized(totalReceivable)}
+          </TuiText>
+        </View>
+      </View>
+    </TuiContainer>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sub-component: Recent 5 transactions list
+// ─────────────────────────────────────────────────────────────────────────────
+interface DashboardRecentTransactionsCardProps {
+  transactions: Transaction[];
+  editingTransactionId?: string;
+  onRecentTransactionPress?: (tx: Transaction) => void;
+}
+
+const DashboardRecentTransactionsCard: React.FC<DashboardRecentTransactionsCardProps> = ({
+  transactions,
+  editingTransactionId,
+  onRecentTransactionPress,
+}) => {
+  const { colors, isDark } = useTheme();
+  const recentTxs = transactions.slice(0, 5);
+  const emptySlotsCount = Math.max(0, 5 - transactions.length);
+
+  return (
+    <TuiContainer label="Recent Transactions">
+      <View style={styles.logsList}>
+        {recentTxs.map((t) => (
+          <TuiTransactionRow
+            key={t.id}
+            t={t}
+            isEditing={editingTransactionId === t.id}
+            onPress={() => onRecentTransactionPress?.(t)}
+          />
+        ))}
+        {Array.from({ length: emptySlotsCount }).map((_, index) => (
+          <View
+            key={`empty-${index}`}
+            style={[
+              styles.logRow,
+              {
+                borderColor: isDark ? colors.primary + '40' : colors.primary + '30',
+                borderStyle: 'dashed',
+                opacity: 0.25,
+                backgroundColor: 'transparent',
+                height: 52,
+              },
+            ]}
+          />
+        ))}
+      </View>
+    </TuiContainer>
+  );
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main Dashboard component
+// ─────────────────────────────────────────────────────────────────────────────
 export const Dashboard: React.FC<DashboardProps> = ({
   transactions,
   statsLimit,
@@ -68,398 +332,78 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: (evt, gestureState) => {
-        // Swipe up: vertical delta is negative and exceeds threshold, and vertical speed/delta is dominant
-        return gestureState.dy < -40 && Math.abs(gestureState.dy) > Math.abs(gestureState.dx) * 1.5;
-      },
-      onPanResponderRelease: (evt, gestureState) => {
-        onNavigateToAdd();
-      },
+      onMoveShouldSetPanResponder: (evt, gestureState) =>
+        gestureState.dy < -40 && Math.abs(gestureState.dy) > Math.abs(gestureState.dx) * 1.5,
+      onPanResponderRelease: () => onNavigateToAdd(),
     })
   ).current;
 
   useEffect(() => {
     AsyncStorage.getItem('tui_hide_balances')
       .then((val) => {
-        if (val !== null) {
-          setHideBalances(val === 'true');
-        }
+        if (val !== null) setHideBalances(val === 'true');
       })
-      .catch((e) => {
-        logger.log('SYSTEM_ERROR', `LOAD_HIDE_BALANCES_FAILED: ${e.message}`);
-      });
+      .catch((e) => logger.log('SYSTEM_ERROR', `LOAD_HIDE_BALANCES_FAILED: ${e.message}`));
   }, []);
 
   const handleToggleHide = () => {
     const newVal = !hideBalances;
     setHideBalances(newVal);
-    AsyncStorage.setItem('tui_hide_balances', newVal ? 'true' : 'false').catch((e) => {
-      logger.log('SYSTEM_ERROR', `SAVE_HIDE_BALANCES_FAILED: ${e.message}`);
-    });
+    AsyncStorage.setItem('tui_hide_balances', newVal ? 'true' : 'false').catch((e) =>
+      logger.log('SYSTEM_ERROR', `SAVE_HIDE_BALANCES_FAILED: ${e.message}`)
+    );
   };
 
-  const formatAmount = (val: number) => {
-    return val.toFixed(2);
-  };
-
-  const formatCurrency = (val: number) => {
-    return `${val < 0 ? '-' : ''}₱${Math.abs(val).toFixed(2)}`;
-  };
-
-  const formatLocalized = (val: number) => {
-    return `₱${val.toLocaleString(undefined, { minimumFractionDigits: 2 })}`;
-  };
-
-
-
-  // Aggregate Calculations
-  const totalIncome = transactions
-    .filter((t) => t.type === 'income')
-    .reduce((sum, t) => sum + t.amount, 0);
-
-  const totalExpense = transactions
-    .filter((t) => t.type === 'expense')
-    .reduce((sum, t) => sum + t.amount, 0);
-
+  // Aggregate calculations
+  const totalIncome = transactions.filter((t) => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+  const totalExpense = transactions.filter((t) => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
   const balance = totalIncome - totalExpense;
+  const animatedBalance = useBalanceAnimation(balance, startAnimation);
 
-  const [animatedBalance, setAnimatedBalance] = useState(hasAnimatedBalance ? balance : 0);
-  const isFirstRenderRef = useRef(true);
-
-  useEffect(() => {
-    if (!hasAnimatedBalance) {
-      if (!startAnimation) return;
-      hasAnimatedBalance = true;
-    } else {
-      if (isFirstRenderRef.current) {
-        isFirstRenderRef.current = false;
-        setAnimatedBalance(balance);
-        return;
-      }
-    }
-
-    let startTime: number | null = null;
-    const startValue = animatedBalance;
-    const duration = 800; // 800ms count-up duration
-
-    let animationFrameId: number;
-
-    const animate = (timestamp: number) => {
-      if (!startTime) startTime = timestamp;
-      const progress = Math.min((timestamp - startTime) / duration, 1);
-      const easedProgress = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-      const currentValue = startValue + (balance - startValue) * easedProgress;
-
-      setAnimatedBalance(currentValue);
-
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(animate);
-      }
-    };
-
-    animationFrameId = requestAnimationFrame(animate);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [balance, startAnimation]);
-
-  const totalOwe = debts
-    .filter((d) => d.type === 'payable')
-    .reduce((sum, d) => sum + d.amount, 0);
-
-  const totalReceivable = debts
-    .filter((d) => d.type === 'receivable')
-    .reduce((sum, d) => sum + d.amount, 0);
+  const totalOwe = debts.filter((d) => d.type === 'payable').reduce((sum, d) => sum + d.amount, 0);
+  const totalReceivable = debts.filter((d) => d.type === 'receivable').reduce((sum, d) => sum + d.amount, 0);
 
   const totalLimit = totalIncome > statsLimit ? totalIncome : statsLimit;
-
   const segments: { color: string; value: number }[] = [];
-
   const remaining = totalLimit - totalExpense;
-  if (remaining > 0) {
-    segments.push({
-      color: colors.primary,
-      value: remaining,
-    });
-  }
-
-  segments.push({
-    color: isDark ? '#27272A' : '#E4E4E7',
-    value: totalExpense,
-  });
+  if (remaining > 0) segments.push({ color: colors.primary, value: remaining });
+  segments.push({ color: isDark ? '#27272A' : '#E4E4E7', value: totalExpense });
 
   return (
-    <View 
+    <View
       {...panResponder.panHandlers}
       style={[styles.mainWrapper, { backgroundColor: colors.background }]}
     >
-      
-      {/* 01: FIXED TOP SECTION (HEADER & BALANCES CARD) */}
-      <View style={[styles.fixedTopSection, { backgroundColor: colors.background }]}>
-        <TuiContainer label="Balances">
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            {hideBalances ? (
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 4 }}>
-                <TuiText
-                  size="3xl"
-                  weight="bold"
-                  style={{
-                    color: balance >= 0 ? colors.primary : colors.destructive,
-                  }}
-                >
-                  {balance < 0 ? '-' : ''}₱
-                </TuiText>
-                <View
-                  style={{
-                    width: 90,
-                    height: 24,
-                    backgroundColor: balance >= 0 ? colors.primary : colors.destructive,
-                    opacity: 0.7,
-                    marginLeft: 6,
-                    borderRadius: 1,
-                  }}
-                />
-              </View>
-            ) : (
-              <TuiText
-                size="3xl"
-                weight="bold"
-                style={{
-                  color: balance >= 0 ? colors.primary : colors.destructive,
-                  marginVertical: 4,
-                }}
-              >
-                {formatCurrency(animatedBalance)}
-              </TuiText>
-            )}
-            
-            <Pressable
-              onPress={handleToggleHide}
-              style={{ padding: 6 }}
-            >
-              <View
-                style={{
-                  width: 26,
-                  height: 26,
-                  borderWidth: 1.5,
-                  borderColor: hideBalances ? colors.primary : (isDark ? '#3F3F46' : '#A1A1AA'),
-                  backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                {hideBalances && (
-                  <View
-                    style={{
-                      width: 12,
-                      height: 12,
-                      backgroundColor: colors.primary,
-                    }}
-                  />
-                )}
-              </View>
-            </Pressable>
-          </View>
-          
-          <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', marginTop: 2 }}>
-            <TuiText size="sm" variant="muted">Income: +₱</TuiText>
-            {hideBalances ? (
-              <View
-                style={{
-                  width: 40,
-                  height: 11,
-                  backgroundColor: colors.mutedForeground,
-                  opacity: 0.6,
-                  marginHorizontal: 4,
-                  borderRadius: 1,
-                }}
-              />
-            ) : (
-              <TuiText size="sm" variant="muted">{formatAmount(totalIncome)}</TuiText>
-            )}
-            <TuiText size="sm" variant="muted">{" | Expenses: -₱"}</TuiText>
-            {hideBalances ? (
-              <View
-                style={{
-                  width: 40,
-                  height: 11,
-                  backgroundColor: colors.mutedForeground,
-                  opacity: 0.6,
-                  marginHorizontal: 4,
-                  borderRadius: 1,
-                }}
-              />
-            ) : (
-              <TuiText size="sm" variant="muted">{formatAmount(totalExpense)}</TuiText>
-            )}
-          </View>
-        </TuiContainer>
+      {/* 01: FIXED TOP SECTION */}
+      <View style={[styles.fixedTopSection, { backgroundColor: colors.background, borderColor: colors.border }]}>
+        <DashboardBalancesCard
+          balance={balance}
+          totalIncome={totalIncome}
+          totalExpense={totalExpense}
+          animatedBalance={animatedBalance}
+          hideBalances={hideBalances}
+          onToggleHide={handleToggleHide}
+        />
       </View>
 
       {/* 02: STATIC BODY SECTION */}
-      <View
-        style={[styles.scrollContentContainer, { flex: 1, paddingBottom: 72 + insets.bottom }]}
-      >
-        
-        {/* Overall Budget Card */}
-        <Pressable onPress={onNavigateToStats}>
-          <TuiContainer 
-            label="Overall Budget" 
-          >
-            <TuiSegmentedMeter
-              segments={segments}
-              totalLimit={totalLimit}
-              totalSpent={totalExpense}
-              label={hideBalances ? (
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <TuiText size="sm" weight="bold">₱</TuiText>
-                  <View
-                    style={{
-                      width: 40,
-                      height: 12,
-                      backgroundColor: colors.foreground,
-                      opacity: 0.7,
-                      marginHorizontal: 4,
-                      borderRadius: 1,
-                    }}
-                  />
-                  <TuiText size="sm" weight="bold">left</TuiText>
-                </View>
-              ) : (
-                `₱${(totalLimit - totalExpense).toFixed(2)} left`
-              )}
-              startAnimation={startAnimation}
-              animateMode="once"
-              animationDirection="grow"
-            />
-          </TuiContainer>
-        </Pressable>
+      <View style={[styles.scrollContentContainer, { flex: 1, paddingBottom: 72 + insets.bottom }]}>
+        <DashboardBudgetCard
+          segments={segments}
+          totalLimit={totalLimit}
+          totalExpense={totalExpense}
+          hideBalances={hideBalances}
+          startAnimation={startAnimation}
+          onPress={onNavigateToStats}
+        />
 
-        {/* My Debts (Divided Column TuiContainer) */}
-        <TuiContainer label="My Debts">
-          <View style={styles.debtsGrid}>
-            <View style={[styles.debtCol, { borderRightWidth: 1, borderColor: colors.border }]}>
-              <View style={styles.titleRow}>
-                <ArrowDownCircle size={12} color={colors.destructive} style={styles.titleIcon} />
-                <TuiText size="xs" variant="muted" weight="bold">I OWE</TuiText>
-              </View>
-              <TuiText
-                size="lg"
-                weight="bold"
-                style={{
-                  color: colors.destructive,
-                  marginTop: 4,
-                }}
-              >
-                {formatLocalized(totalOwe)}
-              </TuiText>
-            </View>
+        <DashboardDebtsCard totalOwe={totalOwe} totalReceivable={totalReceivable} />
 
-            <View style={[styles.debtCol, { paddingLeft: 12 }]}>
-              <View style={styles.titleRow}>
-                <ArrowUpCircle size={12} color={colors.primary} style={styles.titleIcon} />
-                <TuiText size="xs" variant="muted" weight="bold">OWES ME</TuiText>
-              </View>
-              <TuiText
-                size="lg"
-                weight="bold"
-                style={{
-                  color: colors.primary,
-                  marginTop: 4,
-                }}
-              >
-                {formatLocalized(totalReceivable)}
-              </TuiText>
-            </View>
-          </View>
-        </TuiContainer>
-
-        {/* Recent Transactions Container */}
-        <TuiContainer label="Recent Transactions">
-          {(() => {
-            const recentTxs = transactions.slice(0, 5);
-            const emptySlotsCount = Math.max(0, 5 - transactions.length);
-            return (
-              <View style={styles.logsList}>
-                {recentTxs.map((t) => {
-                  const isEditing = editingTransactionId === t.id;
-                  return (
-                    <Pressable
-                      key={t.id}
-                      onPress={() => onRecentTransactionPress?.(t)}
-                      style={({ pressed }) => [
-                        styles.logRow,
-                        {
-                          borderColor: isEditing ? colors.primary : (isDark ? colors.primary + '40' : colors.primary + '30'),
-                          opacity: pressed ? 0.7 : 1,
-                          backgroundColor: isEditing ? colors.primary + '15' : 'transparent',
-                        },
-                      ]}
-                    >
-                      {/* Visual Category Icon */}
-                      <View
-                        style={[
-                          styles.rowIconContainer,
-                          {
-                            borderColor: isDark ? '#3F3F46' : '#000000',
-                            backgroundColor: isDark ? '#27272A' : '#FFFFFF',
-                          },
-                        ]}
-                      >
-                        {getCategoryIcon(t.category, 14, isDark ? '#FAFAFA' : '#000000')}
-                      </View>
-
-                      <View style={styles.logLeft}>
-                        <TuiText weight="bold" size="md">
-                          {t.description}
-                        </TuiText>
-                        <TuiText size="sm" variant="muted">
-                          {(() => {
-                            const catObj = CATEGORIES.find(c => c.id === t.category) || INCOME_CATEGORIES.find(c => c.id === t.category);
-                            const catLabel = catObj ? catObj.label : t.category.charAt(0).toUpperCase() + t.category.slice(1);
-                            return `${t.date} | ${catLabel}`;
-                          })()}
-                        </TuiText>
-                      </View>
-
-                      <View style={styles.logRight}>
-                        <TuiText
-                          weight="bold"
-                          style={{
-                            color: t.type === 'income' ? colors.primary : colors.destructive,
-                            fontSize: 16,
-                          }}
-                        >
-                          {t.type === 'income' ? '+' : '-'}{formatCurrency(t.amount)}
-                        </TuiText>
-                      </View>
-                    </Pressable>
-                  );
-                })}
-
-                {Array.from({ length: emptySlotsCount }).map((_, index) => {
-                  return (
-                    <View
-                      key={`empty-${index}`}
-                      style={[
-                        styles.logRow,
-                        {
-                          borderColor: isDark ? colors.primary + '40' : colors.primary + '30',
-                          borderStyle: 'dashed',
-                          opacity: 0.25,
-                          backgroundColor: 'transparent',
-                          height: 52,
-                        },
-                      ]}
-                    />
-                  );
-                })}
-              </View>
-            );
-          })()}
-        </TuiContainer>
-
+        <DashboardRecentTransactionsCard
+          transactions={transactions}
+          editingTransactionId={editingTransactionId}
+          onRecentTransactionPress={onRecentTransactionPress}
+        />
       </View>
     </View>
   );
@@ -471,8 +415,9 @@ const styles = StyleSheet.create({
   },
   fixedTopSection: {
     paddingHorizontal: 8,
-    paddingTop: 4,
-    paddingBottom: 0,
+    paddingTop: 12,
+    paddingBottom: 6,
+    borderBottomWidth: 1.5,
   },
   titleRow: {
     flexDirection: 'row',
@@ -487,7 +432,7 @@ const styles = StyleSheet.create({
   scrollContentContainer: {
     paddingHorizontal: 8,
     paddingTop: 0,
-    paddingBottom: 60, // Clear floating bottom nav safely
+    paddingBottom: 60,
   },
   statsHeader: {
     flexDirection: 'row',
@@ -534,7 +479,6 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingHorizontal: 0,
   },
-
   debtsGrid: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -544,7 +488,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-
   emptyState: {
     textAlign: 'center',
     paddingVertical: 20,

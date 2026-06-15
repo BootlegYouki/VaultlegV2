@@ -28,6 +28,12 @@ export const INCOME_CATEGORIES = [
   { id: 'other_income', label: 'Other', icon: 'plus-circle' },
 ];
 
+export const getCategoryLabel = (categoryId: string): string => {
+  const catObj = CATEGORIES.find(c => c.id === categoryId) || INCOME_CATEGORIES.find(c => c.id === categoryId);
+  return catObj ? catObj.label : categoryId.charAt(0).toUpperCase() + categoryId.slice(1);
+};
+
+
 export interface Debt {
   id: string;
   name: string;

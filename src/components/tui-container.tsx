@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ViewStyle, Pressable } from 'react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiText } from './tui-text';
+import { TuiRetroBorders } from './tui-retro-borders';
 
 interface TuiContainerProps {
   children: React.ReactNode;
@@ -41,20 +42,8 @@ export const TuiContainer: React.FC<TuiContainerProps> = ({
         style,
       ]}
     >
-      {/* Custom Segmented Borders to support transparent legend background without intersection */}
-      <View style={[styles.borderLeft, { backgroundColor: borderColor }]} />
-      <View style={[styles.borderRight, { backgroundColor: borderColor }]} />
-      <View style={[styles.borderBottom, { backgroundColor: borderColor }]} />
-      <View style={[styles.borderTopLeft, { backgroundColor: borderColor }]} />
-      <View 
-        style={[
-          styles.borderTopRight, 
-          { 
-            backgroundColor: borderColor, 
-            left: 12 + legendWidth,
-          }
-        ]} 
-      />
+      {/* Custom Segmented Borders */}
+      <TuiRetroBorders borderColor={borderColor} legendWidth={legendWidth} />
 
       {/* Legend Container */}
       <View
