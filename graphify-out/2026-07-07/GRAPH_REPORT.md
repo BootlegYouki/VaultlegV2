@@ -1,7 +1,7 @@
 # Graph Report - VaultlegV2  (2026-07-07)
 
 ## Corpus Check
-- 64 files · ~71,814 words
+- 64 files · ~71,787 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -254,7 +254,7 @@ Nodes (5): Detection mode mapping, Migration from jscpd, Step 1: Preview migrati
 
 ### Community 44 - "Community 44"
 Cohesion: 0.22
-Nodes (8): Combined Dead Code + Duplication, Fallow: Common Workflow Patterns & Recipes, Full audit (default), Production audit, Production vs Full Audit, Step 1: Run combined analysis, Step 2: Prioritize cleanup, Table of Contents
+Nodes (8): Combined Dead Code + Duplication, Fallow: Common Workflow Patterns & Recipes, PR Dead Code Check, Step 1: Analyze changed files, Step 1: Run combined analysis, Step 2: If issues found, show specifics, Step 2: Prioritize cleanup, Table of Contents
 
 ### Community 45 - "Community 45"
 Cohesion: 0.50
@@ -290,7 +290,7 @@ Nodes (4): All-in-one with `--ci`, GitHub Code Scanning Integration, Step 1: Gen
 
 ### Community 53 - "Community 53"
 Cohesion: 0.67
-Nodes (3): PR Dead Code Check, Step 1: Analyze changed files, Step 2: If issues found, show specifics
+Nodes (3): Full audit (default), Production audit, Production vs Full Audit
 
 ### Community 55 - "Community 55"
 Cohesion: 0.67

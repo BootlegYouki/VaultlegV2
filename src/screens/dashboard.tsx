@@ -18,6 +18,8 @@ import { logger } from '../utils/logger';
 import { getCategoryIcon } from '../utils/category-icon';
 import { TuiTransactionRow } from '../components/tui-transaction-row';
 import { useBalanceAnimation } from '../hooks/use-balance-animation';
+import { getTodayDateString, isSameMonthYear } from '../utils/date';
+
 
 // Re-export for backwards compatibility
 export { getCategoryIcon };
@@ -363,11 +365,15 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const totalOwe = debts.filter((d) => d.type === 'payable').reduce((sum, d) => sum + d.amount, 0);
   const totalReceivable = debts.filter((d) => d.type === 'receivable').reduce((sum, d) => sum + d.amount, 0);
 
-  const totalLimit = totalIncome > statsLimit ? totalIncome : statsLimit;
+  const todayStr = getTodayDateString();
+  const thisMonthExpense = transactions
+    .filter((t) => t.type === 'expense' && isSameMonthYear(t.date, todayStr))
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalLimit = balance > 0 ? balance + thisMonthExpense : thisMonthExpense;
   const segments: { color: string; value: number }[] = [];
-  const remaining = totalLimit - totalExpense;
-  if (remaining > 0) segments.push({ color: colors.primary, value: remaining });
-  segments.push({ color: isDark ? '#27272A' : '#E4E4E7', value: totalExpense });
+  if (balance > 0) segments.push({ color: colors.primary, value: balance });
+  segments.push({ color: isDark ? '#27272A' : '#E4E4E7', value: thisMonthExpense });
 
   return (
     <View
@@ -391,7 +397,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <DashboardBudgetCard
           segments={segments}
           totalLimit={totalLimit}
-          totalExpense={totalExpense}
+          totalExpense={thisMonthExpense}
           hideBalances={hideBalances}
           startAnimation={startAnimation}
           onPress={onNavigateToStats}

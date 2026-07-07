@@ -2401,7 +2401,7 @@
       "label": "styles",
       "file_type": "code",
       "source_file": "src/screens/stats.tsx",
-      "source_location": "L539",
+      "source_location": "L529",
       "id": "screens_stats_styles",
       "community": 9,
       "norm_label": "styles"
@@ -4707,7 +4707,7 @@
       "source_file": ".agents/skills/fallow/references/patterns.md",
       "source_location": "L67",
       "id": "references_patterns_pr_dead_code_check",
-      "community": 53,
+      "community": 44,
       "norm_label": "pr dead code check"
     },
     {
@@ -4716,7 +4716,7 @@
       "source_file": ".agents/skills/fallow/references/patterns.md",
       "source_location": "L71",
       "id": "references_patterns_step_1_analyze_changed_files",
-      "community": 53,
+      "community": 44,
       "norm_label": "step 1: analyze changed files"
     },
     {
@@ -4725,7 +4725,7 @@
       "source_file": ".agents/skills/fallow/references/patterns.md",
       "source_location": "L79",
       "id": "references_patterns_step_2_if_issues_found_show_specifics",
-      "community": 53,
+      "community": 44,
       "norm_label": "step 2: if issues found, show specifics"
     },
     {
@@ -5184,7 +5184,7 @@
       "source_file": ".agents/skills/fallow/references/patterns.md",
       "source_location": "L541",
       "id": "references_patterns_production_vs_full_audit",
-      "community": 44,
+      "community": 53,
       "norm_label": "production vs full audit"
     },
     {
@@ -5193,7 +5193,7 @@
       "source_file": ".agents/skills/fallow/references/patterns.md",
       "source_location": "L543",
       "id": "references_patterns_full_audit_default",
-      "community": 44,
+      "community": 53,
       "norm_label": "full audit (default)"
     },
     {
@@ -5202,7 +5202,7 @@
       "source_file": ".agents/skills/fallow/references/patterns.md",
       "source_location": "L551",
       "id": "references_patterns_production_audit",
-      "community": 44,
+      "community": 53,
       "norm_label": "production audit"
     },
     {

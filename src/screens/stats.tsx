@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, Dimensions, ScrollView, Animated, FlatList } from 'react-native';
 import { useTheme } from '../theme/theme-provider';
 import { TuiContainer } from '../components/tui-container';
 import { TuiText } from '../components/tui-text';
@@ -7,6 +7,33 @@ import { TuiSegmentedMeter } from '../components/tui-chart';
 import { TuiScrollView } from '../components/tui-scrollview';
 import { Transaction, CATEGORIES, INCOME_CATEGORIES, getCategoryLabel } from '../types';
 import { getCategoryIcon } from '../utils/category-icon';
+import { parseDateString, getTodayDateString, isSameMonthYear, isBeforeOrSameMonthYear, getRelativeMonth } from '../utils/date';
+
+const formatMonthYearHeader = (dateStr: string): string => {
+  const parts = dateStr.split('-');
+  if (parts.length === 3) {
+    const monthNames = [
+      'JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE',
+      'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'
+    ];
+    const mIdx = parseInt(parts[0], 10) - 1;
+    const year = parts[2];
+    if (mIdx >= 0 && mIdx < 12) {
+      return `${monthNames[mIdx]} ${year}`;
+    }
+  }
+  return 'UNKNOWN MONTH';
+};
+
+const { width: screenWidth } = Dimensions.get('window');
+const containerWidth = screenWidth - 32;
+const itemWidth = containerWidth - 80;
+const gap = 12;
+
+
+
+
+
 
 interface StatsProps {
   transactions: Transaction[];
@@ -154,26 +181,116 @@ export const Stats: React.FC<StatsProps> = ({
 }) => {
   const { colors, isDark } = useTheme();
   const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null);
+  const [targetMonth, setTargetMonth] = React.useState<string>(() => getTodayDateString());
+  const [selectorVisible, setSelectorVisible] = React.useState(true);
+  const selectorOpacity = React.useRef(new Animated.Value(1)).current;
+
+  // Generate months list based on actual transactions + current month
+  const monthsList = React.useMemo(() => {
+    const monthsSet = new Set<string>();
+    
+    // Always include current month
+    const todayStr = getTodayDateString();
+    const todayParts = todayStr.split('-');
+    if (todayParts.length === 3) {
+      monthsSet.add(`${todayParts[0]}-01-${todayParts[2]}`);
+    }
+
+    // Add all months that have transactions
+    transactions.forEach(t => {
+      if (t.date) {
+        const parts = t.date.split('-');
+        if (parts.length === 3) {
+          monthsSet.add(`${parts[0]}-01-${parts[2]}`);
+        }
+      }
+    });
+
+    // Sort chronologically
+    return Array.from(monthsSet).sort((a, b) => {
+      const partsA = a.split('-');
+      const partsB = b.split('-');
+      const dateA = new Date(parseInt(partsA[2], 10), parseInt(partsA[0], 10) - 1, 1);
+      const dateB = new Date(parseInt(partsB[2], 10), parseInt(partsB[0], 10) - 1, 1);
+      return dateA.getTime() - dateB.getTime();
+    });
+  }, [transactions]);
+
+  const initialIndex = React.useMemo(() => {
+    const idx = monthsList.findIndex(m => isSameMonthYear(m, getTodayDateString()));
+    return idx !== -1 ? idx : Math.max(0, monthsList.length - 1);
+  }, [monthsList]);
+
+
+
+  const hasInitializedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      hasInitializedRef.current = true;
+    }, 150);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleScroll = (event: any) => {
+    if (!hasInitializedRef.current) return;
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / (itemWidth + gap));
+    if (index >= 0 && index < monthsList.length) {
+      const selected = monthsList[index];
+      if (!isSameMonthYear(selected, targetMonth)) {
+        setTargetMonth(selected);
+      }
+    }
+  };
+
+  const handleMainScroll = (event: any) => {
+    const y = event.nativeEvent.contentOffset.y;
+    if (y > 20 && selectorVisible) {
+      setSelectorVisible(false);
+      Animated.timing(selectorOpacity, {
+        toValue: 0,
+        duration: 180,
+        useNativeDriver: true,
+      }).start();
+    } else if (y <= 5 && !selectorVisible) {
+      setSelectorVisible(true);
+      Animated.timing(selectorOpacity, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+
+
 
   // Aggregate calculations
-  const totalExpense = transactions
-    .filter((t) => t.type === 'expense')
+  const totalIncomeUpToTarget = transactions
+    .filter((t) => t.type === 'income' && isBeforeOrSameMonthYear(t.date, targetMonth))
     .reduce((sum, t) => sum + t.amount, 0);
 
-  const totalIncome = transactions
-    .filter((t) => t.type === 'income')
+  const totalExpenseUpToTarget = transactions
+    .filter((t) => t.type === 'expense' && isBeforeOrSameMonthYear(t.date, targetMonth))
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const balanceAtTargetEnd = totalIncomeUpToTarget - totalExpenseUpToTarget;
+
+  const targetExpense = transactions
+    .filter((t) => t.type === 'expense' && isSameMonthYear(t.date, targetMonth))
     .reduce((sum, t) => sum + t.amount, 0);
 
   // Category breakdown calculations
   const categorySpending = CATEGORIES.map((cat) => {
-    const categoryTxs = transactions.filter((t) => t.type === 'expense' && t.category === cat.id);
+    const categoryTxs = transactions.filter((t) => t.type === 'expense' && t.category === cat.id && isSameMonthYear(t.date, targetMonth));
     const amount = categoryTxs.reduce((sum, t) => sum + t.amount, 0);
     const count = categoryTxs.length;
     const avg = count > 0 ? amount / count : 0;
     
     let lastDate = '';
     if (categoryTxs.length > 0) {
-      const sorted = [...categoryTxs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      const sorted = [...categoryTxs].sort((a, b) => parseDateString(b.date).getTime() - parseDateString(a.date).getTime());
       lastDate = sorted[0].date;
     }
 
@@ -187,17 +304,18 @@ export const Stats: React.FC<StatsProps> = ({
     };
   });
 
+
   const sortedSpending = [...categorySpending]
     .filter((c) => c.value > 0)
     .sort((a, b) => b.value - a.value);
 
   const borderAccent = isDark ? colors.primary + '40' : '#000000';
 
-  const totalLimit = totalIncome > totalExpense ? totalIncome : totalExpense;
+  const totalLimit = balanceAtTargetEnd > 0 ? balanceAtTargetEnd + targetExpense : targetExpense;
 
   const segments: { color: string; value: number }[] = [];
-  const unspent = totalIncome - totalExpense;
-  if (totalIncome > totalExpense && unspent > 0) {
+  const unspent = balanceAtTargetEnd;
+  if (balanceAtTargetEnd > 0 && unspent > 0) {
     segments.push({
       color: colors.primary,
       value: unspent,
@@ -231,18 +349,19 @@ export const Stats: React.FC<StatsProps> = ({
       <View style={[styles.fixedTopSection, { backgroundColor: colors.background, borderColor: colors.border }]}>
         <TuiContainer 
           label="Income Allocation" 
-          badge={totalIncome > totalExpense ? `₱${(totalIncome - totalExpense).toFixed(0)} Left` : undefined}
+          badge={balanceAtTargetEnd > 0 ? `₱${balanceAtTargetEnd.toFixed(0)} Left` : undefined}
           accentBorder={animateMeter}
         >
           <TuiSegmentedMeter
+            key={targetMonth}
             segments={segments}
             totalLimit={totalLimit}
-            totalSpent={totalExpense}
-            label={totalIncome > 0
-              ? `₱${totalExpense.toFixed(2)}`
-              : `₱${totalExpense.toFixed(2)} spent (No income recorded)`
+            totalSpent={targetExpense}
+            label={totalLimit > 0
+              ? `₱${targetExpense.toFixed(2)}`
+              : `₱${targetExpense.toFixed(2)} spent (No funds recorded)`
             }
-            animateMode={animateMeter ? 'always' : 'none'}
+            animateMode="always"
             animationDirection="deplete"
           />
         </TuiContainer>
@@ -254,6 +373,8 @@ export const Stats: React.FC<StatsProps> = ({
         contentContainerStyle={styles.scrollContent}
         refreshing={refreshing}
         onRefresh={onRefresh}
+        onScroll={handleMainScroll}
+        scrollEventThrottle={16}
       >
 
         {/* 02: SPENT ALLOCATION CONTAINER */}
@@ -295,8 +416,8 @@ export const Stats: React.FC<StatsProps> = ({
         >
           {(() => {
             const displayTxs = transactions
-              .filter((t) => t.type === 'expense' && (selectedCategory ? t.category === selectedCategory : true))
-              .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+              .filter((t) => t.type === 'expense' && (selectedCategory ? t.category === selectedCategory : true) && isSameMonthYear(t.date, targetMonth))
+              .sort((a, b) => parseDateString(b.date).getTime() - parseDateString(a.date).getTime());
 
             if (displayTxs.length === 0) {
               return (
@@ -360,6 +481,74 @@ export const Stats: React.FC<StatsProps> = ({
         </TuiContainer>
 
       </TuiScrollView>
+
+      {/* FLOATING MONTH SELECTOR */}
+      <Animated.View 
+        style={[
+          styles.floatingMonthSelectorWrapper,
+          {
+            opacity: selectorOpacity,
+            transform: [
+              {
+                translateY: selectorOpacity.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [24, 0],
+                }),
+              },
+            ],
+          }
+        ]}
+        pointerEvents={selectorVisible ? 'auto' : 'none'}
+      >
+        <FlatList
+          horizontal
+          style={{ width: '100%', height: '100%' }}
+          data={monthsList}
+          keyExtractor={(item) => item}
+          showsHorizontalScrollIndicator={false}
+          decelerationRate="fast"
+          snapToInterval={itemWidth + gap}
+          snapToAlignment="start"
+          disableIntervalMomentum={true}
+          contentContainerStyle={{
+            paddingHorizontal: (containerWidth - itemWidth) / 2,
+            alignItems: 'center',
+          }}
+          initialScrollIndex={initialIndex}
+          initialNumToRender={monthsList.length}
+          windowSize={5}
+          getItemLayout={(_, index) => (
+            { length: itemWidth + gap, offset: (itemWidth + gap) * index, index }
+          )}
+          scrollEventThrottle={16}
+          onScroll={handleScroll}
+          renderItem={({ item: m, index: idx }) => {
+            const isSelected = isSameMonthYear(m, targetMonth);
+            return (
+              <View
+                style={[
+                  styles.carouselItem,
+                  {
+                    width: itemWidth,
+                    marginRight: idx === monthsList.length - 1 ? 0 : gap,
+                    backgroundColor: isDark ? '#18181B' : '#FFFFFF',
+                    borderColor: isSelected ? colors.primary : (isDark ? colors.primary + '40' : colors.primary + '30'),
+                    borderWidth: isSelected ? 2 : 1.5,
+                  }
+                ]}
+              >
+                <TuiText 
+                  size={isSelected ? "lg" : "md"} 
+                  weight="bold" 
+                  style={{ color: colors.primary }}
+                >
+                  {formatMonthYearHeader(m)}
+                </TuiText>
+              </View>
+            );
+          }}
+        />
+      </Animated.View>
     </View>
   );
 };
@@ -380,7 +569,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 8,
     paddingTop: 4,
-    paddingBottom: 80, // Safe padding to clear persistent nav
+    paddingBottom: 170, // Safe padding to clear persistent nav + floating month selector
   },
   emptyState: {
     textAlign: 'center',
@@ -480,4 +669,24 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'center',
   },
+  floatingMonthSelectorWrapper: {
+    position: 'absolute',
+    bottom: 120,
+    left: 16,
+    right: 16,
+    height: 52,
+    overflow: 'hidden',
+  },
+  carouselRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: '100%',
+  },
+  carouselItem: {
+    borderWidth: 1.5,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 52,
+  },
 });
+
